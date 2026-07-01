@@ -179,24 +179,68 @@
             font-size: 1.1rem;
         }
 
-        /* Floating Logo Animation */
+        /* Photo Gallery Grid Animation */
+        .who-gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            position: relative;
+        }
+
+        .gallery-pic {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            filter: brightness(0.9);
+        }
+
+        .gallery-pic:hover {
+            transform: scale(1.05) translateY(-10px);
+            box-shadow: 0 20px 40px rgba(15, 110, 86, 0.2);
+            filter: brightness(1.1);
+            z-index: 10;
+        }
+
+        /* Staggered layout for masonry effect */
+        .pic-1 { transform: translateY(20px); }
+        .pic-2 { transform: translateY(-10px); }
+        .pic-3 { transform: translateY(0px); grid-column: 1 / -1; height: 180px; object-position: center 30%; }
+
+        .pic-1:hover { transform: scale(1.05) translateY(10px); }
+        .pic-2:hover { transform: scale(1.05) translateY(-20px); }
+        .pic-3:hover { transform: scale(1.03) translateY(-10px); }
+
         .who-image {
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
         }
 
-        .who-image img {
-            width: 100%;
-            max-width: 450px;
-            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.1));
+        .floating-logo {
+            position: absolute;
+            width: 120px !important;
+            height: 120px;
+            background: #fff;
+            border-radius: 50%;
+            padding: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            z-index: 5;
+            top: 50%;
+            left: 50%;
+            margin-top: -60px;
+            margin-left: -60px;
             animation: float 6s ease-in-out infinite;
         }
 
         @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-            100% { transform: translateY(0px); }
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
         }
 
         /* ── 3. The Meaning of 26 (Interactive Equation) ── */
@@ -264,6 +308,12 @@
             color: #0F6E56;
             line-height: 1;
             margin-bottom: 1rem;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-block;
+        }
+
+        .meaning-card:hover .card-number {
+            transform: scale(1.15) rotate(-5deg);
         }
 
         .meaning-card h3 {
@@ -368,7 +418,12 @@
             </div>
 
             <div class="who-image reveal">
-                <img src="logo2.png" alt="PLAY26 Logo">
+                <div class="who-gallery">
+                    <img src="https://images.unsplash.com/photo-1556056504-5c7696c4c28d?auto=format&fit=crop&w=400&q=80" alt="Football Turf" class="gallery-pic pic-1">
+                    <img src="https://images.unsplash.com/photo-1529900965600-71fc1c0a1316?auto=format&fit=crop&w=400&q=80" alt="Cricket Pitch" class="gallery-pic pic-2">
+                    <img src="https://images.unsplash.com/photo-1575361204480-aadea25e6e68?auto=format&fit=crop&w=800&q=80" alt="Sports Facility" class="gallery-pic pic-3">
+                </div>
+                <img src="logo2.png" alt="PLAY26 Logo" class="floating-logo">
             </div>
 
         </div>
