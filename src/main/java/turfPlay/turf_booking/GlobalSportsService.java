@@ -116,7 +116,7 @@ public class GlobalSportsService {
         
         if (footballApiKey == null || footballApiKey.equals("YOUR_FOOTBALL_DATA_API_KEY_HERE") || footballApiKey.equals("YOUR_RAPIDAPI_KEY_HERE")) {
             System.out.println("Football-Data API Key missing. Returning mock data for " + competitionCode);
-            return getMockPremierLeague(); // Return mock data for all if key is missing
+            return getMockFootballStandings(competitionCode);
         }
 
         try {
@@ -162,7 +162,7 @@ public class GlobalSportsService {
             if (standingsCache.containsKey(competitionCode)) {
                 return standingsCache.get(competitionCode);
             }
-            return getMockPremierLeague();
+            return getMockFootballStandings(competitionCode);
         }
     }
 
@@ -255,6 +255,18 @@ public class GlobalSportsService {
         return news;
     }
 
+    private List<GlobalStandingDTO> getMockFootballStandings(String code) {
+        switch (code) {
+            case "WC": return getMockWorldCup();
+            case "CL": return getMockChampionsLeague();
+            case "BL1": return getMockBundesliga();
+            case "FL1": return getMockLigue1();
+            case "SA": return getMockSerieA();
+            case "PL":
+            default: return getMockPremierLeague();
+        }
+    }
+
     private List<GlobalStandingDTO> getMockPremierLeague() {
         List<GlobalStandingDTO> standings = new ArrayList<>();
         GlobalStandingDTO t1 = new GlobalStandingDTO(); t1.setRank(1); t1.setTeamName("Arsenal"); t1.setMatchesPlayed(35); t1.setWon(25); t1.setDrawn(5); t1.setLost(5); t1.setGoalsFor(85); t1.setGoalsAgainst(28); t1.setGoalDifference(57); t1.setPoints(80);
@@ -262,6 +274,51 @@ public class GlobalSportsService {
         GlobalStandingDTO t3 = new GlobalStandingDTO(); t3.setRank(3); t3.setTeamName("Liverpool"); t3.setMatchesPlayed(35); t3.setWon(22); t3.setDrawn(9); t3.setLost(4); t3.setGoalsFor(77); t3.setGoalsAgainst(38); t3.setGoalDifference(39); t3.setPoints(75);
         GlobalStandingDTO t4 = new GlobalStandingDTO(); t4.setRank(4); t4.setTeamName("Aston Villa"); t4.setMatchesPlayed(35); t4.setWon(20); t4.setDrawn(7); t4.setLost(8); t4.setGoalsFor(71); t4.setGoalsAgainst(53); t4.setGoalDifference(18); t4.setPoints(67);
         standings.add(t1); standings.add(t2); standings.add(t3); standings.add(t4);
+        return standings;
+    }
+
+    private List<GlobalStandingDTO> getMockWorldCup() {
+        List<GlobalStandingDTO> standings = new ArrayList<>();
+        GlobalStandingDTO t1 = new GlobalStandingDTO(); t1.setRank(1); t1.setTeamName("Argentina"); t1.setMatchesPlayed(7); t1.setWon(5); t1.setDrawn(1); t1.setLost(1); t1.setGoalsFor(15); t1.setGoalsAgainst(8); t1.setGoalDifference(7); t1.setPoints(16);
+        GlobalStandingDTO t2 = new GlobalStandingDTO(); t2.setRank(2); t2.setTeamName("France"); t2.setMatchesPlayed(7); t2.setWon(5); t2.setDrawn(1); t2.setLost(1); t1.setGoalsFor(16); t1.setGoalsAgainst(7); t1.setGoalDifference(9); t1.setPoints(16);
+        GlobalStandingDTO t3 = new GlobalStandingDTO(); t3.setRank(3); t3.setTeamName("Croatia"); t3.setMatchesPlayed(7); t3.setWon(2); t3.setDrawn(4); t3.setLost(1); t1.setGoalsFor(8); t1.setGoalsAgainst(7); t1.setGoalDifference(1); t1.setPoints(10);
+        standings.add(t1); standings.add(t2); standings.add(t3);
+        return standings;
+    }
+
+    private List<GlobalStandingDTO> getMockChampionsLeague() {
+        List<GlobalStandingDTO> standings = new ArrayList<>();
+        GlobalStandingDTO t1 = new GlobalStandingDTO(); t1.setRank(1); t1.setTeamName("Real Madrid"); t1.setMatchesPlayed(6); t1.setWon(6); t1.setDrawn(0); t1.setLost(0); t1.setGoalDifference(9); t1.setPoints(18);
+        GlobalStandingDTO t2 = new GlobalStandingDTO(); t2.setRank(2); t2.setTeamName("Bayern Munich"); t2.setMatchesPlayed(6); t2.setWon(5); t2.setDrawn(1); t2.setLost(0); t1.setGoalDifference(6); t1.setPoints(16);
+        GlobalStandingDTO t3 = new GlobalStandingDTO(); t3.setRank(3); t3.setTeamName("PSG"); t3.setMatchesPlayed(6); t3.setWon(2); t3.setDrawn(2); t3.setLost(2); t1.setGoalDifference(1); t1.setPoints(8);
+        standings.add(t1); standings.add(t2); standings.add(t3);
+        return standings;
+    }
+
+    private List<GlobalStandingDTO> getMockBundesliga() {
+        List<GlobalStandingDTO> standings = new ArrayList<>();
+        GlobalStandingDTO t1 = new GlobalStandingDTO(); t1.setRank(1); t1.setTeamName("Bayer Leverkusen"); t1.setMatchesPlayed(34); t1.setWon(28); t1.setDrawn(6); t1.setLost(0); t1.setGoalDifference(65); t1.setPoints(90);
+        GlobalStandingDTO t2 = new GlobalStandingDTO(); t2.setRank(2); t2.setTeamName("VfB Stuttgart"); t2.setMatchesPlayed(34); t2.setWon(23); t2.setDrawn(4); t2.setLost(7); t1.setGoalDifference(39); t1.setPoints(73);
+        GlobalStandingDTO t3 = new GlobalStandingDTO(); t3.setRank(3); t3.setTeamName("Bayern Munich"); t3.setMatchesPlayed(34); t3.setWon(23); t3.setDrawn(3); t3.setLost(8); t1.setGoalDifference(49); t1.setPoints(72);
+        standings.add(t1); standings.add(t2); standings.add(t3);
+        return standings;
+    }
+
+    private List<GlobalStandingDTO> getMockLigue1() {
+        List<GlobalStandingDTO> standings = new ArrayList<>();
+        GlobalStandingDTO t1 = new GlobalStandingDTO(); t1.setRank(1); t1.setTeamName("Paris Saint-Germain"); t1.setMatchesPlayed(34); t1.setWon(22); t1.setDrawn(10); t1.setLost(2); t1.setGoalDifference(48); t1.setPoints(76);
+        GlobalStandingDTO t2 = new GlobalStandingDTO(); t2.setRank(2); t2.setTeamName("Monaco"); t2.setMatchesPlayed(34); t2.setWon(20); t2.setDrawn(7); t2.setLost(7); t1.setGoalDifference(26); t1.setPoints(67);
+        GlobalStandingDTO t3 = new GlobalStandingDTO(); t3.setRank(3); t3.setTeamName("Brest"); t3.setMatchesPlayed(34); t3.setWon(17); t3.setDrawn(10); t3.setLost(7); t1.setGoalDifference(19); t1.setPoints(61);
+        standings.add(t1); standings.add(t2); standings.add(t3);
+        return standings;
+    }
+
+    private List<GlobalStandingDTO> getMockSerieA() {
+        List<GlobalStandingDTO> standings = new ArrayList<>();
+        GlobalStandingDTO t1 = new GlobalStandingDTO(); t1.setRank(1); t1.setTeamName("Inter Milan"); t1.setMatchesPlayed(38); t1.setWon(29); t1.setDrawn(7); t1.setLost(2); t1.setGoalDifference(67); t1.setPoints(94);
+        GlobalStandingDTO t2 = new GlobalStandingDTO(); t2.setRank(2); t2.setTeamName("AC Milan"); t2.setMatchesPlayed(38); t2.setWon(22); t2.setDrawn(9); t2.setLost(7); t1.setGoalDifference(27); t1.setPoints(75);
+        GlobalStandingDTO t3 = new GlobalStandingDTO(); t3.setRank(3); t3.setTeamName("Juventus"); t3.setMatchesPlayed(38); t3.setWon(19); t3.setDrawn(14); t3.setLost(5); t1.setGoalDifference(23); t1.setPoints(71);
+        standings.add(t1); standings.add(t2); standings.add(t3);
         return standings;
     }
     

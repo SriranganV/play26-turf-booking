@@ -60,6 +60,12 @@ public class PageController {
         
         // Fetch News
         model.addAttribute("latestNews", globalSportsService.fetchLatestNews());
+        return "blogs";
+    }
+
+    @GetMapping("/leaderboard")
+    public String leaderboard(Model model) {
+        model.addAttribute("pageTitle", "Global Leaderboards");
         
         // Fetch Football Standings (Cached in Service)
         model.addAttribute("premierLeague", globalSportsService.fetchFootballStandings("PL"));
@@ -72,7 +78,7 @@ public class PageController {
         // Fetch Cricket Standings
         model.addAttribute("iplStandings", globalSportsService.fetchIplStandings());
         
-        return "blogs";
+        return "leaderboard";
     }
 
     @GetMapping("/dashboard")
