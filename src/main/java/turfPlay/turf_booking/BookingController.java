@@ -14,11 +14,44 @@ public class BookingController {
 
     private final BookingService bookingService;
     private final TurfSlotService turfSlotService;
+    private final TurfService turfService;
 
     public BookingController(BookingService bookingService,
-                             TurfSlotService turfSlotService) {
+                             TurfSlotService turfSlotService,
+                             TurfService turfService) {
         this.bookingService = bookingService;
         this.turfSlotService = turfSlotService;
+        this.turfService = turfService;
+    }
+
+    /**
+     * Show Checkout Review page.
+     */
+    @GetMapping("/bookings/checkout/{slotId}")
+    public String checkout(@PathVariable Long slotId, Model model) {
+        TurfSlot slot = turfSlotService.getSlotById(slotId)
+                .orElseThrow(() -> new IllegalArgumentException("Slot not found."));
+        
+        Turf turf = turfService.getTurfById(slot.getTurfId())
+                .orElseThrow(() -> new IllegalArgumentException("Turf not found."));
+
+        model.addAttribute("pageTitle", "Checkout");
+        model.addAttribute("slot", slot);
+        model.addAttribute("turf", turf);
+        return "bookings/checkout";
+    }
+
+    /**
+     * Show Receipt page.
+     */
+    @GetMapping("/bookings/receipt/{bookingId}")
+    public String receipt(@PathVariable Long bookingId, Model model) {
+        Booking booking = bookingService.getBookingById(bookingId)
+                .orElseThrow(() -> new IllegalArgumentException("Booking not found."));
+        
+        model.addAttribute("pageTitle", "Booking Receipt");
+        model.addAttribute("booking", booking);
+        return "bookings/receipt";
     }
 
     /**
@@ -35,16 +68,18 @@ public class BookingController {
         Long turfId = null;
 
         try {
-            // Resolve the slot first so we know which turf to redirect to
+            // Resolve the slot first so we know which turf to redirect to (in case of error)
             TurfSlot slot = turfSlotService.getSlotById(slotId)
                     .orElseThrow(() -> new IllegalArgumentException("Slot not found."));
 
             turfId = slot.getTurfId();
 
-            bookingService.bookSlot(principal.getName(), slotId);
+            Long bookingId = bookingService.bookSlot(principal.getName(), slotId);
 
             redirectAttributes.addFlashAttribute("successMessage",
-                    "✅ Slot booked successfully! You can manage it in My Bookings.");
+                    "✅ Slot booked successfully! Here is your receipt.");
+                    
+            return "redirect:/bookings/receipt/" + bookingId;
 
         } catch (IllegalStateException e) {
             // Slot was just taken by someone else
@@ -55,7 +90,7 @@ public class BookingController {
                     "⚠️ Booking failed: " + e.getMessage());
         }
 
-        // Return user to the turf detail page they came from
+        // Return user to the turf detail page they came from on error
         if (turfId != null) {
             return "redirect:/turfs/" + turfId;
         }

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle})}"></head>
+<body style="background: #f1f5f9;">
+    <nav th:replace="~{fragments/layout :: nav}"></nav>
+
+    <style>
+        .receipt-container {
+            max-width: 600px;
+            margin: 60px auto 100px;
+            padding: 0 20px;
+        }
+
+        .success-banner {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .success-banner .icon {
+            width: 72px;
+            height: 72px;
+            background: #dcfce7;
+            color: #16a34a;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: 16px;
+            box-shadow: 0 0 0 10px rgba(22, 163, 74, 0.1);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        .success-banner h1 {
+            font-size: 28px;
+            font-weight: 900;
+            color: #0f172a;
+            margin: 0 0 8px;
+        }
+
+        .success-banner p {
+            color: #64748b;
+            font-size: 15px;
+        }
+
+        .ticket {
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .ticket::before, .ticket::after {
+            content: '';
+            position: absolute;
+            top: 130px;
+            width: 30px;
+            height: 30px;
+            background: #f1f5f9;
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        .ticket::before { left: -15px; }
+        .ticket::after { right: -15px; }
+
+        .ticket-header {
+            background: linear-gradient(135deg, #0F6E56 0%, #085041 100%);
+            padding: 40px 30px 30px;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        .ticket-header .turf-name {
+            font-size: 24px;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .ticket-header .turf-location {
+            font-size: 14px;
+            color: #9fe1cb;
+            margin-top: 4px;
+        }
+
+        .ticket-body {
+            padding: 30px;
+            border-top: 2px dashed #e2e8f0;
+            position: relative;
+        }
+
+        .booking-id-tag {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .booking-id-tag span {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-family: monospace;
+            font-size: 14px;
+            font-weight: 700;
+            color: #475569;
+            letter-spacing: 1px;
+        }
+
+        .ticket-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .ticket-field {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid #f1f5f9;
+        }
+
+        .ticket-field .label {
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .ticket-field .value {
+            font-size: 16px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .ticket-footer {
+            background: #f8fafc;
+            padding: 24px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .ticket-footer .status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #16a34a;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 700;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #0F6E56;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #085041;
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background: #fff;
+            color: #0F6E56;
+            border: 2px solid #0F6E56;
+        }
+
+        .btn-secondary:hover {
+            background: #f0fdf4;
+            color: #0F6E56;
+        }
+
+    </style>
+
+    <div class="receipt-container">
+        <div class="success-banner">
+            <div class="icon">✓</div>
+            <h1>Booking Confirmed!</h1>
+            <p>We've sent a confirmation email to <span th:text="${booking.userEmail}" style="font-weight:600;">user@example.com</span></p>
+        </div>
+
+        <div class="ticket">
+            <div class="ticket-header">
+                <h2 class="turf-name" th:text="${booking.turfName}">Green Arena</h2>
+                <div class="turf-location">📍 <span th:text="${booking.turfLocation}">City Center</span></div>
+            </div>
+
+            <div class="ticket-body">
+                <div class="booking-id-tag">
+                    <span>ID: PLAY26-<span th:text="${booking.id}">1024</span></span>
+                </div>
+
+                <div class="ticket-grid">
+                    <div class="ticket-field">
+                        <div class="label">Date</div>
+                        <div class="value" th:text="${booking.slotDate}">2026-07-28</div>
+                    </div>
+                    <div class="ticket-field">
+                        <div class="label">Time</div>
+                        <div class="value">
+                            <span th:text="${booking.startTime}">18:00</span> - <span th:text="${booking.endTime}">19:00</span>
+                        </div>
+                    </div>
+                    <div class="ticket-field">
+                        <div class="label">Booked By</div>
+                        <div class="value" th:text="${booking.userName}">John Doe</div>
+                    </div>
+                    <div class="ticket-field">
+                        <div class="label">Payment</div>
+                        <div class="value">Pay at Venue</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ticket-footer">
+                <div class="status">
+                    <span style="font-size:20px;">●</span> Confirmed
+                </div>
+                <div style="font-weight: 800; font-size: 18px; color: #0f172a;">
+                    Valid Entry
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <a th:href="@{/bookings/my}" class="btn btn-secondary">
+                View My Bookings
+            </a>
+            <button class="btn btn-primary" onclick="window.print()">
+                Download Ticket
+            </button>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

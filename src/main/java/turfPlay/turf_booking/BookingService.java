@@ -25,7 +25,7 @@ public class BookingService {
 
     
     @Transactional
-    public void bookSlot(String email, Long slotId) {
+    public Long bookSlot(String email, Long slotId) {
         Long userId = userRepository.findIdByEmail(email);
 
         TurfSlot slot = turfSlotService.getSlotById(slotId)
@@ -35,8 +35,14 @@ public class BookingService {
             throw new IllegalStateException("Slot is not available");
         }
 
-        bookingRepository.createBooking(userId, slotId);
+        Long bookingId = bookingRepository.createBooking(userId, slotId);
         turfSlotService.markBooked(slotId);
+        
+        return bookingId;
+    }
+
+    public java.util.Optional<Booking> getBookingById(Long id) {
+        return bookingRepository.findById(id);
     }
 
     public List<Booking> getBookingsForUser(String email) {

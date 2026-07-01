@@ -7,6 +7,11 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
 @Repository
 public class BookingRepository {
@@ -41,13 +46,40 @@ public class BookingRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void createBooking(Long userId, Long slotId) {
+    public Long createBooking(Long userId, Long slotId) {
         String sql = """
                 INSERT INTO bookings (user_id, turf_slot_id, booking_status)
                 VALUES (?, ?, 'CONFIRMED')
                 """;
 
-        jdbcTemplate.update(sql, userId, slotId);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setLong(1, userId);
+            ps.setLong(2, slotId);
+            return ps;
+        }, keyHolder);
+        
+        if (keyHolder.getKey() != null) {
+            return keyHolder.getKey().longValue();
+        }
+        return null;
+    }
+
+    public Optional<Booking> findById(Long id) {
+        String sql = """
+                SELECT b.id, b.user_id, b.turf_slot_id, b.booking_status, b.booked_at,
+                       u.full_name, u.email,
+                       t.name AS turf_name, t.location,
+                       ts.slot_date, ts.start_time, ts.end_time
+                FROM bookings b
+                JOIN users u ON b.user_id = u.id
+                JOIN turf_slots ts ON b.turf_slot_id = ts.id
+                JOIN turfs t ON ts.turf_id = t.id
+                WHERE b.id = ?
+                """;
+        List<Booking> results = jdbcTemplate.query(sql, bookingRowMapper, id);
+        return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
     }
 
     public List<Booking> findByUserId(Long userId) {

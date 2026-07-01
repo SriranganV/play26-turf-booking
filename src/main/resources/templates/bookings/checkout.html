@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle})}"></head>
+<body style="background: #f8fafc;">
+    <nav th:replace="~{fragments/layout :: nav}"></nav>
+
+    <style>
+        .checkout-container {
+            max-width: 1000px;
+            margin: 40px auto 80px;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .checkout-header {
+            margin-bottom: 24px;
+        }
+        
+        .checkout-header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .checkout-header p {
+            color: #64748b;
+            margin-top: 8px;
+            font-size: 15px;
+        }
+
+        .checkout-card {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .checkout-card h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkout-card h2::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: #0F6E56;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .turf-summary {
+            display: flex;
+            gap: 20px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #f1f5f9;
+            margin-bottom: 24px;
+        }
+
+        .turf-thumb {
+            width: 100px;
+            height: 100px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        .turf-info h3 {
+            font-size: 20px;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0 0 4px;
+        }
+
+        .turf-info .location {
+            color: #64748b;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .slot-details {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px dashed #cbd5e1;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .detail-row .label {
+            color: #64748b;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .detail-row .value {
+            color: #0f172a;
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .payment-method {
+            border: 2px solid #0F6E56;
+            background: #f0fdf4;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .payment-method .radio {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 6px solid #0F6E56;
+            background: #fff;
+        }
+
+        .payment-method span {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .summary-card {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(15, 110, 86, 0.08);
+            border: 2px solid #0F6E56;
+            padding: 32px;
+            position: sticky;
+            top: 100px;
+        }
+
+        .summary-card h3 {
+            font-size: 18px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 24px;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            font-size: 15px;
+            color: #475569;
+        }
+
+        .price-row.total {
+            border-top: 2px dashed #cbd5e1;
+            padding-top: 20px;
+            margin-top: 20px;
+            margin-bottom: 30px;
+            color: #0f172a;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .btn-pay {
+            width: 100%;
+            background: #0F6E56;
+            color: #ffffff;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(15, 110, 86, 0.2);
+        }
+
+        .btn-pay:hover {
+            background: #085041;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(15, 110, 86, 0.3);
+        }
+
+        .secure-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            color: #16a34a;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 16px;
+        }
+
+    </style>
+
+    <div class="checkout-container">
+        <!-- Left Column -->
+        <div>
+            <div class="checkout-header">
+                <h1>Review & Checkout</h1>
+                <p>You're almost there! Review your booking details below.</p>
+            </div>
+
+            <!-- Booking Details Card -->
+            <div class="checkout-card">
+                <h2>Booking Details</h2>
+                
+                <div class="turf-summary">
+                    <img src="https://images.unsplash.com/photo-1575361204480-aadea25e6e68?auto=format&fit=crop&w=200&q=80" alt="Turf Image" class="turf-thumb">
+                    <div class="turf-info">
+                        <h3 th:text="${turf.name}">Green Arena</h3>
+                        <div class="location">📍 <span th:text="${turf.location}">City Center</span></div>
+                    </div>
+                </div>
+
+                <div class="slot-details">
+                    <div class="detail-row">
+                        <span class="label">Date</span>
+                        <span class="value" th:text="${slot.slotDate}">2026-07-28</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Time</span>
+                        <span class="value">
+                            <span th:text="${slot.startTime}">18:00</span> - <span th:text="${slot.endTime}">19:00</span>
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Duration</span>
+                        <span class="value">1 Hour</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Method Card -->
+            <div class="checkout-card">
+                <h2>Payment Method</h2>
+                <div class="payment-method">
+                    <div class="radio"></div>
+                    <span>Pay at Venue</span>
+                </div>
+                <p style="margin-top:12px;font-size:13px;color:#64748b;">
+                    Your slot will be reserved immediately. You can pay via Cash or UPI when you arrive at the turf.
+                </p>
+            </div>
+        </div>
+
+        <!-- Right Column (Order Summary) -->
+        <div>
+            <div class="summary-card">
+                <h3>Order Summary</h3>
+                
+                <div class="price-row">
+                    <span>Turf Booking (1 hr)</span>
+                    <span>₹<span th:text="${turf.pricePerHour}">1000</span></span>
+                </div>
+                <div class="price-row">
+                    <span>Platform Fee</span>
+                    <span>₹50</span>
+                </div>
+                <div class="price-row">
+                    <span>Taxes</span>
+                    <span>₹0</span>
+                </div>
+                
+                <div class="price-row total">
+                    <span>Total Amount</span>
+                    <span>₹<span th:text="${turf.pricePerHour + 50}">1050</span></span>
+                </div>
+
+                <form th:action="@{/bookings/create/{slotId}(slotId=${slot.id})}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <button type="submit" class="btn-pay" onclick="this.innerHTML='Processing...'; this.style.opacity='0.8';">
+                        Confirm & Book
+                    </button>
+                </form>
+
+                <div class="secure-badge">
+                    🔒 Secure Booking Guaranteed
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
