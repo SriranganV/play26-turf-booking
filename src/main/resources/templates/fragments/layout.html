@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" style="scroll-behavior: smooth;">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" style="scroll-behavior: smooth;">
 
 <!-- ── 1. HEAD FRAGMENT ── -->
 <head th:fragment="head(title)">
@@ -342,13 +342,23 @@
         <a href="/dashboard">Dashboard</a>
         <a href="/bookings/my">My Bookings</a>
         
-        <a href="/admin/turfs">Admin Turfs</a>
-        <a href="/admin/slots">Admin Slots</a>
-        <a href="/admin/bookings">Admin Bookings</a>
-        <a href="/admin/rules">Admin Rules</a>
+        <th:block sec:authorize="hasRole('ADMIN')">
+            <a href="/admin/turfs">Admin Turfs</a>
+            <a href="/admin/slots">Admin Slots</a>
+            <a href="/admin/bookings">Admin Bookings</a>
+            <a href="/admin/rules">Admin Rules</a>
+        </th:block>
         
-        <a href="/login" class="btn-nav btn-login">Login</a>
-        <a href="/register" class="btn-nav btn-register">Register</a>
+        <th:block sec:authorize="!isAuthenticated()">
+            <a href="/login" class="btn-nav btn-login">Login</a>
+            <a href="/register" class="btn-nav btn-register">Register</a>
+        </th:block>
+        
+        <th:block sec:authorize="isAuthenticated()">
+            <form th:action="@{/logout}" method="post" style="display: inline; margin: 0; padding: 0;">
+                <button type="submit" class="btn-nav btn-login" style="background: transparent;">Logout</button>
+            </form>
+        </th:block>
     </div>
 </nav>
 
