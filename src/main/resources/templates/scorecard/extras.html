@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Add Extras | PLAY26</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet"></head>
+<body>
+<div class="play26-hero"><div class="container"><h1><i class="bi bi-plus-slash-minus me-2"></i>Update Extras</h1><p>Innings <span th:text="${innings}">1</span></p></div></div>
+<div class="container pb-5">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a th:href="@{/scorecard/match/{id}(id=${match.id})}">Scorecard</a></li><li class="breadcrumb-item active">Extras</li></ol></nav>
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="glass-card mb-4 text-center">
+                <h6 class="text-muted mb-1">Total Extras</h6>
+                <div class="fs-1 fw-bold text-accent" id="extrasTotal" th:text="${extras.total} ?: 0">0</div>
+            </div>
+            <div class="glass-card">
+                <form th:action="@{/scorecard/match/{id}/extras/save(id=${match.id})}" th:object="${extras}" method="post">
+                    <input type="hidden" th:field="*{id}"><input type="hidden" th:field="*{scorecardId}"><input type="hidden" name="innings" th:value="${innings}">
+                    <div class="row g-3">
+                        <div class="col-md-6"><label class="form-label">Wides (W)</label><input type="number" class="form-control" th:field="*{wides}" id="wides" min="0"></div>
+                        <div class="col-md-6"><label class="form-label">No Balls (NB)</label><input type="number" class="form-control" th:field="*{noBalls}" id="noBalls" min="0"></div>
+                        <div class="col-md-6"><label class="form-label">Byes (B)</label><input type="number" class="form-control" th:field="*{byes}" id="byes" min="0"></div>
+                        <div class="col-md-6"><label class="form-label">Leg Byes (LB)</label><input type="number" class="form-control" th:field="*{legByes}" id="legByes" min="0"></div>
+                        <div class="col-md-12"><label class="form-label">Penalty Runs</label><input type="number" class="form-control" th:field="*{penalty}" id="penalty" min="0"></div>
+                        <div class="col-12 d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-play26 flex-fill"><i class="bi bi-check-lg me-1"></i>Save Extras</button>
+                            <a th:href="@{/scorecard/match/{id}(id=${match.id})}" class="btn btn-outline-play26 flex-fill">Cancel</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/play26.js}"></script>
+</body></html>

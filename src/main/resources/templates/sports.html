@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Sports & Fitness - PLAY26')}">
+
+</head>
+<body>
+
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+    <style>
+        /* ── Sports & Fitness Page Styles (PLAY26 Theme) ── */
+
+        /* ── Advanced Animation Classes ── */
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-60px);
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: opacity, transform;
+        }
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(60px);
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: opacity, transform;
+        }
+        .reveal-left.active, .reveal-right.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        .floating { animation: float 4s ease-in-out infinite; }
+
+        /* ── 1. Parallax Cinematic Hero ── */
+        .sports-hero {
+            position: relative;
+            height: 85vh;
+            min-height: 550px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #fff;
+            background: linear-gradient(to bottom, rgba(15, 110, 86, 0.4), rgba(17, 24, 39, 0.95)), 
+                        url('/9975f4e9-ea80-4031-91f8-1cfc53a722a8.png') center/cover fixed no-repeat;
+            overflow: hidden;
+            border-bottom: 4px solid #9FE1CB;
+            padding-bottom: 2rem;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            padding: 0 20px;
+        }
+
+        .hero-tagline {
+            font-size: 1.15rem;
+            color: #9FE1CB;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .hero-title {
+            font-size: 5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            letter-spacing: -2px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.6);
+        }
+
+        .hero-title span { color: #9FE1CB; }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+            font-weight: 500;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        /* ── 2. Sticky Sub-Navigation (New Feature!) ── */
+        .sports-subnav {
+            position: sticky;
+            top: 68px; /* Sticks right below the main layout nav */
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            z-index: 900;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
+
+        .subnav-link {
+            font-size: 13px;
+            font-weight: 700;
+            color: #374151;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 999px;
+            background: #f3f4f6;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .subnav-link:hover {
+            background: #E1F5EE;
+            color: #0F6E56;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(15, 110, 86, 0.15);
+        }
+
+        .subnav-link.highlight {
+            background: #0F6E56;
+            color: #ffffff;
+        }
+        .subnav-link.highlight:hover {
+            background: #085041;
+            box-shadow: 0 4px 15px rgba(15, 110, 86, 0.3);
+        }
+
+        /* ── 3. Fitness Importance Grid ── */
+        .benefits-section {
+            padding: 6rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .section-header {
+            font-size: 2.75rem;
+            font-weight: 800;
+            color: #111;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+
+        .section-desc {
+            font-size: 1.15rem;
+            color: #6b7280;
+            max-width: 750px;
+            margin: 0 auto 4rem auto;
+            line-height: 1.7;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .benefit-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .benefit-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #E1F5EE 0%, #ffffff 100%);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 25px 50px rgba(15, 110, 86, 0.12);
+            border-color: #9FE1CB;
+        }
+        .benefit-card:hover::before { opacity: 1; }
+
+        .benefit-icon {
+            width: 80px;
+            height: 80px;
+            background: #0F6E56;
+            color: #ffffff;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin: 0 auto 1.75rem auto;
+            box-shadow: 0 10px 25px rgba(15, 110, 86, 0.25);
+            transition: transform 0.4s ease;
+        }
+
+        .benefit-card:hover .benefit-icon {
+            transform: rotate(10deg) scale(1.15);
+            background: #111;
+            color: #9FE1CB;
+        }
+
+        .benefit-card h3 { font-size: 1.5rem; font-weight: 800; color: #111; margin-bottom: 1rem; }
+        .benefit-card p { font-size: 1.05rem; color: #4b5563; line-height: 1.6; }
+
+        /* ── 4. Deep Dive: Sports Showcase (Alternating Rows) ── */
+        .sports-showcase {
+            background: #f4f6f5;
+            padding: 6rem 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .showcase-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6rem; /* Space between each sport row */
+        }
+
+        .sport-row {
+            display: flex;
+            align-items: center;
+            gap: 4rem;
+        }
+
+        /* Reverses every even row for a beautiful zig-zag layout */
+        .sport-row:nth-child(even) { flex-direction: row-reverse; }
+
+        .sport-graphic {
+            flex: 1;
+            height: 400px;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 100px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.5s ease;
+        }
+
+        .sport-graphic::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 2px, transparent 2px, transparent 10px);
+        }
+
+        .sport-row:hover .sport-graphic { transform: scale(1.03) rotate(-2deg); }
+        .sport-row:nth-child(even):hover .sport-graphic { transform: scale(1.03) rotate(2deg); }
+
+        /* Custom Gradients for Sports */
+        .bg-football { background: linear-gradient(135deg, #0F6E56 0%, #159b79 100%); }
+        .bg-cricket { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); }
+        .bg-tennis { background: linear-gradient(135deg, #b45309 0%, #f59e0b 100%); }
+        .bg-basketball { background: linear-gradient(135deg, #be123c 0%, #f43f5e 100%); }
+
+        .sport-info { flex: 1; }
+
+        .sport-info h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #111;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
+
+        .sport-info p {
+            font-size: 1.1rem;
+            color: #4b5563;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+
+        .sport-benefits-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 2rem 0;
+        }
+
+        .sport-benefits-list li {
+            font-size: 1rem;
+            color: #374151;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .sport-benefits-list li::before {
+            content: '✓';
+            color: #0F6E56;
+            background: #E1F5EE;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn-sport {
+            padding: 12px 24px;
+            border-radius: 999px;
+            font-size: 1rem;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-sport-primary { background: #0F6E56; color: #fff; box-shadow: 0 10px 20px rgba(15, 110, 86, 0.2); }
+        .btn-sport-primary:hover { background: #085041; transform: translateY(-3px); box-shadow: 0 12px 25px rgba(15, 110, 86, 0.3); }
+
+        .btn-sport-outline { background: transparent; color: #0F6E56; border: 2px solid #0F6E56; }
+        .btn-sport-outline:hover { background: #0F6E56; color: #fff; }
+
+        .btn-sport-accent { background: #9FE1CB; color: #0F6E56; box-shadow: 0 10px 20px rgba(159, 225, 203, 0.3); }
+        .btn-sport-accent:hover { background: #ffffff; transform: translateY(-3px); box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1); }
+
+        /* ── 5. Advanced Scorecard Hub CTA ── */
+        .scorecard-hub {
+            background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+            color: #fff;
+            padding: 8rem 1rem;
+            text-align: center;
+            border-top: 4px solid #9FE1CB;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Floating decorative elements for the scorecard hub */
+        .hub-decor {
+            position: absolute;
+            background: rgba(159, 225, 203, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(159, 225, 203, 0.2);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: #9FE1CB;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: float 5s ease-in-out infinite alternate;
+        }
+
+        .decor-1 { top: 20%; left: 15%; width: 120px; height: 60px; font-size: 1.2rem; transform: rotate(-10deg); }
+        .decor-2 { bottom: 20%; right: 15%; width: 150px; height: 70px; font-size: 1.5rem; transform: rotate(15deg); animation-delay: 1s; }
+
+        .scorecard-container {
+            max-width: 850px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .scorecard-icon {
+            font-size: 4.5rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            animation: pulseGlow 3s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { filter: drop-shadow(0 0 10px rgba(159, 225, 203, 0.3)); transform: scale(1); }
+            100% { filter: drop-shadow(0 0 40px rgba(159, 225, 203, 0.9)); transform: scale(1.05); }
+        }
+
+        .scorecard-hub h2 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 1rem;
+            letter-spacing: -1.5px;
+        }
+        
+        .scorecard-hub h2 span { color: #9FE1CB; }
+
+        .scorecard-hub p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.7;
+            margin-bottom: 2.5rem;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .sport-row, .sport-row:nth-child(even) { flex-direction: column; text-align: center; gap: 2.5rem; }
+            .sport-benefits-list li { justify-content: center; }
+            .btn-group { justify-content: center; }
+            .sport-graphic { width: 100%; height: 300px; }
+            .scorecard-hub h2 { font-size: 2.5rem; }
+            .hub-decor { display: none; } /* Hide floating decors on mobile to save space */
+            .sports-subnav { display: none; } /* Hide sticky subnav on mobile to prevent clutter */
+        }
+    </style>
+<!-- ── STICKY SUB-NAVIGATION ── -->
+<div class="sports-subnav">
+    <a href="#football" class="subnav-link">&#9917; Football</a>
+    <a href="#cricket" class="subnav-link">&#127951; Cricket</a>
+    <a href="#tennis" class="subnav-link">&#127934; Tennis</a>
+    <a href="#basketball" class="subnav-link">&#127936; Basketball</a>
+    <!-- Special Highlighted Links -->
+    <a th:href="@{/rules}" class="subnav-link highlight">&#128214; Read Sports Rules</a>
+    <a th:href="@{/scorecard}" class="subnav-link highlight">&#128202; Scorecard Manager</a>
+</div>
+
+<main>
+
+    <!-- ── 1. PARALLAX HERO ── -->
+    <section class="sports-hero reveal">
+        <div class="hero-content">
+            <div class="hero-tagline">Why We Play</div>
+            <h1 class="hero-title">Elevate Your Game.<br><span>Elevate Your Life.</span></h1>
+            <p class="hero-subtitle">Sports are the ultimate foundation for physical health, mental resilience, and lifelong communities. Discover our supported sports.</p>
+        </div>
+    </section>
+
+    <!-- ── 2. IMPORTANCE OF FITNESS GRID ── -->
+    <section class="benefits-section">
+        <h2 class="section-header reveal">The Power of Play</h2>
+        <p class="section-desc reveal">Active participation in sports transforms your daily life. Here is how hitting the turf at PLAY26 benefits your mind and body.</p>
+        
+        <div class="benefits-grid">
+            <div class="benefit-card reveal">
+                <div class="benefit-icon">&#128170;</div>
+                <h3>Physical Health</h3>
+                <p>Improves cardiovascular endurance, builds muscle strength, and significantly boosts your immune system, keeping you active and energized.</p>
+            </div>
+            <div class="benefit-card reveal" style="transition-delay: 0.1s;">
+                <div class="benefit-icon">&#129504;</div>
+                <h3>Mental Clarity</h3>
+                <p>Releases powerful endorphins, wiping away stress. Competitive sports actively train your brain for better focus and faster decision-making.</p>
+            </div>
+            <div class="benefit-card reveal" style="transition-delay: 0.2s;">
+                <div class="benefit-icon">&#129309;</div>
+                <h3>Community Bonds</h3>
+                <p>Sports naturally bring people together. Fosters effortless communication, builds leadership skills, and helps you form lasting friendships.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── 3. DEEP DIVE: SPORTS SHOWCASE ── -->
+    <section class="sports-showcase">
+        <div class="showcase-container">
+            
+            <!-- Football -->
+            <div class="sport-row" id="football">
+                <div class="sport-graphic bg-football reveal-left">
+                    <span class="floating" style="filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));">&#9917;</span>
+                </div>
+                <div class="sport-info reveal-right">
+                    <h2>Football / Futsal</h2>
+                    <p>The world's game. Whether you are playing 5-a-side on a boxed turf or an 11-a-side full pitch match, football offers unmatched high-intensity interval training. It demands quick reflexes, intense stamina, and perfect team coordination.</p>
+                    <ul class="sport-benefits-list">
+                        <li>Burns up to 600 calories per hour</li>
+                        <li>Improves lower-body agility and footwork</li>
+                        <li>Builds elite cardiovascular endurance</li>
+                    </ul>
+                    <div class="btn-group">
+                        <a th:href="@{/turfs}" class="btn-sport btn-sport-primary">Book a Pitch</a>
+                        <a th:href="@{/rules(sport='Football')}" class="btn-sport btn-sport-outline">Read Football Rules</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Box Cricket -->
+            <div class="sport-row" id="cricket">
+                <div class="sport-graphic bg-cricket reveal-right">
+                    <span class="floating" style="filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));">&#127951;</span>
+                </div>
+                <div class="sport-info reveal-left">
+                    <h2>Box Cricket</h2>
+                    <p>A fast-paced, high-energy adaptation of traditional cricket played in enclosed turfs. It focuses on aggressive batting, tight bowling, and lightning-fast fielding. Because of the enclosed space, the ball is always in play, making it a thrilling experience.</p>
+                    <ul class="sport-benefits-list">
+                        <li>Enhances hand-eye coordination and timing</li>
+                        <li>Great for explosive sprints and core rotation</li>
+                        <li>Highly strategic team-building environment</li>
+                    </ul>
+                    <div class="btn-group">
+                        <a th:href="@{/turfs}" class="btn-sport btn-sport-primary">Book a Net/Turf</a>
+                        <!-- Connects directly to the Scorecard Manager -->
+                        <a th:href="@{/scorecard}" class="btn-sport btn-sport-accent">Scorecard Manager</a>
+                        <a th:href="@{/rules(sport='Cricket')}" class="btn-sport btn-sport-outline">Cricket Rules</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tennis -->
+            <div class="sport-row" id="tennis">
+                <div class="sport-graphic bg-tennis reveal-left">
+                    <span class="floating" style="filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));">&#127934;</span>
+                </div>
+                <div class="sport-info reveal-right">
+                    <h2>Tennis</h2>
+                    <p>A phenomenal full-body workout that challenges your tactical thinking just as much as your physical limits. Whether playing singles or doubles, tennis requires rapid lateral movements, powerful strikes, and unwavering focus.</p>
+                    <ul class="sport-benefits-list">
+                        <li>Increases bone density and muscle tone</li>
+                        <li>Sharpens strategic thinking and concentration</li>
+                        <li>Exceptional for maintaining joint flexibility</li>
+                    </ul>
+                    <div class="btn-group">
+                        <a th:href="@{/turfs}" class="btn-sport btn-sport-primary">Reserve a Court</a>
+                        <a th:href="@{/rules(sport='Tennis')}" class="btn-sport btn-sport-outline">Tennis Rules</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Basketball -->
+            <div class="sport-row" id="basketball">
+                <div class="sport-graphic bg-basketball reveal-right">
+                    <span class="floating" style="filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));">&#127936;</span>
+                </div>
+                <div class="sport-info reveal-left">
+                    <h2>Basketball</h2>
+                    <p>A game of verticality, speed, and precision. Basketball keeps you constantly on the move, shifting from offensive sprints to defensive stances in seconds. It is the perfect sport for building explosive power and endurance.</p>
+                    <ul class="sport-benefits-list">
+                        <li>Develops explosive jumping power and balance</li>
+                        <li>Improves spatial awareness and peripheral vision</li>
+                        <li>High caloric burn due to constant motion</li>
+                    </ul>
+                    <div class="btn-group">
+                        <a th:href="@{/turfs}" class="btn-sport btn-sport-primary">Find a Court</a>
+                        <a th:href="@{/rules(sport='Basketball')}" class="btn-sport btn-sport-outline">Basketball Rules</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ── 4. DIGITAL SCORECARD MANAGER HUB ── -->
+    <section class="scorecard-hub reveal" id="scorecard-manager">
+        
+        <!-- Floating UI Elements to simulate a Software Dashboard -->
+        <div class="hub-decor decor-1">Player 1: 85*</div>
+        <div class="hub-decor decor-2">Match Won! &#127942;</div>
+
+        <div class="scorecard-container">
+            <span class="scorecard-icon">&#128202;</span> <!-- Bar chart / Tracker icon -->
+            <h2>The Ultimate <span>Scorecard Manager</span></h2>
+            <p>Don't just play the game—track your legacy. PLAY26 features an advanced digital scorecard management system. Log your innings, track your team's statistics over time, update runs and wickets in real-time, and manage your active match scorecards directly from your dashboard.</p>
+            
+            <div class="btn-group" style="justify-content: center; margin-top: 2rem;">
+                <a th:href="@{/scorecard}" class="btn-sport btn-sport-accent" style="padding: 16px 36px; font-size: 1.15rem; background: #9FE1CB; color:#111;">
+                    Open Scorecard Manager &#10148;
+                </a>
+                <a th:href="@{/dashboard}" class="btn-sport btn-sport-outline" style="color: #fff; border-color: rgba(255,255,255,0.5);">
+                    Go to Dashboard
+                </a>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<!-- IN-PAGE SCRIPT TO HANDLE THE NEW REVEAL-LEFT AND REVEAL-RIGHT ANIMATIONS -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Select standard reveals from layout.html, plus the new left/right variants
+        const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+        revealElements.forEach(el => observer.observe(el));
+    });
+</script>
+
+</body>
+</html>

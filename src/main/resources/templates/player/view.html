@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title th:text="${pageTitle} + ' | PLAY26'">Player | PLAY26</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet"></head>
+<body>
+<div class="toast-container"><div th:if="${successMessage}" class="toast play26-toast success" role="alert"><div class="toast-body"><i class="bi bi-check-circle-fill text-success me-2"></i><span th:text="${successMessage}"></span></div></div></div>
+<div class="play26-hero"><div class="container">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb mb-2"><li class="breadcrumb-item"><a th:href="@{/players}" style="color:rgba(255,255,255,.7)">Players</a></li><li class="breadcrumb-item active" style="color:#fff" th:text="${player.playerName}">Player</li></ol></nav>
+    <div class="d-flex align-items-center gap-3">
+        <img th:if="${player.photo != null and !player.photo.isEmpty()}" th:src="${player.photo}" class="rounded-circle" style="width:80px;height:80px;object-fit:cover" alt="">
+        <div><h1 class="mb-0" th:text="${player.playerName}">Player</h1>
+            <p class="mb-0"><span th:text="${player.teamName}">Team</span> | #<span th:text="${player.jerseyNumber} ?: '-'">-</span></p></div>
+    </div>
+</div></div>
+<div class="container pb-5">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="glass-card mb-4">
+                <h5 class="section-title"><i class="bi bi-person me-2"></i>Profile</h5>
+                <div class="row g-3">
+                    <div class="col-6 col-md-4"><small class="text-muted d-block">Role</small><strong th:text="${player.role} ?: 'N/A'">Batsman</strong></div>
+                    <div class="col-6 col-md-4"><small class="text-muted d-block">Batting Style</small><strong th:text="${player.battingStyle} ?: 'N/A'">Right Hand</strong></div>
+                    <div class="col-6 col-md-4"><small class="text-muted d-block">Bowling Style</small><strong th:text="${player.bowlingStyle} ?: 'N/A'">N/A</strong></div>
+                    <div class="col-6 col-md-4"><small class="text-muted d-block">Nationality</small><strong th:text="${player.nationality} ?: 'N/A'">India</strong></div>
+                    <div class="col-6 col-md-4"><small class="text-muted d-block">Age</small><strong th:text="${player.age} ?: 'N/A'">25</strong></div>
+                    <div class="col-6 col-md-4"><small class="text-muted d-block">DOB</small><strong th:text="${player.dateOfBirth}">Date</strong></div>
+                </div>
+                <div class="d-flex gap-2 mt-3">
+                    <span th:if="${player.captain}" class="badge badge-upcoming px-3 py-2">Captain</span>
+                    <span th:if="${player.viceCaptain}" class="badge bg-secondary px-3 py-2">Vice Captain</span>
+                    <span th:if="${player.wicketKeeper}" class="badge badge-active px-3 py-2">Wicket Keeper</span>
+                </div>
+            </div>
+            <div class="glass-card">
+                <h5 class="section-title"><i class="bi bi-envelope me-2"></i>Contact</h5>
+                <p th:if="${player.phone != null}"><i class="bi bi-phone me-2"></i><span th:text="${player.phone}">Phone</span></p>
+                <p th:if="${player.email != null}"><i class="bi bi-envelope me-2"></i><span th:text="${player.email}">Email</span></p>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="d-flex gap-2">
+                <a th:href="@{/players/edit/{id}(id=${player.id})}" class="btn btn-play26 flex-fill"><i class="bi bi-pencil me-1"></i>Edit</a>
+                <form th:action="@{/players/delete/{id}(id=${player.id})}" method="post" class="flex-fill">
+                    <button type="submit" class="btn btn-outline-play26 w-100 text-danger btn-delete" data-confirm="Delete this player?"><i class="bi bi-trash me-1"></i>Delete</button></form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/play26.js}"></script>
+</body></html>

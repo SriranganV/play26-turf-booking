@@ -1,0 +1,2637 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>PLAY26 | Edit Player</title>
+
+    <!-- Bootstrap -->
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+            rel="stylesheet">
+
+    <!-- Google Font -->
+
+    <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet">
+
+    <style>
+
+    </style>
+
+</head>
+
+
+<body>
+<style>
+/*==================================================
+                PLAY26 PLAYER CREATE
+==================================================*/
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+
+    min-height:100vh;
+
+    background:linear-gradient(
+            135deg,
+            #08131d,
+            #0d2942,
+            #18486d);
+
+    color:#ffffff;
+
+    overflow-x:hidden;
+
+    position:relative;
+
+}
+
+/*==================================================
+                Animated Background
+==================================================*/
+
+.bg-circle{
+
+    position:fixed;
+
+    border-radius:50%;
+
+    filter:blur(90px);
+
+    opacity:.40;
+
+    z-index:-1;
+
+    animation:float 10s ease-in-out infinite;
+
+}
+
+.bg-circle-1{
+
+    width:340px;
+    height:340px;
+
+    background:#00ff99;
+
+    left:-120px;
+    top:-120px;
+
+}
+
+.bg-circle-2{
+
+    width:280px;
+    height:280px;
+
+    background:#0099ff;
+
+    right:-80px;
+    top:100px;
+
+}
+
+.bg-circle-3{
+
+    width:250px;
+    height:250px;
+
+    background:#ff9800;
+
+    left:45%;
+    bottom:-120px;
+
+}
+
+@keyframes float{
+
+    0%{
+
+        transform:translateY(0);
+
+    }
+
+    50%{
+
+        transform:translateY(25px);
+
+    }
+
+    100%{
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/*==================================================
+                    Sidebar
+==================================================*/
+
+.sidebar{
+
+    min-height:100vh;
+
+    background:rgba(255,255,255,.08);
+
+    backdrop-filter:blur(20px);
+
+    border-right:1px solid rgba(255,255,255,.08);
+
+    padding:30px 20px;
+
+    position:sticky;
+
+    top:0;
+
+}
+
+.logo{
+
+    text-align:center;
+
+    font-size:30px;
+
+    font-weight:700;
+
+    margin-bottom:45px;
+
+}
+
+.logo i{
+
+    color:#00ff99;
+
+}
+
+.menu{
+
+    list-style:none;
+
+    padding:0;
+
+}
+
+.menu li{
+
+    margin-bottom:14px;
+
+}
+
+.menu li a{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    padding:14px 18px;
+
+    border-radius:15px;
+
+    text-decoration:none;
+
+    color:#dddddd;
+
+    transition:.35s;
+
+}
+
+.menu li a i{
+
+    font-size:20px;
+
+}
+
+.menu li:hover a{
+
+    background:#00ff99;
+
+    color:#111;
+
+    transform:translateX(8px);
+
+}
+
+.menu li.active a{
+
+    background:#00ff99;
+
+    color:#111;
+
+    font-weight:600;
+
+    box-shadow:0 15px 30px rgba(0,255,153,.30);
+
+}
+
+/*==================================================
+                    Content
+==================================================*/
+
+.content{
+
+    padding:35px;
+
+}
+
+.top-bar{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:35px;
+
+}
+
+.top-bar h2{
+
+    font-size:34px;
+
+    font-weight:700;
+
+}
+
+.top-bar small{
+
+    color:#d4d4d4;
+
+}
+
+.profile{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    padding:12px 20px;
+
+    border-radius:50px;
+
+    background:rgba(255,255,255,.08);
+
+    backdrop-filter:blur(15px);
+
+}
+
+.profile img{
+
+    width:55px;
+
+    height:55px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:3px solid #00ff99;
+
+}
+
+/*==================================================
+                    Form Card
+==================================================*/
+
+.form-card{
+
+    background:rgba(255,255,255,.08);
+
+    backdrop-filter:blur(20px);
+
+    border-radius:22px;
+
+    padding:35px;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    box-shadow:0 20px 40px rgba(0,0,0,.20);
+
+}
+
+/*==================================================
+                    Labels
+==================================================*/
+
+.form-label{
+
+    color:#ffffff;
+
+    font-weight:600;
+
+    margin-bottom:10px;
+
+}
+
+/*==================================================
+                Inputs
+==================================================*/
+
+.form-control,
+.form-select{
+
+    height:52px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:rgba(255,255,255,.95);
+
+}
+
+textarea.form-control{
+
+    min-height:140px;
+
+    resize:none;
+
+}
+
+.form-control:focus,
+.form-select:focus{
+
+    box-shadow:0 0 0 4px rgba(0,255,153,.20);
+
+    border:none;
+
+}
+
+/*==================================================
+                Photo Preview
+==================================================*/
+
+.player-preview{
+
+    width:160px;
+
+    height:160px;
+
+    object-fit:cover;
+
+    border-radius:50%;
+
+    border:4px solid #00ff99;
+
+    background:#ffffff;
+
+    padding:6px;
+
+    transition:.35s;
+
+}
+
+.player-preview:hover{
+
+    transform:scale(1.05);
+
+    box-shadow:0 20px 35px rgba(0,255,153,.30);
+
+}
+
+/*==================================================
+                Checkboxes
+==================================================*/
+
+.form-check{
+
+    padding-left:30px;
+
+}
+
+.form-check-input{
+
+    width:20px;
+
+    height:20px;
+
+    cursor:pointer;
+
+}
+
+.form-check-label{
+
+    margin-left:6px;
+
+    cursor:pointer;
+
+}
+
+/*==================================================
+                    Buttons
+==================================================*/
+
+.btn{
+
+    padding:12px 24px;
+
+    border-radius:14px;
+
+    font-weight:600;
+
+    transition:.35s;
+
+}
+
+.btn:hover{
+
+    transform:translateY(-3px);
+
+}
+
+.btn-success{
+
+    background:#00ff99;
+
+    color:#111;
+
+    border:none;
+
+}
+
+.btn-success:hover{
+
+    background:#00d47a;
+
+}
+
+.btn-warning{
+
+    color:#111;
+
+}
+
+.btn-secondary{
+
+    border:none;
+
+}
+/*==================================================
+                FILE UPLOAD
+==================================================*/
+
+input[type="file"]{
+
+    padding:12px;
+
+    cursor:pointer;
+
+}
+
+input[type="file"]::file-selector-button{
+
+    background:#00ff99;
+
+    color:#111;
+
+    border:none;
+
+    padding:10px 18px;
+
+    border-radius:10px;
+
+    margin-right:15px;
+
+    cursor:pointer;
+
+    transition:.35s;
+
+}
+
+input[type="file"]::file-selector-button:hover{
+
+    background:#00d47a;
+
+}
+
+/*==================================================
+                FORM SECTION
+==================================================*/
+
+.row>.col-md-4,
+.row>.col-md-6,
+.row>.col-12{
+
+    animation:fadeUp .5s ease;
+
+}
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(20px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/*==================================================
+                FORM CARD HOVER
+==================================================*/
+
+.form-card{
+
+    transition:.35s;
+
+}
+
+.form-card:hover{
+
+    box-shadow:0 25px 50px rgba(0,255,153,.15);
+
+}
+
+/*==================================================
+                TOAST
+==================================================*/
+
+.toast{
+
+    background:#10253c;
+
+    color:#fff;
+
+    border:none;
+
+    border-radius:16px;
+
+    overflow:hidden;
+
+}
+
+.toast-header{
+
+    background:#10253c;
+
+    color:#fff;
+
+    border-bottom:1px solid rgba(255,255,255,.08);
+
+}
+
+.toast-body{
+
+    padding:16px;
+
+}
+
+/*==================================================
+                MODAL
+==================================================*/
+
+.modal-content{
+
+    background:#10253c;
+
+    color:#fff;
+
+    border:none;
+
+    border-radius:20px;
+
+}
+
+.modal-header{
+
+    border-bottom:1px solid rgba(255,255,255,.08);
+
+}
+
+.modal-footer{
+
+    border-top:1px solid rgba(255,255,255,.08);
+
+}
+
+/*==================================================
+                LOADING
+==================================================*/
+
+.loading-overlay{
+
+    position:fixed;
+
+    inset:0;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:rgba(0,0,0,.65);
+
+    backdrop-filter:blur(5px);
+
+    z-index:9999;
+
+}
+
+/*==================================================
+                FOOTER
+==================================================*/
+
+footer{
+
+    margin-top:50px;
+
+    color:#d5d5d5;
+
+}
+
+footer h6{
+
+    font-weight:700;
+
+}
+
+/*==================================================
+                BUTTON GROUP
+==================================================*/
+
+.d-flex.gap-3 .btn{
+
+    min-width:140px;
+
+}
+
+/*==================================================
+                INVALID FIELD
+==================================================*/
+
+.is-invalid{
+
+    border:2px solid #ff5252!important;
+
+}
+
+.invalid-feedback{
+
+    display:block;
+
+    color:#ff8080;
+
+}
+
+/*==================================================
+                RESPONSIVE
+==================================================*/
+
+@media(max-width:1200px){
+
+    .sidebar{
+
+        display:none;
+
+    }
+
+    .content{
+
+        padding:25px;
+
+    }
+
+}
+
+@media(max-width:992px){
+
+    .top-bar{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:20px;
+
+    }
+
+    .profile{
+
+        width:100%;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .form-card{
+
+        padding:25px;
+
+    }
+
+    .player-preview{
+
+        width:130px;
+
+        height:130px;
+
+    }
+
+    .d-flex.gap-3{
+
+        flex-direction:column;
+
+    }
+
+    .d-flex.gap-3 .btn{
+
+        width:100%;
+
+    }
+
+}
+
+@media(max-width:576px){
+
+    .content{
+
+        padding:18px;
+
+    }
+
+    .top-bar h2{
+
+        font-size:28px;
+
+    }
+
+}
+
+/*==================================================
+                SCROLLBAR
+==================================================*/
+
+::-webkit-scrollbar{
+
+    width:10px;
+
+}
+
+::-webkit-scrollbar-track{
+
+    background:#08131d;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#00ff99;
+
+    border-radius:20px;
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+    background:#00d47a;
+
+}
+/*==================================================
+        PLAY26 PLAYER CREATE - PREMIUM EFFECTS
+==================================================*/
+
+/*=========================================
+ Premium Glass Glow
+=========================================*/
+
+.form-card{
+
+    box-shadow:
+        0 12px 35px rgba(0,0,0,.25),
+        inset 0 1px 1px rgba(255,255,255,.06);
+
+}
+
+.form-card:hover{
+
+    box-shadow:
+        0 20px 45px rgba(0,255,153,.20),
+        inset 0 1px 1px rgba(255,255,255,.08);
+
+}
+
+/*=========================================
+ Labels
+=========================================*/
+
+.form-label{
+
+    letter-spacing:.4px;
+
+}
+
+/*=========================================
+ Input Animation
+=========================================*/
+
+.form-control,
+.form-select{
+
+    transition:
+        transform .25s,
+        box-shadow .25s,
+        border-color .25s;
+
+}
+
+.form-control:hover,
+.form-select:hover{
+
+    transform:translateY(-2px);
+
+}
+
+.form-control:focus,
+.form-select:focus{
+
+    transform:scale(1.01);
+
+}
+
+/*=========================================
+ Photo Animation
+=========================================*/
+
+.player-preview{
+
+    transition:
+        .35s;
+
+}
+
+.player-preview:hover{
+
+    transform:
+        scale(1.08)
+        rotate(2deg);
+
+}
+
+/*=========================================
+ Checkbox Animation
+=========================================*/
+
+.form-check{
+
+    transition:.30s;
+
+}
+
+.form-check:hover{
+
+    transform:translateX(5px);
+
+}
+
+.form-check-input{
+
+    transition:.25s;
+
+}
+
+.form-check-input:checked{
+
+    background:#00ff99;
+
+    border-color:#00ff99;
+
+}
+
+/*=========================================
+ Button Animation
+=========================================*/
+
+.btn{
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+.btn:hover{
+
+    transform:translateY(-4px);
+
+}
+
+.btn:active{
+
+    transform:scale(.97);
+
+}
+
+/*=========================================
+ Ripple Effect
+=========================================*/
+
+.ripple{
+
+    position:absolute;
+
+    border-radius:50%;
+
+    transform:scale(0);
+
+    background:rgba(255,255,255,.45);
+
+    animation:ripple .6s linear;
+
+}
+
+@keyframes ripple{
+
+    to{
+
+        transform:scale(4);
+
+        opacity:0;
+
+    }
+
+}
+
+/*=========================================
+ Fade Animation
+=========================================*/
+
+.fade-up{
+
+    animation:fadeUp .55s ease;
+
+}
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(20px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/*=========================================
+ Zoom Animation
+=========================================*/
+
+.zoom-in{
+
+    animation:zoomIn .45s ease;
+
+}
+
+@keyframes zoomIn{
+
+    from{
+
+        opacity:0;
+
+        transform:scale(.92);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:scale(1);
+
+    }
+
+}
+
+/*=========================================
+ Loading Skeleton
+=========================================*/
+
+.loading{
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+.loading::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:-150%;
+
+    top:0;
+
+    width:150%;
+
+    height:100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.12),
+            transparent);
+
+    animation:loading 1.3s infinite;
+
+}
+
+@keyframes loading{
+
+    from{
+
+        left:-150%;
+
+    }
+
+    to{
+
+        left:150%;
+
+    }
+
+}
+
+/*=========================================
+ Focus Ring
+=========================================*/
+
+input:focus,
+select:focus{
+
+    outline:none;
+
+}
+
+/*=========================================
+ Required Label
+=========================================*/
+
+.required::after{
+
+    content:" *";
+
+    color:#ff5252;
+
+}
+
+/*=========================================
+ Card Entrance
+=========================================*/
+
+.form-card{
+
+    animation:cardEntry .6s ease;
+
+}
+
+@keyframes cardEntry{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(30px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/*=========================================
+ Toast Animation
+=========================================*/
+
+.toast.show{
+
+    animation:toastSlide .4s ease;
+
+}
+
+@keyframes toastSlide{
+
+    from{
+
+        transform:translateX(100%);
+
+        opacity:0;
+
+    }
+
+    to{
+
+        transform:translateX(0);
+
+        opacity:1;
+
+    }
+
+}
+
+/*=========================================
+ Print Mode
+=========================================*/
+
+@media print{
+
+    .sidebar,
+    .profile,
+    footer,
+    .btn,
+    .toast-container,
+    .loading-overlay{
+
+        display:none!important;
+
+    }
+
+    body{
+
+        background:#fff;
+
+        color:#000;
+
+    }
+
+    .form-card{
+
+        background:#fff;
+
+        box-shadow:none;
+
+        border:1px solid #ddd;
+
+    }
+
+}
+</style>
+
+<!-- Animated Background -->
+
+<div class="bg-circle bg-circle-1"></div>
+<div class="bg-circle bg-circle-2"></div>
+<div class="bg-circle bg-circle-3"></div>
+
+<div class="container-fluid">
+
+    <div class="row">
+
+        <!-- Sidebar -->
+
+        <aside class="col-lg-2 sidebar">
+
+            <div class="logo">
+
+                <i class="bi bi-trophy-fill"></i>
+
+                PLAY26
+
+            </div>
+
+            <ul class="menu">
+
+                <li>
+
+                    <a th:href="@{/dashboard}">
+
+                        <i class="bi bi-speedometer2"></i>
+
+                        Dashboard
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a th:href="@{/scorecard/tournaments}">
+
+                        <i class="bi bi-trophy-fill"></i>
+
+                        Tournament
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a th:href="@{/scorecard/teams}">
+
+                        <i class="bi bi-shield-fill"></i>
+
+                        Teams
+
+                    </a>
+
+                </li>
+
+                <li class="active">
+
+                    <a th:href="@{/scorecard/players}">
+
+                        <i class="bi bi-people-fill"></i>
+
+                        Players
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a th:href="@{/scorecard}">
+
+                        <i class="bi bi-clipboard-data-fill"></i>
+
+                        Scorecards
+
+                    </a>
+
+                </li>
+
+            </ul>
+
+        </aside>
+
+        <!-- Main Content -->
+
+        <main class="col-lg-10 content">
+
+            <div class="top-bar">
+
+                <div>
+
+                    <h2>
+
+                        <i class="bi bi-pencil-square"></i>
+
+                        Edit Player
+
+                    </h2>
+
+                    <small>
+
+                        Update player information.
+
+                    </small>
+
+                </div>
+
+                <div class="profile">
+
+                    <img src="https://i.pravatar.cc/100?img=12">
+
+                    <div>
+
+                        <strong>
+
+                            Administrator
+
+                        </strong>
+
+                        <br>
+
+                        <small>
+
+                            PLAY26 Sports
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Form -->
+
+            <div class="form-card">
+
+                <form
+
+                        th:action="@{/scorecard/players/update}"
+
+                        th:object="${player}"
+
+                        method="post"
+
+                        enctype="multipart/form-data">
+
+                    <!-- Hidden ID -->
+
+                    <input
+
+                            type="hidden"
+
+                            th:field="*{id}">
+
+                    <div class="row g-4">
+                                            <!-- Tournament -->
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+
+                                Tournament
+
+                            </label>
+
+                            <select
+                                    class="form-select"
+                                    th:field="*{tournamentId}"
+                                    required>
+
+                                <option value="">Select Tournament</option>
+
+                                <option
+                                        th:each="t : ${tournaments}"
+                                        th:value="${t.id}"
+                                        th:text="${t.tournamentName}">
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <!-- Team -->
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+
+                                Team
+
+                            </label>
+
+                            <select
+                                    class="form-select"
+                                    th:field="*{teamId}"
+                                    required>
+
+                                <option value="">Select Team</option>
+
+                                <option
+                                        th:each="team : ${teams}"
+                                        th:value="${team.id}"
+                                        th:text="${team.teamName}">
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <!-- Player Name -->
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+
+                                Player Name
+
+                            </label>
+
+                            <input
+                                    type="text"
+                                    class="form-control"
+                                    th:field="*{playerName}"
+                                    required>
+
+                        </div>
+
+                        <!-- Jersey Number -->
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+
+                                Jersey Number
+
+                            </label>
+
+                            <input
+                                    type="number"
+                                    class="form-control"
+                                    th:field="*{jerseyNumber}">
+
+                        </div>
+
+                        <!-- Current Photo -->
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+
+                                Current Photo
+
+                            </label>
+
+                            <div>
+
+                                <img
+
+                                        id="photoPreview"
+
+                                        th:if="${player.photo!=null}"
+
+                                        th:src="@{'/uploads/players/' + ${player.photo}}"
+
+                                        class="player-preview">
+
+                                <img
+
+                                        th:unless="${player.photo!=null}"
+
+                                        id="photoPreview"
+
+                                        src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+
+                                        class="player-preview">
+
+                            </div>
+
+                        </div>
+
+                        <!-- Upload New -->
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+
+                                Change Photo
+
+                            </label>
+
+                            <input
+
+                                    id="photoInput"
+
+                                    type="file"
+
+                                    name="photoFile"
+
+                                    class="form-control"
+
+                                    accept="image/*">
+
+                        </div>
+
+                        <!-- Role -->
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+
+                                Role
+
+                            </label>
+
+                            <select
+                                    class="form-select"
+                                    th:field="*{role}">
+
+                                <option>Batsman</option>
+
+                                <option>Bowler</option>
+
+                                <option>All Rounder</option>
+
+                                <option>Wicket Keeper</option>
+
+                            </select>
+
+                        </div>
+
+                        <!-- Batting Style -->
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+
+                                Batting Style
+
+                            </label>
+
+                            <select
+                                    class="form-select"
+                                    th:field="*{battingStyle}">
+
+                                <option>Right Hand</option>
+
+                                <option>Left Hand</option>
+
+                            </select>
+
+                        </div>
+
+                        <!-- Bowling Style -->
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+
+                                Bowling Style
+
+                            </label>
+
+                            <select
+                                    class="form-select"
+                                    th:field="*{bowlingStyle}">
+
+                                <option>Right Arm Fast</option>
+
+                                <option>Right Arm Medium</option>
+
+                                <option>Right Arm Spin</option>
+
+                                <option>Left Arm Fast</option>
+
+                                <option>Left Arm Medium</option>
+
+                                <option>Left Arm Spin</option>
+
+                            </select>
+
+                        </div>
+
+                        <!-- DOB -->
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+
+                                Date of Birth
+
+                            </label>
+
+                            <input
+                                    type="date"
+                                    class="form-control"
+                                    th:field="*{dateOfBirth}">
+
+                        </div>
+
+                        <!-- Age -->
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+
+                                Age
+
+                            </label>
+
+                            <input
+                                    type="number"
+                                    class="form-control"
+                                    th:field="*{age}">
+
+                        </div>
+
+                        <!-- Nationality -->
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+
+                                Nationality
+
+                            </label>
+
+                            <input
+                                    type="text"
+                                    class="form-control"
+                                    th:field="*{nationality}">
+
+                        </div>
+
+                        <!-- Phone -->
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+
+                                Phone
+
+                            </label>
+
+                            <input
+                                    type="text"
+                                    class="form-control"
+                                    th:field="*{phone}">
+
+                        </div>
+
+                        <!-- Email -->
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+
+                                Email
+
+                            </label>
+
+                            <input
+                                    type="email"
+                                    class="form-control"
+                                    th:field="*{email}">
+
+                        </div>
+
+                        <!-- Status -->
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+
+                                Status
+
+                            </label>
+
+                            <select
+                                    class="form-select"
+                                    th:field="*{status}">
+
+                                <option value="ACTIVE">
+
+                                    Active
+
+                                </option>
+
+                                <option value="INACTIVE">
+
+                                    Inactive
+
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <!-- Player Flags -->
+
+                        <div class="col-md-6">
+
+                            <label class="form-label d-block">
+
+                                Player Flags
+
+                            </label>
+
+                            <div class="d-flex flex-wrap gap-4 mt-2">
+
+                                <div class="form-check">
+
+                                    <input
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            th:field="*{wicketKeeper}">
+
+                                    <label class="form-check-label">
+
+                                        Wicket Keeper
+
+                                    </label>
+
+                                </div>
+
+                                <div class="form-check">
+
+                                    <input
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            th:field="*{captain}">
+
+                                    <label class="form-check-label">
+
+                                        Captain
+
+                                    </label>
+
+                                </div>
+
+                                <div class="form-check">
+
+                                    <input
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            th:field="*{viceCaptain}">
+
+                                    <label class="form-check-label">
+
+                                        Vice Captain
+
+                                    </label>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Buttons -->
+
+                        <div class="col-12 mt-4">
+
+                            <div class="d-flex justify-content-end gap-3">
+
+                                <a
+                                        th:href="@{/scorecard/players}"
+                                        class="btn btn-secondary">
+
+                                    <i class="bi bi-arrow-left-circle"></i>
+
+                                    Cancel
+
+                                </a>
+
+                                <button
+                                        type="reset"
+                                        class="btn btn-warning">
+
+                                    <i class="bi bi-arrow-clockwise"></i>
+
+                                    Reset
+
+                                </button>
+
+                                <button
+                                        type="submit"
+                                        class="btn btn-success">
+
+                                    <i class="bi bi-check-circle-fill"></i>
+
+                                    Update Player
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+                        <!-- ========================================= -->
+            <!-- Footer -->
+            <!-- ========================================= -->
+
+            <footer class="text-center mt-5 mb-3">
+
+                <h6 class="mb-1">
+
+                    ⚽ PLAY26
+
+                </h6>
+
+                <small>
+
+                    24 Hours + 2 Clicks to Book
+
+                </small>
+
+                <br>
+
+                <small>
+
+                    Player Management System
+
+                </small>
+
+                <br>
+
+                <small>
+
+                    © 2026 PLAY26. All Rights Reserved.
+
+                </small>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+</div>
+
+<!-- ========================================= -->
+<!-- Success Toast -->
+<!-- ========================================= -->
+
+<div
+        class="toast-container position-fixed top-0 end-0 p-3">
+
+    <div
+            id="playToast"
+            class="toast"
+            role="alert"
+            aria-live="assertive"
+            aria-atomic="true">
+
+        <div class="toast-header">
+
+            <i class="bi bi-check-circle-fill text-success me-2"></i>
+
+            <strong class="me-auto">
+
+                PLAY26
+
+            </strong>
+
+            <small>
+
+                Just Now
+
+            </small>
+
+            <button
+
+                    type="button"
+
+                    class="btn-close"
+
+                    data-bs-dismiss="toast">
+
+            </button>
+
+        </div>
+
+        <div
+                id="toastMessage"
+                class="toast-body">
+
+            Player updated successfully.
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================================= -->
+<!-- Loading Overlay -->
+<!-- ========================================= -->
+
+<div
+
+        id="loadingOverlay"
+
+        class="loading-overlay d-none">
+
+    <div class="text-center">
+
+        <div
+
+                class="spinner-border text-success"
+
+                role="status">
+
+            <span class="visually-hidden">
+
+                Loading...
+
+            </span>
+
+        </div>
+
+        <div class="mt-3 text-white">
+
+            Updating Player...
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================================= -->
+<!-- Cancel Confirmation Modal -->
+<!-- ========================================= -->
+
+<div
+
+        class="modal fade"
+
+        id="cancelModal"
+
+        tabindex="-1"
+
+        aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+
+                    <i class="bi bi-exclamation-circle-fill text-warning"></i>
+
+                    Cancel Update
+
+                </h5>
+
+                <button
+
+                        type="button"
+
+                        class="btn-close"
+
+                        data-bs-dismiss="modal">
+
+                </button>
+
+            </div>
+
+            <div class="modal-body text-center">
+
+                <i
+
+                        class="bi bi-question-circle-fill text-warning"
+
+                        style="font-size:70px;">
+
+                </i>
+
+                <h4 class="mt-3">
+
+                    Leave this page?
+
+                </h4>
+
+                <p>
+
+                    Any unsaved changes will be lost.
+
+                </p>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+
+                        type="button"
+
+                        class="btn btn-secondary"
+
+                        data-bs-dismiss="modal">
+
+                    Continue Editing
+
+                </button>
+
+                <a
+
+                        th:href="@{/scorecard/players}"
+
+                        class="btn btn-danger">
+
+                    Leave Page
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================================= -->
+<!-- Bootstrap JS -->
+<!-- ========================================= -->
+
+<script
+
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+/*=====================================================
+PLAY26 PLAYER EDIT
+JavaScript Part 3A
+======================================================*/
+
+document.addEventListener("DOMContentLoaded", function () {
+
+initializeEditPage();
+
+});
+
+/*=====================================================
+Initialization
+======================================================*/
+
+function initializeEditPage() {
+
+initializeImagePreview();
+
+initializeAgeCalculation();
+
+initializeValidation();
+
+initializeRipple();
+
+initializeAnimations();
+
+}
+
+/*=====================================================
+Change Photo Preview
+======================================================*/
+
+function initializeImagePreview() {
+
+const input =
+document.getElementById("photoInput");
+
+const preview =
+document.getElementById("photoPreview");
+
+if (!input || !preview) return;
+
+input.addEventListener("change", function () {
+
+if (!this.files.length) return;
+
+const reader = new FileReader();
+
+reader.onload = function (e) {
+
+    preview.src = e.target.result;
+
+};
+
+reader.readAsDataURL(this.files[0]);
+
+});
+
+}
+
+/*=====================================================
+Auto Age
+======================================================*/
+
+function initializeAgeCalculation() {
+
+const dob =
+document.querySelector("input[type='date']");
+
+const age =
+document.querySelector("input[name='age']");
+
+if (!dob || !age) return;
+
+dob.addEventListener("change", function () {
+
+if (this.value === "") return;
+
+const birth = new Date(this.value);
+
+const today = new Date();
+
+let years =
+    today.getFullYear() -
+    birth.getFullYear();
+
+const month =
+    today.getMonth() -
+    birth.getMonth();
+
+if (
+
+    month < 0 ||
+
+    (month === 0 &&
+     today.getDate() < birth.getDate())
+
+) {
+
+    years--;
+
+}
+
+age.value = years;
+
+});
+
+}
+
+/*=====================================================
+Validation
+======================================================*/
+
+function initializeValidation() {
+
+const form =
+document.querySelector("form");
+
+if (!form) return;
+
+form.addEventListener("submit", function (e) {
+
+let valid = true;
+
+form.querySelectorAll("[required]")
+
+    .forEach(field => {
+
+        field.classList.remove("is-invalid");
+
+        if (!field.value.trim()) {
+
+            field.classList.add("is-invalid");
+
+            valid = false;
+
+        }
+
+    });
+
+if (!valid) {
+
+    e.preventDefault();
+
+    showToast(
+
+        "Please complete all required fields."
+
+    );
+
+}
+
+});
+
+}
+
+/*=====================================================
+Ripple Buttons
+======================================================*/
+
+function initializeRipple() {
+
+document.querySelectorAll(".btn")
+
+.forEach(button => {
+
+    button.addEventListener("click", function (e) {
+
+        const ripple =
+            document.createElement("span");
+
+        ripple.className = "ripple";
+
+        const rect =
+            this.getBoundingClientRect();
+
+        ripple.style.left =
+            (e.clientX - rect.left) + "px";
+
+        ripple.style.top =
+            (e.clientY - rect.top) + "px";
+
+        this.appendChild(ripple);
+
+        setTimeout(() => {
+
+            ripple.remove();
+
+        }, 600);
+
+    });
+
+});
+
+}
+
+/*=====================================================
+Form Animation
+======================================================*/
+
+function initializeAnimations() {
+
+const card =
+document.querySelector(".form-card");
+
+if (!card) return;
+
+card.style.opacity = "0";
+
+card.style.transform = "translateY(25px)";
+
+setTimeout(() => {
+
+card.style.transition = ".5s";
+
+card.style.opacity = "1";
+
+card.style.transform = "translateY(0)";
+
+}, 150);
+
+}
+
+/*=====================================================
+Toast
+======================================================*/
+
+function showToast(message){
+
+const body =
+document.getElementById("toastMessage");
+
+if(body){
+
+body.innerHTML = message;
+
+}
+
+const toastElement =
+document.getElementById("playToast");
+
+if(toastElement){
+
+new bootstrap.Toast(toastElement).show();
+
+}
+
+}
+
+/*=====================================================
+Ctrl + S
+======================================================*/
+
+document.addEventListener("keydown",function(e){
+
+if(e.ctrlKey && e.key==="s"){
+
+e.preventDefault();
+
+document.querySelector("form").requestSubmit();
+
+}
+
+});
+
+/*=====================================================
+Loading Overlay
+======================================================*/
+
+window.addEventListener("load",()=>{
+
+const loader =
+document.getElementById("loadingOverlay");
+
+if(loader){
+
+loader.classList.add("d-none");
+
+}
+
+});
+
+/*=====================================================
+Ready
+======================================================*/
+
+console.log("PLAY26 Edit Player Ready");
+/*=====================================================
+PLAY26 PLAYER EDIT
+JavaScript Part 3B
+======================================================*/
+
+/*=====================================================
+Phone Validation
+======================================================*/
+
+const phoneField =
+document.querySelector("input[name='phone']");
+
+if (phoneField) {
+
+phoneField.addEventListener("input", function () {
+
+this.value = this.value.replace(/\D/g, "");
+
+if (this.value.length > 10) {
+
+    this.value = this.value.substring(0, 10);
+
+}
+
+});
+
+}
+
+/*=====================================================
+Email Validation
+======================================================*/
+
+const emailField =
+document.querySelector("input[name='email']");
+
+if (emailField) {
+
+emailField.addEventListener("blur", function () {
+
+if (this.value === "") return;
+
+const pattern =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+if (!pattern.test(this.value)) {
+
+    this.classList.add("is-invalid");
+
+    showToast("Please enter a valid email address.");
+
+} else {
+
+    this.classList.remove("is-invalid");
+
+}
+
+});
+
+}
+
+/*=====================================================
+Jersey Number Validation
+======================================================*/
+
+const jerseyField =
+document.querySelector("input[name='jerseyNumber']");
+
+if (jerseyField) {
+
+jerseyField.addEventListener("input", function () {
+
+if (this.value < 0) {
+
+    this.value = "";
+
+}
+
+if (this.value > 999) {
+
+    this.value = 999;
+
+}
+
+});
+
+}
+
+/*=====================================================
+Auto Capitalize Player Name
+======================================================*/
+
+const playerName =
+document.querySelector("input[name='playerName']");
+
+if (playerName) {
+
+playerName.addEventListener("input", function () {
+
+this.value = this.value.replace(
+
+    /\b\w/g,
+
+    c => c.toUpperCase()
+
+);
+
+});
+
+}
+
+/*=====================================================
+Nationality Formatting
+======================================================*/
+
+const nationality =
+document.querySelector("input[name='nationality']");
+
+if (nationality) {
+
+nationality.addEventListener("blur", function () {
+
+this.value = this.value
+    .toLowerCase()
+    .replace(/\b\w/g, c => c.toUpperCase());
+
+});
+
+}
+
+/*=====================================================
+Reset Confirmation
+======================================================*/
+
+const resetButton =
+document.querySelector("button[type='reset']");
+
+if (resetButton) {
+
+resetButton.addEventListener("click", function (e) {
+
+if (!confirm("Reset all modified values?")) {
+
+    e.preventDefault();
+
+}
+
+});
+
+}
+
+/*=====================================================
+Cancel Confirmation Modal
+======================================================*/
+
+const cancelButton =
+document.querySelector(".btn-secondary");
+
+if (cancelButton) {
+
+cancelButton.addEventListener("click", function (e) {
+
+e.preventDefault();
+
+const modal = new bootstrap.Modal(
+
+    document.getElementById("cancelModal")
+
+);
+
+modal.show();
+
+});
+
+}
+
+/*=====================================================
+Loading Overlay During Update
+======================================================*/
+
+const form =
+document.querySelector("form");
+
+if (form) {
+
+form.addEventListener("submit", function () {
+
+const loader =
+    document.getElementById("loadingOverlay");
+
+if (loader) {
+
+    loader.classList.remove("d-none");
+
+}
+
+});
+
+}
+
+/*=====================================================
+Prevent Double Submission
+======================================================*/
+
+let submitted = false;
+
+if (form) {
+
+form.addEventListener("submit", function (e) {
+
+if (submitted) {
+
+    e.preventDefault();
+
+    return;
+
+}
+
+submitted = true;
+
+});
+
+}
+
+/*=====================================================
+Keyboard Shortcuts
+======================================================*/
+
+document.addEventListener("keydown", function (e) {
+
+if (e.altKey && e.key === "b") {
+
+window.location.href = "/scorecard/players";
+
+}
+
+if (e.altKey && e.key === "r") {
+
+location.reload();
+
+}
+
+});
+
+/*=====================================================
+Welcome Toast
+======================================================*/
+
+setTimeout(function () {
+
+showToast("Player details ready for editing.");
+
+}, 800);
+
+/*=====================================================
+Console Banner
+======================================================*/
+
+console.log(
+"%cPLAY26 Player Edit Ready",
+"color:#00ff99;font-size:16px;font-weight:bold;"
+);
+
+</script>
+
+<!-- ========================================= -->
+<!-- Page JavaScript -->
+<!-- ========================================= -->
+
+<script>
+
+</script>
+
+</body>
+
+</html>

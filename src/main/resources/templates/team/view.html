@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title th:text="${pageTitle} + ' | PLAY26'">Team | PLAY26</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet"></head>
+<body>
+<div class="toast-container"><div th:if="${successMessage}" class="toast play26-toast success" role="alert"><div class="toast-body"><i class="bi bi-check-circle-fill text-success me-2"></i><span th:text="${successMessage}"></span></div></div></div>
+<div class="play26-hero"><div class="container">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb mb-2"><li class="breadcrumb-item"><a th:href="@{/teams}" style="color:rgba(255,255,255,.7)">Teams</a></li><li class="breadcrumb-item active" style="color:#fff" th:text="${team.teamName}">Team</li></ol></nav>
+    <div class="d-flex align-items-center gap-3">
+        <img th:if="${team.logo != null and !team.logo.isEmpty()}" th:src="${team.logo}" class="rounded-circle" style="width:64px;height:64px;object-fit:cover" alt="">
+        <div><h1 class="mb-0" th:text="${team.teamName}">Team</h1><p class="mb-0" th:text="${team.city}">City</p></div>
+        <span class="badge ms-auto fs-6 px-3 py-2" th:classappend="${team.status == 'ACTIVE' ? 'badge-active' : 'badge-cancelled'}" th:text="${team.status}">ACTIVE</span>
+    </div>
+</div></div>
+<div class="container pb-5">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="glass-card mb-4">
+                <h5 class="section-title"><i class="bi bi-bar-chart me-2"></i>Performance</h5>
+                <div class="row g-3 text-center">
+                    <div class="col-4 col-md-2"><div class="stat-card p-2"><div class="stat-value fs-4" th:text="${team.matchesPlayed} ?: 0">0</div><div class="stat-label">Played</div></div></div>
+                    <div class="col-4 col-md-2"><div class="stat-card p-2"><div class="stat-value fs-4 text-accent" th:text="${team.wins} ?: 0">0</div><div class="stat-label">Won</div></div></div>
+                    <div class="col-4 col-md-2"><div class="stat-card p-2"><div class="stat-value fs-4 text-secondary-play26" th:text="${team.losses} ?: 0">0</div><div class="stat-label">Lost</div></div></div>
+                    <div class="col-4 col-md-2"><div class="stat-card p-2"><div class="stat-value fs-4" th:text="${team.ties} ?: 0">0</div><div class="stat-label">Tied</div></div></div>
+                    <div class="col-4 col-md-2"><div class="stat-card p-2"><div class="stat-value fs-4" th:text="${team.points} ?: 0">0</div><div class="stat-label">Points</div></div></div>
+                    <div class="col-4 col-md-2"><div class="stat-card p-2"><div class="stat-value fs-4" th:text="${team.netRunRate} ?: '0.000'">0.000</div><div class="stat-label">NRR</div></div></div>
+                </div>
+            </div>
+            <div class="glass-card">
+                <h5 class="section-title"><i class="bi bi-info-circle me-2"></i>Details</h5>
+                <div class="row g-3">
+                    <div class="col-6 col-md-4"><small class="text-muted d-block">Short Name</small><strong th:text="${team.shortName} ?: 'N/A'">CSK</strong></div>
+                    <div class="col-6 col-md-4"><small class="text-muted d-block">Code</small><strong th:text="${team.teamCode} ?: 'N/A'">CSK</strong></div>
+                    <div class="col-6 col-md-4"><small class="text-muted d-block">Tournament</small><strong th:text="${team.tournamentName} ?: 'N/A'">T</strong></div>
+                    <div class="col-6 col-md-4"><small class="text-muted d-block">Coach</small><strong th:text="${team.coachName} ?: 'N/A'">Coach</strong></div>
+                    <div class="col-6 col-md-4"><small class="text-muted d-block">Home Ground</small><strong th:text="${team.homeGround} ?: 'N/A'">Ground</strong></div>
+                    <div class="col-12" th:if="${team.description != null}"><small class="text-muted d-block">Description</small><p th:text="${team.description}">Desc</p></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="d-flex gap-2">
+                <a th:href="@{/teams/edit/{id}(id=${team.id})}" class="btn btn-play26 flex-fill"><i class="bi bi-pencil me-1"></i>Edit</a>
+                <form th:action="@{/teams/delete/{id}(id=${team.id})}" method="post" class="flex-fill">
+                    <button type="submit" class="btn btn-outline-play26 w-100 text-danger btn-delete" data-confirm="Delete this team?"><i class="bi bi-trash me-1"></i>Delete</button></form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/play26.js}"></script>
+</body></html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<style>
+:root{
+--primary:#0f6e56;--secondary:#18a777;--glass:rgba(255,255,255,.72);
+--shadow:0 20px 40px rgba(15,110,86,.15);
+}
+body{
+background:linear-gradient(135deg,#eef8f5,#f8fbfa);
+min-height:100vh;
+}
+.hero{
+background:linear-gradient(135deg,var(--primary),var(--secondary));
+border-radius:24px;
+padding:45px;
+color:#fff;
+box-shadow:var(--shadow);
+position:relative;
+overflow:hidden;
+margin-bottom:25px;
+}
+.hero:after{
+content:"";
+position:absolute;
+width:350px;height:350px;
+right:-80px;top:-80px;
+background:rgba(255,255,255,.12);
+border-radius:50%;
+}
+.glass{
+background:var(--glass);
+backdrop-filter:blur(18px);
+border-radius:22px;
+padding:24px;
+box-shadow:var(--shadow);
+}
+.stat-card{
+border-radius:18px;
+padding:22px;
+color:#fff;
+}
+.info-label{
+font-size:.8rem;
+color:#6c757d;
+text-transform:uppercase;
+font-weight:600;
+}
+.info-value{
+font-size:1.05rem;
+font-weight:700;
+}
+.badge-status{
+font-size:.9rem;
+padding:.55rem 1rem;
+border-radius:50px;
+}
+.timeline{
+border-left:4px solid var(--primary);
+padding-left:20px;
+margin-top:10px;
+}
+.timeline-item{margin-bottom:18px;}
+</style>
+
+<div class="container py-4">
+
+<div class="hero">
+<div class="d-flex justify-content-between align-items-center flex-wrap">
+<div>
+<h2 class="fw-bold mb-2" th:text="${tournament.name}">Tournament Name</h2>
+<p class="opacity-75 mb-0" th:text="${tournament.location}">Location</p>
+</div>
+
+<span class="badge bg-warning badge-status"
+      th:text="${tournament.status}">
+Upcoming
+</span>
+</div>
+</div>
+
+<div class="row g-4">
+
+<div class="col-lg-8">
+
+<div class="glass">
+
+<h4 class="mb-4">
+<i class="bi bi-info-circle"></i>
+Tournament Information
+</h4>
+
+<div class="row g-4">
+
+<div class="col-md-6">
+<div class="info-label">Tournament Name</div>
+<div class="info-value" th:text="${tournament.name}"></div>
+</div>
+
+<div class="col-md-6">
+<div class="info-label">Location</div>
+<div class="info-value" th:text="${tournament.location}"></div>
+</div>
+
+<div class="col-md-6">
+<div class="info-label">Tournament Type</div>
+<div class="info-value" th:text="${tournament.tournamentType}"></div>
+</div>
+
+<div class="col-md-6">
+<div class="info-label">Status</div>
+<div class="info-value" th:text="${tournament.status}"></div>
+</div>
+
+<div class="col-md-6">
+<div class="info-label">Start Date</div>
+<div class="info-value" th:text="${tournament.startDate}"></div>
+</div>
+
+<div class="col-md-6">
+<div class="info-label">End Date</div>
+<div class="info-value" th:text="${tournament.endDate}"></div>
+</div>
+
+<div class="col-12">
+<div class="info-label">Description</div>
+<div class="info-value"
+     th:text="${tournament.description}">
+Description
+</div>
+</div>
+
+</div>
+
+</div>
+
+<div class="glass mt-4">
+<h4 class="mb-3">
+<i class="bi bi-clock-history"></i>
+Timeline
+</h4>
+
+<div class="timeline">
+
+<div class="timeline-item">
+<h6>Start</h6>
+<p class="mb-0" th:text="${tournament.startDate}"></p>
+</div>
+
+<div class="timeline-item">
+<h6>Finish</h6>
+<p class="mb-0" th:text="${tournament.endDate}"></p>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="stat-card bg-success mb-3">
+<h3 th:text="${teamCount ?: 0}">0</h3>
+<p class="mb-0">Registered Teams</p>
+</div>
+
+<div class="stat-card bg-primary mb-3">
+<h3 th:text="${playerCount ?: 0}">0</h3>
+<p class="mb-0">Players</p>
+</div>
+
+<div class="stat-card bg-dark mb-4">
+<h3 th:text="${matchCount ?: 0}">0</h3>
+<p class="mb-0">Matches</p>
+</div>
+
+<div class="glass">
+
+<div class="d-grid gap-2">
+
+<a th:href="@{/tournaments/edit/{id}(id=${tournament.id})}"
+   class="btn btn-warning">
+<i class="bi bi-pencil-square"></i>
+Edit Tournament
+</a>
+
+<a th:href="@{/tournaments/delete/{id}(id=${tournament.id})}"
+   class="btn btn-danger"
+   onclick="return confirm('Delete this tournament?')">
+<i class="bi bi-trash"></i>
+Delete Tournament
+</a>
+
+<a th:href="@{/tournaments}"
+   class="btn btn-outline-secondary">
+<i class="bi bi-arrow-left"></i>
+Back to List
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

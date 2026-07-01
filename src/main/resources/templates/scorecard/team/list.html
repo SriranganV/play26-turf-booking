@@ -1,0 +1,3203 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title>PLAY26 | Team Management</title>
+
+    <!-- Bootstrap -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+          rel="stylesheet">
+
+    <!-- Google Font -->
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <!-- Team CSS -->
+
+    <link rel="stylesheet"
+          th:href="@{/css/team.css}">
+
+</head>
+
+<body>
+<style>
+/*====================================================
+                PLAY26 TEAM MANAGEMENT
+=====================================================*/
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+
+    background:linear-gradient(
+            135deg,
+            #06131d,
+            #0d2942,
+            #163d63);
+
+    color:#ffffff;
+
+    min-height:100vh;
+
+    overflow-x:hidden;
+
+    position:relative;
+
+}
+
+/*=========================================
+Animated Background
+=========================================*/
+
+.bg-circle{
+
+    position:fixed;
+
+    border-radius:50%;
+
+    filter:blur(90px);
+
+    opacity:.45;
+
+    z-index:-1;
+
+    animation:float 10s infinite ease-in-out;
+
+}
+
+.bg-circle-1{
+
+    width:350px;
+    height:350px;
+
+    background:#00ff9d;
+
+    left:-120px;
+    top:-120px;
+
+}
+
+.bg-circle-2{
+
+    width:320px;
+    height:320px;
+
+    background:#00a8ff;
+
+    right:-120px;
+    top:80px;
+
+}
+
+.bg-circle-3{
+
+    width:250px;
+    height:250px;
+
+    background:#ff9800;
+
+    bottom:-120px;
+    left:40%;
+
+}
+
+/*=========================================
+Sidebar
+=========================================*/
+
+.sidebar{
+
+    min-height:100vh;
+
+    background:rgba(255,255,255,.07);
+
+    backdrop-filter:blur(18px);
+
+    border-right:1px solid rgba(255,255,255,.08);
+
+    padding:30px 20px;
+
+    position:sticky;
+
+    top:0;
+
+}
+
+.logo{
+
+    font-size:30px;
+
+    font-weight:700;
+
+    text-align:center;
+
+    color:#fff;
+
+    margin-bottom:45px;
+
+}
+
+.logo i{
+
+    color:#00ff99;
+
+    margin-right:8px;
+
+}
+
+.menu{
+
+    list-style:none;
+
+    padding:0;
+
+}
+
+.menu li{
+
+    margin-bottom:14px;
+
+}
+
+.menu li a{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    padding:14px 18px;
+
+    color:#ddd;
+
+    text-decoration:none;
+
+    border-radius:14px;
+
+    transition:.35s;
+
+}
+
+.menu li a i{
+
+    font-size:20px;
+
+}
+
+.menu li:hover a{
+
+    background:#00ff99;
+
+    color:#111;
+
+    transform:translateX(8px);
+
+}
+
+.menu li.active a{
+
+    background:#00ff99;
+
+    color:#111;
+
+    font-weight:600;
+
+    box-shadow:0 12px 25px rgba(0,255,153,.25);
+
+}
+
+/*=========================================
+Main Content
+=========================================*/
+
+.content{
+
+    padding:35px;
+
+}
+
+/*=========================================
+Top Bar
+=========================================*/
+
+.top-bar{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:30px;
+
+}
+
+.top-bar h2{
+
+    font-size:34px;
+
+    font-weight:700;
+
+}
+
+.top-bar small{
+
+    color:#bdbdbd;
+
+}
+
+.profile{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    background:rgba(255,255,255,.08);
+
+    padding:10px 18px;
+
+    border-radius:50px;
+
+    backdrop-filter:blur(15px);
+
+}
+
+.profile img{
+
+    width:55px;
+
+    height:55px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:3px solid #00ff99;
+
+}
+
+/*=========================================
+Dashboard Cards
+=========================================*/
+
+.dashboard-card{
+
+    position:relative;
+
+    overflow:hidden;
+
+    background:rgba(255,255,255,.08);
+
+    backdrop-filter:blur(18px);
+
+    border-radius:22px;
+
+    padding:25px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    transition:.45s;
+
+    cursor:pointer;
+
+}
+
+.dashboard-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:180px;
+
+    height:180px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.04);
+
+    right:-80px;
+
+    top:-80px;
+
+}
+
+.dashboard-card:hover{
+
+    transform:translateY(-10px);
+
+    box-shadow:0 20px 45px rgba(0,0,0,.35);
+
+}
+
+.dashboard-card h6{
+
+    color:#d5d5d5;
+
+    font-size:15px;
+
+}
+
+.dashboard-card h2{
+
+    margin-top:10px;
+
+    font-size:36px;
+
+    font-weight:700;
+
+}
+
+.dashboard-card i{
+
+    font-size:60px;
+
+    color:#00ff99;
+
+}
+
+.dashboard-card.green i{
+
+    color:#34e89e;
+
+}
+
+.dashboard-card.orange i{
+
+    color:#ffb300;
+
+}
+
+.dashboard-card.red i{
+
+    color:#ff4d6d;
+
+}
+
+/*=========================================
+Toolbar
+=========================================*/
+
+.toolbar{
+
+    background:rgba(255,255,255,.08);
+
+    border-radius:20px;
+
+    padding:25px;
+
+    backdrop-filter:blur(18px);
+
+    margin-bottom:25px;
+
+}
+
+.search-box{
+
+    position:relative;
+
+}
+
+.search-box i{
+
+    position:absolute;
+
+    top:16px;
+
+    left:18px;
+
+    color:#888;
+
+}
+
+.search-box input{
+
+    padding:14px 18px 14px 50px;
+
+    border:none;
+
+    border-radius:15px;
+
+    width:100%;
+
+    outline:none;
+
+    transition:.35s;
+
+}
+
+.search-box input:focus{
+
+    box-shadow:0 0 0 4px rgba(0,255,153,.18);
+
+}
+
+.form-select{
+
+    height:52px;
+
+    border-radius:15px;
+
+}
+
+.create-btn{
+
+    border-radius:15px;
+
+    font-weight:600;
+
+    padding:13px;
+
+    transition:.35s;
+
+}
+
+.create-btn:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:0 15px 30px rgba(0,255,153,.30);
+
+}
+/*====================================================
+                TEAM TABLE
+=====================================================*/
+
+.table-card{
+
+    background:rgba(255,255,255,.08);
+
+    backdrop-filter:blur(18px);
+
+    border-radius:22px;
+
+    padding:25px;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    box-shadow:0 15px 35px rgba(0,0,0,.18);
+
+}
+
+.table{
+
+    color:#ffffff;
+
+    margin-bottom:0;
+
+}
+
+.table thead{
+
+    background:rgba(255,255,255,.06);
+
+}
+
+.table thead th{
+
+    border:none;
+
+    padding:18px;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    letter-spacing:.5px;
+
+    color:#e5e5e5;
+
+    text-transform:uppercase;
+
+}
+
+.table tbody td{
+
+    padding:18px;
+
+    border-color:rgba(255,255,255,.05);
+
+    vertical-align:middle;
+
+}
+
+.table tbody tr{
+
+    transition:.35s;
+
+}
+
+.table tbody tr:hover{
+
+    background:rgba(255,255,255,.05);
+
+    transform:scale(1.01);
+
+}
+
+/*=========================================
+Team Logo
+=========================================*/
+
+.team-logo{
+
+    width:60px;
+
+    height:60px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:3px solid rgba(255,255,255,.15);
+
+    transition:.35s;
+
+    background:#fff;
+
+}
+
+.team-logo:hover{
+
+    transform:scale(1.15) rotate(8deg);
+
+    border-color:#00ff99;
+
+    box-shadow:0 12px 25px rgba(0,255,153,.30);
+
+}
+
+/*=========================================
+Captain Badge
+=========================================*/
+
+.captain-badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    width:28px;
+
+    height:28px;
+
+    border-radius:50%;
+
+    background:#ffc107;
+
+    color:#111;
+
+    font-size:15px;
+
+    margin-right:8px;
+
+}
+
+/*=========================================
+Status Badge
+=========================================*/
+
+.status{
+
+    display:inline-block;
+
+    padding:8px 16px;
+
+    border-radius:30px;
+
+    font-size:12px;
+
+    font-weight:600;
+
+    text-transform:uppercase;
+
+    letter-spacing:.5px;
+
+}
+
+.status.active{
+
+    background:#00c853;
+
+    color:#fff;
+
+}
+
+.status.inactive{
+
+    background:#ff9800;
+
+    color:#fff;
+
+}
+
+.status.suspended{
+
+    background:#e53935;
+
+    color:#fff;
+
+}
+
+/*=========================================
+Badges
+=========================================*/
+
+.badge{
+
+    padding:8px 14px;
+
+    border-radius:30px;
+
+    font-weight:600;
+
+}
+
+/*=========================================
+Dropdown
+=========================================*/
+
+.dropdown .btn{
+
+    width:42px;
+
+    height:42px;
+
+    border-radius:50%;
+
+    border:none;
+
+    background:rgba(255,255,255,.08);
+
+    color:#fff;
+
+}
+
+.dropdown .btn:hover{
+
+    background:#00ff99;
+
+    color:#111;
+
+}
+
+.dropdown-menu{
+
+    background:#111b2b;
+
+    border:none;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    box-shadow:0 18px 35px rgba(0,0,0,.40);
+
+}
+
+.dropdown-item{
+
+    color:#fff;
+
+    padding:12px 18px;
+
+    transition:.3s;
+
+}
+
+.dropdown-item:hover{
+
+    background:#00ff99;
+
+    color:#111;
+
+}
+
+.dropdown-item i{
+
+    margin-right:10px;
+
+}
+
+/*=========================================
+Empty State
+=========================================*/
+
+.empty-state{
+
+    text-align:center;
+
+    padding:70px 30px;
+
+}
+
+.empty-state i{
+
+    font-size:90px;
+
+    color:#00ff99;
+
+    margin-bottom:20px;
+
+}
+
+.empty-state h4{
+
+    font-weight:700;
+
+    margin-bottom:10px;
+
+}
+
+.empty-state p{
+
+    color:#bbbbbb;
+
+    margin-bottom:25px;
+
+}
+
+/*=========================================
+Pagination
+=========================================*/
+
+.pagination .page-link{
+
+    background:rgba(255,255,255,.08);
+
+    color:#fff;
+
+    border:none;
+
+    margin:0 4px;
+
+    border-radius:12px;
+
+    transition:.35s;
+
+}
+
+.pagination .page-link:hover{
+
+    background:#00ff99;
+
+    color:#111;
+
+}
+
+.pagination .active .page-link{
+
+    background:#00ff99;
+
+    color:#111;
+
+}
+
+/*=========================================
+Footer
+=========================================*/
+
+footer{
+
+    color:#cccccc;
+
+    margin-top:40px;
+
+}
+
+/*=========================================
+Responsive
+=========================================*/
+
+@media(max-width:1200px){
+
+    .sidebar{
+
+        display:none;
+
+    }
+
+    .content{
+
+        padding:25px;
+
+    }
+
+}
+
+@media(max-width:992px){
+
+    .top-bar{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:20px;
+
+    }
+
+    .toolbar .row>div{
+
+        margin-bottom:15px;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .dashboard-card{
+
+        margin-bottom:20px;
+
+    }
+
+    .table{
+
+        font-size:14px;
+
+    }
+
+    .team-logo{
+
+        width:50px;
+
+        height:50px;
+
+    }
+
+}
+
+@media(max-width:576px){
+
+    .content{
+
+        padding:18px;
+
+    }
+
+    .top-bar h2{
+
+        font-size:28px;
+
+    }
+
+}
+
+/*=========================================
+Animation
+=========================================*/
+
+@keyframes float{
+
+    0%{
+
+        transform:translateY(0px);
+
+    }
+
+    50%{
+
+        transform:translateY(20px);
+
+    }
+
+    100%{
+
+        transform:translateY(0px);
+
+    }
+
+}
+
+/*=========================================
+Scrollbar
+=========================================*/
+
+::-webkit-scrollbar{
+
+    width:10px;
+
+}
+
+::-webkit-scrollbar-track{
+
+    background:#08131d;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#00ff99;
+
+    border-radius:20px;
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+    background:#00d47a;
+
+}
+/*====================================================
+        PLAY26 TEAM MANAGEMENT
+        PART 2B
+====================================================*/
+
+/*=========================================
+ Premium Card Glow
+=========================================*/
+
+.dashboard-card,
+.table-card,
+.toolbar{
+
+    border:1px solid rgba(255,255,255,.08);
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.20),
+        inset 0 1px 1px rgba(255,255,255,.05);
+
+}
+
+.dashboard-card:hover{
+
+    box-shadow:
+        0 20px 40px rgba(0,255,153,.25);
+
+}
+
+.table-card:hover{
+
+    box-shadow:
+        0 20px 40px rgba(0,170,255,.20);
+
+}
+
+/*=========================================
+ Team Name
+=========================================*/
+
+.table strong{
+
+    font-size:16px;
+
+    font-weight:600;
+
+}
+
+.table small{
+
+    color:#bbbbbb;
+
+}
+
+/*=========================================
+ Jersey Colors
+=========================================*/
+
+.jersey-preview{
+
+    display:flex;
+
+    gap:6px;
+
+    align-items:center;
+
+}
+
+.jersey-primary{
+
+    width:18px;
+
+    height:18px;
+
+    border-radius:50%;
+
+    border:2px solid #fff;
+
+}
+
+.jersey-secondary{
+
+    width:18px;
+
+    height:18px;
+
+    border-radius:50%;
+
+    border:2px solid #fff;
+
+}
+
+/*=========================================
+ Action Button Animation
+=========================================*/
+
+.btn{
+
+    transition:.35s;
+
+}
+
+.btn:hover{
+
+    transform:translateY(-3px);
+
+}
+
+.btn-success{
+
+    background:#00ff99;
+
+    border:none;
+
+    color:#111;
+
+}
+
+.btn-success:hover{
+
+    background:#00d47a;
+
+}
+
+.btn-danger:hover{
+
+    transform:translateY(-3px);
+
+}
+
+/*=========================================
+ Modal
+=========================================*/
+
+.modal-content{
+
+    background:#0d1c2c;
+
+    color:#fff;
+
+    border:none;
+
+    border-radius:20px;
+
+}
+
+.modal-header{
+
+    border-bottom:1px solid rgba(255,255,255,.08);
+
+}
+
+.modal-footer{
+
+    border-top:1px solid rgba(255,255,255,.08);
+
+}
+
+.modal-title{
+
+    font-weight:700;
+
+}
+
+/*=========================================
+ Toast
+=========================================*/
+
+.toast{
+
+    background:#0d1c2c;
+
+    color:#fff;
+
+    border:none;
+
+    border-radius:16px;
+
+}
+
+.toast-header{
+
+    background:transparent;
+
+    color:#fff;
+
+    border:none;
+
+}
+
+/*=========================================
+ Ripple Effect
+=========================================*/
+
+.btn{
+
+    overflow:hidden;
+
+    position:relative;
+
+}
+
+.ripple{
+
+    position:absolute;
+
+    border-radius:50%;
+
+    transform:scale(0);
+
+    animation:ripple .6s linear;
+
+    background:rgba(255,255,255,.4);
+
+}
+
+@keyframes ripple{
+
+    to{
+
+        transform:scale(4);
+
+        opacity:0;
+
+    }
+
+}
+
+/*=========================================
+ Loading Animation
+=========================================*/
+
+.loading{
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+.loading::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:-150%;
+
+    top:0;
+
+    width:150%;
+
+    height:100%;
+
+    background:
+
+        linear-gradient(
+
+            90deg,
+
+            transparent,
+
+            rgba(255,255,255,.15),
+
+            transparent
+
+        );
+
+    animation:loading 1.2s infinite;
+
+}
+
+@keyframes loading{
+
+    from{
+
+        left:-150%;
+
+    }
+
+    to{
+
+        left:150%;
+
+    }
+
+}
+
+/*=========================================
+ Fade Animation
+=========================================*/
+
+.fade-up{
+
+    animation:fadeUp .7s ease;
+
+}
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(30px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/*=========================================
+ Zoom Animation
+=========================================*/
+
+.zoom-in{
+
+    animation:zoomIn .4s;
+
+}
+
+@keyframes zoomIn{
+
+    from{
+
+        opacity:0;
+
+        transform:scale(.9);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:scale(1);
+
+    }
+
+}
+
+/*=========================================
+ Statistics Cards
+=========================================*/
+
+.dashboard-card h2{
+
+    transition:.4s;
+
+}
+
+.dashboard-card:hover h2{
+
+    letter-spacing:1px;
+
+}
+
+/*=========================================
+ Table Row Animation
+=========================================*/
+
+tbody tr{
+
+    animation:fadeUp .5s ease;
+
+}
+
+/*=========================================
+ Search Highlight
+=========================================*/
+
+.highlight{
+
+    background:#00ff99;
+
+    color:#111;
+
+    padding:2px 5px;
+
+    border-radius:4px;
+
+}
+
+/*=========================================
+ Table Active
+=========================================*/
+
+.table-active{
+
+    background:rgba(0,255,153,.15)!important;
+
+}
+
+/*=========================================
+ Glass Border
+=========================================*/
+
+.sidebar,
+.dashboard-card,
+.toolbar,
+.table-card{
+
+    border:1px solid rgba(255,255,255,.08);
+
+}
+
+/*=========================================
+ Image Hover
+=========================================*/
+
+.team-logo{
+
+    cursor:pointer;
+
+}
+
+.team-logo:hover{
+
+    box-shadow:0 15px 30px rgba(0,255,153,.35);
+
+}
+
+/*=========================================
+ Status Hover
+=========================================*/
+
+.status{
+
+    transition:.3s;
+
+}
+
+.status:hover{
+
+    transform:scale(1.08);
+
+}
+
+/*=========================================
+ Dropdown Animation
+=========================================*/
+
+.dropdown-menu{
+
+    animation:menuOpen .25s ease;
+
+}
+
+@keyframes menuOpen{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(10px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/*=========================================
+ Focus Effects
+=========================================*/
+
+input:focus,
+select:focus,
+textarea:focus{
+
+    box-shadow:0 0 0 4px rgba(0,255,153,.20)!important;
+
+    border:none!important;
+
+}
+
+/*=========================================
+ Footer
+=========================================*/
+
+footer{
+
+    opacity:.8;
+
+    transition:.35s;
+
+}
+
+footer:hover{
+
+    opacity:1;
+
+}
+
+/*=========================================
+ Print
+=========================================*/
+
+@media print{
+
+    .sidebar,
+    .toolbar,
+    .dropdown,
+    .create-btn,
+    footer{
+
+        display:none!important;
+
+    }
+
+    body{
+
+        background:#fff;
+
+        color:#000;
+
+    }
+
+    .table{
+
+        color:#000;
+
+    }
+
+}
+</style>
+<!-- Background -->
+
+<div class="bg-circle bg-circle-1"></div>
+<div class="bg-circle bg-circle-2"></div>
+<div class="bg-circle bg-circle-3"></div>
+
+<div class="container-fluid">
+
+    <div class="row">
+
+        <!-- ========================= -->
+        <!-- Sidebar                  -->
+        <!-- ========================= -->
+
+        <aside class="col-lg-2 sidebar">
+
+            <div class="logo">
+
+                <i class="bi bi-trophy-fill"></i>
+
+                PLAY26
+
+            </div>
+
+            <ul class="menu">
+
+                <li>
+
+                    <a th:href="@{/dashboard}">
+
+                        <i class="bi bi-speedometer2"></i>
+
+                        Dashboard
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a th:href="@{/scorecard/tournaments}">
+
+                        <i class="bi bi-trophy"></i>
+
+                        Tournament
+
+                    </a>
+
+                </li>
+
+                <li class="active">
+
+                    <a th:href="@{/scorecard/teams}">
+
+                        <i class="bi bi-shield-fill"></i>
+
+                        Teams
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a href="#">
+
+                        <i class="bi bi-people-fill"></i>
+
+                        Players
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a href="#">
+
+                        <i class="bi bi-calendar-event"></i>
+
+                        Fixtures
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a href="#">
+
+                        <i class="bi bi-clipboard-data"></i>
+
+                        Scorecards
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a href="#">
+
+                        <i class="bi bi-bar-chart-fill"></i>
+
+                        Statistics
+
+                    </a>
+
+                </li>
+
+            </ul>
+
+        </aside>
+
+        <!-- ========================= -->
+        <!-- Main Content             -->
+        <!-- ========================= -->
+
+        <main class="col-lg-10 content">
+
+            <!-- Header -->
+
+            <div class="top-bar">
+
+                <div>
+
+                    <h2>🏏 Team Management</h2>
+
+                    <small>
+                        Manage all teams participating in PLAY26 tournaments.
+                    </small>
+
+                </div>
+
+                <div class="profile">
+
+                    <img src="https://i.pravatar.cc/150?img=12">
+
+                    <div>
+
+                        <strong>Administrator</strong>
+
+                        <br>
+
+                        <small>PLAY26 Sports</small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Dashboard Cards -->
+
+            <div class="row g-4 mb-4">
+
+                <div class="col-lg-3">
+
+                    <div class="dashboard-card">
+
+                        <div>
+
+                            <h6>Total Teams</h6>
+
+                            <h2 th:text="${totalTeams}">12</h2>
+
+                        </div>
+
+                        <i class="bi bi-shield-fill"></i>
+
+                    </div>
+
+                </div>
+
+                <div class="col-lg-3">
+
+                    <div class="dashboard-card green">
+
+                        <div>
+
+                            <h6>Total Players</h6>
+
+                            <h2 th:text="${totalPlayers}">180</h2>
+
+                        </div>
+
+                        <i class="bi bi-people-fill"></i>
+
+                    </div>
+
+                </div>
+
+                <div class="col-lg-3">
+
+                    <div class="dashboard-card orange">
+
+                        <div>
+
+                            <h6>Highest NRR</h6>
+
+                            <h2 th:text="${bestNRR != null ? bestNRR.netRunRate : '0.000'}">
+                                2.134
+                            </h2>
+
+                        </div>
+
+                        <i class="bi bi-graph-up-arrow"></i>
+
+                    </div>
+
+                </div>
+
+                <div class="col-lg-3">
+
+                    <div class="dashboard-card red">
+
+                        <div>
+
+                            <h6>Most Wins</h6>
+
+                            <h2 th:text="${mostWins != null ? mostWins.wins : 0}">
+                                16
+                            </h2>
+
+                        </div>
+
+                        <i class="bi bi-award-fill"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+                        <!-- ========================================= -->
+            <!-- Toolbar -->
+            <!-- ========================================= -->
+
+            <div class="toolbar mb-4">
+
+                <div class="row g-3 align-items-center">
+
+                    <!-- Search -->
+
+                    <div class="col-lg-4">
+
+                        <div class="search-box">
+
+                            <i class="bi bi-search"></i>
+
+                            <input
+                                    type="text"
+                                    id="searchInput"
+                                    class="form-control"
+                                    placeholder="Search Team">
+
+                        </div>
+
+                    </div>
+
+                    <!-- Tournament Filter -->
+
+                    <div class="col-lg-2">
+
+                        <select
+                                class="form-select"
+                                id="tournamentFilter">
+
+                            <option value="">
+                                All Tournament
+                            </option>
+
+                            <option
+                                    th:each="t : ${tournaments}"
+                                    th:value="${t.id}"
+                                    th:text="${t.tournamentName}">
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- City Filter -->
+
+                    <div class="col-lg-2">
+
+                        <select
+                                class="form-select"
+                                id="cityFilter">
+
+                            <option value="">
+                                All City
+                            </option>
+
+                            <option>Chennai</option>
+                            <option>Bangalore</option>
+                            <option>Hyderabad</option>
+                            <option>Mumbai</option>
+                            <option>Delhi</option>
+                            <option>Kolkata</option>
+                            <option>Pune</option>
+                            <option>Coimbatore</option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- Status -->
+
+                    <div class="col-lg-2">
+
+                        <select
+                                class="form-select"
+                                id="statusFilter">
+
+                            <option value="">
+                                All Status
+                            </option>
+
+                            <option value="ACTIVE">
+                                Active
+                            </option>
+
+                            <option value="INACTIVE">
+                                Inactive
+                            </option>
+
+                            <option value="SUSPENDED">
+                                Suspended
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- Create Team -->
+
+                    <div class="col-lg-2">
+
+                        <a
+                                th:href="@{/scorecard/teams/new}"
+                                class="btn btn-success create-btn w-100">
+
+                            <i class="bi bi-plus-circle-fill"></i>
+
+                            Create Team
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- ========================================= -->
+            <!-- Team Table -->
+            <!-- ========================================= -->
+
+            <div class="table-card">
+
+                <div class="table-responsive">
+
+                    <table class="table align-middle table-hover">
+
+                        <thead>
+
+                        <tr>
+
+                            <th>Logo</th>
+
+                            <th>Team</th>
+
+                            <th>City</th>
+
+                            <th>Captain</th>
+
+                            <th>Players</th>
+
+                            <th>Matches</th>
+
+                            <th>Wins</th>
+
+                            <th>Points</th>
+
+                            <th>NRR</th>
+
+                            <th>Status</th>
+
+                            <th class="text-center">
+
+                                Action
+
+                            </th>
+
+                        </tr>
+
+                        </thead>
+
+                        <tbody id="tableBody">
+
+                        <tr
+                                th:each="team : ${teams}">
+
+                            <!-- Logo -->
+
+                            <td>
+
+                                <img
+
+                                        th:src="${team.logo}"
+
+                                        src="/images/default-team.png"
+
+                                        class="team-logo"
+
+                                        alt="Logo">
+
+                            </td>
+
+                            <!-- Team -->
+
+                            <td>
+
+                                <div>
+
+                                    <strong
+                                            th:text="${team.teamName}">
+                                        Chennai Super Kings
+                                    </strong>
+
+                                    <br>
+
+                                    <small
+                                            class="text-secondary"
+
+                                            th:text="${team.shortName}">
+                                        CSK
+                                    </small>
+
+                                </div>
+
+                            </td>
+
+                            <!-- City -->
+
+                            <td
+                                    th:text="${team.city}">
+                                Chennai
+                            </td>
+
+                            <!-- Captain -->
+
+                            <td>
+
+                                <span class="captain-badge">
+
+                                    👑
+
+                                </span>
+
+                                <span
+                                        th:text="${team.captainId}">
+                                    Captain
+                                </span>
+
+                            </td>
+
+                            <!-- Players -->
+
+                            <td
+                                    th:text="${team.totalPlayers}">
+                                18
+                            </td>
+
+                            <!-- Matches -->
+
+                            <td
+                                    th:text="${team.matchesPlayed}">
+                                12
+                            </td>
+
+                            <!-- Wins -->
+
+                            <td
+                                    th:text="${team.wins}">
+                                9
+                            </td>
+
+                            <!-- Points -->
+
+                            <td>
+
+                                <span
+                                        class="badge bg-success"
+
+                                        th:text="${team.points}">
+                                    18
+                                </span>
+
+                            </td>
+
+                            <!-- NRR -->
+
+                            <td>
+
+                                <span
+                                        class="badge bg-info"
+
+                                        th:text="${team.formattedNRR}">
+                                    +1.245
+                                </span>
+
+                            </td>
+
+                            <!-- Status -->
+
+                            <td>
+
+                                <span
+
+                                        class="status"
+
+                                        th:text="${team.status}"
+
+                                        th:classappend="${team.status=='ACTIVE'} ? ' active'
+                                         : (${team.status=='INACTIVE'} ? ' inactive'
+                                         : ' suspended')">
+
+                                    ACTIVE
+
+                                </span>
+
+                            </td>
+
+                            <!-- Actions -->
+
+                            <td class="text-center">
+
+                                <div class="dropdown">
+
+                                    <button
+
+                                            class="btn btn-light"
+
+                                            data-bs-toggle="dropdown">
+
+                                        <i class="bi bi-three-dots"></i>
+
+                                    </button>
+
+                                    <ul class="dropdown-menu dropdown-menu-end">
+
+                                        <li>
+
+                                            <a
+
+                                                    class="dropdown-item"
+
+                                                    th:href="@{/scorecard/teams/{id}(id=${team.id})}">
+
+                                                <i class="bi bi-eye"></i>
+
+                                                View
+
+                                            </a>
+
+                                        </li>
+
+                                        <li>
+
+                                            <a
+
+                                                    class="dropdown-item"
+
+                                                    th:href="@{/scorecard/teams/edit/{id}(id=${team.id})}">
+
+                                                <i class="bi bi-pencil-square"></i>
+
+                                                Edit
+
+                                            </a>
+
+                                        </li>
+
+                                        <li>
+
+                                            <a
+
+                                                    href="#"
+
+                                                    class="dropdown-item text-danger delete-btn"
+
+                                                    th:data-id="${team.id}">
+
+                                                <i class="bi bi-trash"></i>
+
+                                                Delete
+
+                                            </a>
+
+                                        </li>
+
+                                    </ul>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+                                </div>
+                </main>
+                </div>
+                </div>
+                <script type="text/javascript">
+                /*=====================================================
+                PLAY26 TEAM MANAGEMENT
+                JavaScript Part 3A
+        ======================================================*/
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            initializeDashboard();
+
+        });
+
+        /*=====================================================
+         Dashboard Initialization
+        ======================================================*/
+
+        function initializeDashboard(){
+
+            animateCounters();
+
+            initializeSearch();
+
+            initializeTournamentFilter();
+
+            initializeCityFilter();
+
+            initializeStatusFilter();
+
+            animateRows();
+
+            animateCards();
+
+        }
+
+        /*=====================================================
+         Counter Animation
+        ======================================================*/
+
+        function animateCounters(){
+
+            const counters=document.querySelectorAll(".dashboard-card h2");
+
+            counters.forEach(counter=>{
+
+                let target=parseFloat(counter.innerText);
+
+                if(isNaN(target))
+                    return;
+
+                let value=0;
+
+                let increment=target/60;
+
+                const timer=setInterval(()=>{
+
+                    value+=increment;
+
+                    if(value>=target){
+
+                        counter.innerText=target;
+
+                        clearInterval(timer);
+
+                    }
+
+                    else{
+
+                        if(target%1!==0){
+
+                            counter.innerText=value.toFixed(2);
+
+                        }
+
+                        else{
+
+                            counter.innerText=Math.floor(value);
+
+                        }
+
+                    }
+
+                },20);
+
+            });
+
+        }
+
+        /*=====================================================
+         Search
+        ======================================================*/
+
+        function initializeSearch(){
+
+            const input=document.getElementById("searchInput");
+
+            if(!input)
+                return;
+
+            input.addEventListener("keyup",function(){
+
+                const keyword=this.value.toLowerCase();
+
+                const rows=document.querySelectorAll("#tableBody tr");
+
+                rows.forEach(row=>{
+
+                    let text=row.innerText.toLowerCase();
+
+                    if(text.includes(keyword)){
+
+                        row.style.display="";
+
+                        row.classList.add("fade-up");
+
+                    }
+
+                    else{
+
+                        row.style.display="none";
+
+                    }
+
+                });
+
+            });
+
+        }
+
+        /*=====================================================
+         Tournament Filter
+        ======================================================*/
+
+        function initializeTournamentFilter(){
+
+            const filter=document.getElementById("tournamentFilter");
+
+            if(!filter)
+                return;
+
+            filter.addEventListener("change",function(){
+
+                let value=this.value;
+
+                const rows=document.querySelectorAll("#tableBody tr");
+
+                rows.forEach(row=>{
+
+                    if(value===""){
+
+                        row.style.display="";
+
+                        return;
+
+                    }
+
+                    if(row.dataset.tournament===value){
+
+                        row.style.display="";
+
+                    }
+
+                    else{
+
+                        row.style.display="none";
+
+                    }
+
+                });
+
+            });
+
+        }
+
+        /*=====================================================
+         City Filter
+        ======================================================*/
+
+        function initializeCityFilter(){
+
+            const filter=document.getElementById("cityFilter");
+
+            if(!filter)
+                return;
+
+            filter.addEventListener("change",function(){
+
+                const value=this.value.toLowerCase();
+
+                const rows=document.querySelectorAll("#tableBody tr");
+
+                rows.forEach(row=>{
+
+                    if(value===""){
+
+                        row.style.display="";
+
+                        return;
+
+                    }
+
+                    const city=row.children[2].innerText.toLowerCase();
+
+                    if(city===value){
+
+                        row.style.display="";
+
+                    }
+
+                    else{
+
+                        row.style.display="none";
+
+                    }
+
+                });
+
+            });
+
+        }
+
+        /*=====================================================
+         Status Filter
+        ======================================================*/
+
+        function initializeStatusFilter(){
+
+            const filter=document.getElementById("statusFilter");
+
+            if(!filter)
+                return;
+
+            filter.addEventListener("change",function(){
+
+                const value=this.value.toLowerCase();
+
+                const rows=document.querySelectorAll("#tableBody tr");
+
+                rows.forEach(row=>{
+
+                    if(value===""){
+
+                        row.style.display="";
+
+                        return;
+
+                    }
+
+                    const status=row.querySelector(".status");
+
+                    if(status.innerText.toLowerCase()===value){
+
+                        row.style.display="";
+
+                    }
+
+                    else{
+
+                        row.style.display="none";
+
+                    }
+
+                });
+
+            });
+
+        }
+
+        /*=====================================================
+         Card Animation
+        ======================================================*/
+
+        function animateCards(){
+
+            const cards=document.querySelectorAll(".dashboard-card");
+
+            cards.forEach((card,index)=>{
+
+                card.style.opacity="0";
+
+                card.style.transform="translateY(30px)";
+
+                setTimeout(()=>{
+
+                    card.style.transition=".6s";
+
+                    card.style.opacity="1";
+
+                    card.style.transform="translateY(0)";
+
+                },index*150);
+
+            });
+
+        }
+
+        /*=====================================================
+         Table Animation
+        ======================================================*/
+
+        function animateRows(){
+
+            const rows=document.querySelectorAll("#tableBody tr");
+
+            rows.forEach((row,index)=>{
+
+                row.style.opacity="0";
+
+                row.style.transform="translateY(25px)";
+
+                setTimeout(()=>{
+
+                    row.style.transition=".45s";
+
+                    row.style.opacity="1";
+
+                    row.style.transform="translateY(0)";
+
+                },index*70);
+
+            });
+
+        }
+
+        /*=====================================================
+         Row Hover
+        ======================================================*/
+
+        document.querySelectorAll("#tableBody tr").forEach(row=>{
+
+            row.addEventListener("mouseenter",()=>{
+
+                row.style.transform="scale(1.01)";
+
+            });
+
+            row.addEventListener("mouseleave",()=>{
+
+                row.style.transform="scale(1)";
+
+            });
+
+        });
+
+        /*=====================================================
+         Ripple Effect
+        ======================================================*/
+
+        document.querySelectorAll(".btn").forEach(button=>{
+
+            button.addEventListener("click",function(e){
+
+                const ripple=document.createElement("span");
+
+                ripple.classList.add("ripple");
+
+                this.appendChild(ripple);
+
+                let x=e.clientX-this.offsetLeft;
+
+                let y=e.clientY-this.offsetTop;
+
+                ripple.style.left=x+"px";
+
+                ripple.style.top=y+"px";
+
+                setTimeout(()=>{
+
+                    ripple.remove();
+
+                },600);
+
+            });
+
+        });
+
+        /*=====================================================
+         Search Placeholder Animation
+        ======================================================*/
+
+        const placeholders=[
+
+        "Search Team",
+
+        "Search Captain",
+
+        "Search Coach",
+
+        "Search City"
+
+        ];
+
+        let currentPlaceholder=0;
+
+        setInterval(()=>{
+
+            const input=document.getElementById("searchInput");
+
+            if(!input)
+                return;
+
+            currentPlaceholder++;
+
+            if(currentPlaceholder>=placeholders.length){
+
+                currentPlaceholder=0;
+
+            }
+
+            input.placeholder=placeholders[currentPlaceholder];
+
+        },2500);
+
+        /*=====================================================
+         Keyboard Shortcut
+        ======================================================*/
+
+        document.addEventListener("keydown",function(e){
+
+            if(e.ctrlKey && e.key==="f"){
+
+                e.preventDefault();
+
+                document.getElementById("searchInput").focus();
+
+            }
+
+        });
+
+        /*=====================================================
+         Loading Hook
+        ======================================================*/
+
+        window.onload=function(){
+
+            document.body.classList.add("loaded");
+
+        };
+
+        console.log("PLAY26 Team Dashboard Loaded");
+        /*=====================================================
+        PLAY26 TEAM MANAGEMENT
+        JavaScript Part 3B
+======================================================*/
+
+/*=====================================================
+ Delete Modal
+======================================================*/
+
+let deleteModal;
+let deleteId = null;
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const modalElement = document.getElementById("deleteModal");
+
+    if (modalElement) {
+        deleteModal = new bootstrap.Modal(modalElement);
+    }
+
+    document.querySelectorAll(".delete-btn").forEach(btn => {
+
+        btn.addEventListener("click", function (e) {
+
+            e.preventDefault();
+
+            deleteId = this.dataset.id;
+
+            deleteModal.show();
+
+        });
+
+    });
+
+    const confirmDelete = document.getElementById("confirmDelete");
+
+    if (confirmDelete) {
+
+        confirmDelete.addEventListener("click", () => {
+
+            if (deleteId != null) {
+
+                window.location.href =
+                    "/scorecard/teams/delete/" + deleteId;
+
+            }
+
+        });
+
+    }
+
+});
+
+/*=====================================================
+ Toast Notification
+======================================================*/
+
+function showToast(message){
+
+    const toastBody=document.getElementById("toastMessage");
+
+    if(toastBody){
+
+        toastBody.innerHTML=message;
+
+        const toast=new bootstrap.Toast(
+                document.getElementById("playToast")
+        );
+
+        toast.show();
+
+    }
+
+}
+
+/*=====================================================
+ Pagination
+======================================================*/
+
+const rowsPerPage=8;
+
+let currentPage=1;
+
+function paginateTable(){
+
+    const rows=document.querySelectorAll("#tableBody tr");
+
+    const pagination=document.getElementById("pagination");
+
+    if(!pagination) return;
+
+    pagination.innerHTML="";
+
+    const pageCount=Math.ceil(rows.length/rowsPerPage);
+
+    function displayPage(page){
+
+        currentPage=page;
+
+        rows.forEach((row,index)=>{
+
+            if(index>=(page-1)*rowsPerPage &&
+                index<page*rowsPerPage){
+
+                row.style.display="";
+
+            }
+
+            else{
+
+                row.style.display="none";
+
+            }
+
+        });
+
+    }
+
+    displayPage(1);
+
+    for(let i=1;i<=pageCount;i++){
+
+        const li=document.createElement("li");
+
+        li.className="page-item";
+
+        if(i===1){
+
+            li.classList.add("active");
+
+        }
+
+        li.innerHTML=`
+        <a class="page-link" href="#">${i}</a>
+        `;
+
+        li.onclick=function(e){
+
+            e.preventDefault();
+
+            document.querySelectorAll("#pagination .page-item")
+                .forEach(item=>item.classList.remove("active"));
+
+            li.classList.add("active");
+
+            displayPage(i);
+
+        };
+
+        pagination.appendChild(li);
+
+    }
+
+}
+
+paginateTable();
+
+/*=====================================================
+ Scroll To Top Button
+======================================================*/
+
+const scrollBtn=document.createElement("button");
+
+scrollBtn.className="btn btn-success";
+
+scrollBtn.innerHTML="<i class='bi bi-arrow-up'></i>";
+
+scrollBtn.style.position="fixed";
+scrollBtn.style.right="25px";
+scrollBtn.style.bottom="25px";
+scrollBtn.style.width="55px";
+scrollBtn.style.height="55px";
+scrollBtn.style.borderRadius="50%";
+scrollBtn.style.display="none";
+scrollBtn.style.zIndex="999";
+
+document.body.appendChild(scrollBtn);
+
+window.addEventListener("scroll",()=>{
+
+    if(window.scrollY>250){
+
+        scrollBtn.style.display="block";
+
+    }
+
+    else{
+
+        scrollBtn.style.display="none";
+
+    }
+
+});
+
+scrollBtn.onclick=function(){
+
+    window.scrollTo({
+
+        top:0,
+
+        behavior:"smooth"
+
+    });
+
+};
+
+/*=====================================================
+ Floating Create Button Animation
+======================================================*/
+
+const createBtn=document.querySelector(".create-btn");
+
+if(createBtn){
+
+    createBtn.addEventListener("mouseenter",()=>{
+
+        createBtn.style.transform="translateY(-5px) scale(1.03)";
+
+    });
+
+    createBtn.addEventListener("mouseleave",()=>{
+
+        createBtn.style.transform="translateY(0)";
+
+    });
+
+}
+
+/*=====================================================
+ Double Click Row
+======================================================*/
+
+document.querySelectorAll("#tableBody tr").forEach(row=>{
+
+    row.addEventListener("dblclick",()=>{
+
+        const link=row.querySelector(".dropdown-item");
+
+        if(link){
+
+            window.location=link.href;
+
+        }
+
+    });
+
+});
+
+/*=====================================================
+ Live Clock
+======================================================*/
+
+const clock=document.createElement("div");
+
+clock.style.position="fixed";
+
+clock.style.left="25px";
+
+clock.style.bottom="25px";
+
+clock.style.padding="10px 20px";
+
+clock.style.borderRadius="15px";
+
+clock.style.background="rgba(255,255,255,.08)";
+
+clock.style.backdropFilter="blur(18px)";
+
+clock.style.color="#fff";
+
+clock.style.zIndex="999";
+
+document.body.appendChild(clock);
+
+setInterval(()=>{
+
+    clock.innerHTML=new Date().toLocaleTimeString();
+
+},1000);
+
+/*=====================================================
+ Success Messages
+======================================================*/
+
+const params=new URLSearchParams(window.location.search);
+
+if(params.has("success")){
+
+    showToast("Team created successfully.");
+
+}
+
+if(params.has("updated")){
+
+    showToast("Team updated successfully.");
+
+}
+
+if(params.has("deleted")){
+
+    showToast("Team deleted successfully.");
+
+}
+
+if(params.has("duplicate")){
+
+    showToast("Team name already exists.");
+
+}
+
+/*=====================================================
+ Keyboard Shortcut
+======================================================*/
+
+document.addEventListener("keydown",(e)=>{
+
+    if(e.altKey && e.key==="n"){
+
+        window.location="/scorecard/teams/new";
+
+    }
+
+});
+
+/*=====================================================
+ Auto Refresh Timer
+======================================================*/
+
+setInterval(()=>{
+
+    console.log("PLAY26 Team Dashboard Active");
+
+},60000);
+
+console.log("PLAY26 Team Dashboard Part 3B Loaded");
+/*=====================================================
+PLAY26 TEAM MANAGEMENT
+JavaScript Part 3C
+======================================================*/
+
+/*=====================================================
+Export Table to CSV
+======================================================*/
+
+function exportCSV() {
+
+let csv = [];
+
+let rows = document.querySelectorAll("table tr");
+
+rows.forEach(row => {
+
+let cols = row.querySelectorAll("th,td");
+
+let data = [];
+
+cols.forEach(col => {
+
+    data.push('"' + col.innerText.replace(/"/g, '""') + '"');
+
+});
+
+csv.push(data.join(","));
+
+});
+
+let csvFile = new Blob([csv.join("\n")], {
+type: "text/csv"
+});
+
+let downloadLink = document.createElement("a");
+
+downloadLink.download = "PLAY26_Teams.csv";
+
+downloadLink.href = window.URL.createObjectURL(csvFile);
+
+downloadLink.style.display = "none";
+
+document.body.appendChild(downloadLink);
+
+downloadLink.click();
+
+document.body.removeChild(downloadLink);
+
+}
+
+/*=====================================================
+Theme Toggle
+======================================================*/
+
+const themeButton = document.createElement("button");
+
+themeButton.className = "btn btn-warning";
+
+themeButton.innerHTML = "<i class='bi bi-moon-stars-fill'></i>";
+
+themeButton.style.position = "fixed";
+themeButton.style.bottom = "95px";
+themeButton.style.right = "25px";
+themeButton.style.width = "55px";
+themeButton.style.height = "55px";
+themeButton.style.borderRadius = "50%";
+themeButton.style.zIndex = "999";
+
+document.body.appendChild(themeButton);
+
+let darkTheme = true;
+
+themeButton.onclick = function () {
+
+if (darkTheme) {
+
+document.body.style.filter = "invert(1) hue-rotate(180deg)";
+
+document.querySelectorAll("img").forEach(img => {
+
+    img.style.filter = "invert(1) hue-rotate(180deg)";
+
+});
+
+} else {
+
+document.body.style.filter = "";
+
+document.querySelectorAll("img").forEach(img => {
+
+    img.style.filter = "";
+
+});
+
+}
+
+darkTheme = !darkTheme;
+
+};
+
+/*=====================================================
+Refresh Button
+======================================================*/
+
+const refreshBtn = document.createElement("button");
+
+refreshBtn.className = "btn btn-primary";
+
+refreshBtn.innerHTML = "<i class='bi bi-arrow-clockwise'></i>";
+
+refreshBtn.style.position = "fixed";
+refreshBtn.style.bottom = "165px";
+refreshBtn.style.right = "25px";
+refreshBtn.style.width = "55px";
+refreshBtn.style.height = "55px";
+refreshBtn.style.borderRadius = "50%";
+refreshBtn.style.zIndex = "999";
+
+document.body.appendChild(refreshBtn);
+
+refreshBtn.onclick = function () {
+
+refreshBtn.querySelector("i").classList.add("fa-spin");
+
+location.reload();
+
+};
+
+/*=====================================================
+Export Button
+======================================================*/
+
+const exportBtn = document.createElement("button");
+
+exportBtn.className = "btn btn-success";
+
+exportBtn.innerHTML = "<i class='bi bi-download'></i>";
+
+exportBtn.style.position = "fixed";
+exportBtn.style.bottom = "235px";
+exportBtn.style.right = "25px";
+exportBtn.style.width = "55px";
+exportBtn.style.height = "55px";
+exportBtn.style.borderRadius = "50%";
+exportBtn.style.zIndex = "999";
+
+document.body.appendChild(exportBtn);
+
+exportBtn.onclick = exportCSV;
+
+/*=====================================================
+Notification Bell
+======================================================*/
+
+const bell = document.createElement("div");
+
+bell.innerHTML =
+"<i class='bi bi-bell-fill'></i>";
+
+bell.style.position = "fixed";
+bell.style.top = "20px";
+bell.style.right = "25px";
+bell.style.fontSize = "28px";
+bell.style.color = "#ffc107";
+bell.style.cursor = "pointer";
+bell.style.zIndex = "999";
+
+document.body.appendChild(bell);
+
+bell.onclick = function () {
+
+showToast("No new notifications.");
+
+};
+
+/*=====================================================
+Welcome Toast
+======================================================*/
+
+setTimeout(() => {
+
+showToast("Welcome to PLAY26 Team Management.");
+
+}, 1200);
+
+/*=====================================================
+Statistics Card Hover
+======================================================*/
+
+document.querySelectorAll(".dashboard-card")
+.forEach(card => {
+
+card.addEventListener("mouseenter", () => {
+
+card.style.transform =
+    "translateY(-8px) scale(1.03)";
+
+});
+
+card.addEventListener("mouseleave", () => {
+
+card.style.transform =
+    "translateY(0px) scale(1)";
+
+});
+
+});
+
+/*=====================================================
+Team Logo Preview
+======================================================*/
+
+document.querySelectorAll(".team-logo")
+.forEach(img => {
+
+img.addEventListener("click", function () {
+
+const modal = window.open("");
+
+modal.document.write(
+    "<img src='" +
+    this.src +
+    "' style='width:100%;background:#111;'>"
+);
+
+});
+
+});
+
+/*=====================================================
+Highlight Top Team
+======================================================*/
+
+const firstRow = document.querySelector("#tableBody tr");
+
+if (firstRow) {
+
+firstRow.classList.add("table-active");
+
+}
+
+/*=====================================================
+Live Date
+======================================================*/
+
+const dateDiv = document.createElement("div");
+
+dateDiv.style.position = "fixed";
+dateDiv.style.bottom = "305px";
+dateDiv.style.right = "20px";
+dateDiv.style.color = "#fff";
+dateDiv.style.fontSize = "13px";
+dateDiv.style.background = "rgba(255,255,255,.08)";
+dateDiv.style.padding = "8px 16px";
+dateDiv.style.borderRadius = "12px";
+dateDiv.style.backdropFilter = "blur(12px)";
+dateDiv.style.zIndex = "999";
+
+document.body.appendChild(dateDiv);
+
+setInterval(() => {
+
+dateDiv.innerHTML =
+new Date().toLocaleDateString();
+
+}, 1000);
+
+/*=====================================================
+Dashboard Auto Refresh
+======================================================*/
+
+setInterval(() => {
+
+console.log("PLAY26 Dashboard Running...");
+
+}, 30000);
+
+/*=====================================================
+Console Message
+======================================================*/
+
+console.log(
+"%cPLAY26 Team Dashboard Loaded Successfully",
+"color:#00ff99;font-size:16px;font-weight:bold;"
+);
+                </script>
+
+                </body>
+                </html>
+                

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<style>
+:root{
+--primary:#0f6e56;--accent:#19a974;--glass:rgba(255,255,255,.72);
+--shadow:0 20px 40px rgba(15,110,86,.15);
+}
+body{background:linear-gradient(135deg,#eef8f5,#f9fbfb)}
+.hero{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;padding:42px;border-radius:24px;box-shadow:var(--shadow);margin:24px 0}
+.glass{background:var(--glass);backdrop-filter:blur(18px);border-radius:22px;padding:24px;box-shadow:var(--shadow)}
+.info-title{font-size:.8rem;color:#6c757d;text-transform:uppercase;font-weight:700}
+.info-value{font-size:1.05rem;font-weight:700}
+.stat{border-radius:18px;padding:20px;color:#fff}
+</style>
+
+<div class="container py-4">
+
+<div class="hero d-flex justify-content-between align-items-center flex-wrap">
+<div>
+<h2 class="fw-bold mb-2" th:text="${match.matchNumber}">MATCH-01</h2>
+<p class="mb-0 opacity-75">
+<span th:text="${match.matchDate}"></span> |
+<span th:text="${match.matchTime}"></span>
+</p>
+</div>
+<span class="badge bg-warning fs-6" th:text="${match.status}">UPCOMING</span>
+</div>
+
+<div class="row g-4">
+
+<div class="col-lg-8">
+
+<div class="glass">
+<h4 class="mb-4"><i class="bi bi-info-circle"></i> Match Information</h4>
+
+<div class="row g-4">
+<div class="col-md-6">
+<div class="info-title">Tournament</div>
+<div class="info-value" th:text="${match.tournamentId}"></div>
+</div>
+
+<div class="col-md-6">
+<div class="info-title">Venue</div>
+<div class="info-value" th:text="${match.venue}"></div>
+</div>
+
+<div class="col-md-6">
+<div class="info-title">Team A</div>
+<div class="info-value" th:text="${match.teamAId}"></div>
+</div>
+
+<div class="col-md-6">
+<div class="info-title">Team B</div>
+<div class="info-value" th:text="${match.teamBId}"></div>
+</div>
+
+<div class="col-md-6">
+<div class="info-title">Overs</div>
+<div class="info-value" th:text="${match.overs}"></div>
+</div>
+
+<div class="col-md-6">
+<div class="info-title">Status</div>
+<div class="info-value" th:text="${match.status}"></div>
+</div>
+</div>
+</div>
+
+<div class="glass mt-4">
+<h4 class="mb-4"><i class="bi bi-trophy"></i> Toss & Result</h4>
+
+<div class="row g-4">
+<div class="col-md-6">
+<div class="info-title">Toss Winner</div>
+<div class="info-value" th:text="${match.tossWinner}"></div>
+</div>
+
+<div class="col-md-6">
+<div class="info-title">Toss Decision</div>
+<div class="info-value" th:text="${match.tossDecision}"></div>
+</div>
+
+<div class="col-md-6">
+<div class="info-title">Winner</div>
+<div class="info-value" th:text="${match.winner} ?: '-'">-</div>
+</div>
+
+<div class="col-md-6">
+<div class="info-title">Man of the Match</div>
+<div class="info-value" th:text="${match.manOfMatch} ?: '-'">-</div>
+</div>
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="stat bg-success mb-3">
+<h3 th:text="${match.overs}">20</h3>
+<p class="mb-0">Overs</p>
+</div>
+
+<div class="stat bg-primary mb-3">
+<h3 th:text="${match.status}">UPCOMING</h3>
+<p class="mb-0">Current Status</p>
+</div>
+
+<div class="glass">
+<div class="d-grid gap-2">
+<a th:href="@{/scorecard/matches/edit/{id}(id=${match.id})}" class="btn btn-warning">
+<i class="bi bi-pencil-square"></i> Edit Match
+</a>
+
+<a th:href="@{/scorecard/matches/delete/{id}(id=${match.id})}"
+class="btn btn-danger"
+onclick="return confirm('Delete this match?')">
+<i class="bi bi-trash"></i> Delete Match
+</a>
+
+<a th:href="@{/scorecard/matches}" class="btn btn-outline-secondary">
+<i class="bi bi-arrow-left"></i> Back to List
+</a>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

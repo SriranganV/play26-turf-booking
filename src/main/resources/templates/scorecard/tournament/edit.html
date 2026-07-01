@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<style>
+:root{
+ --primary:#0f6e56;--primary2:#1aa37a;--bg:#eef5f3;--glass:rgba(255,255,255,.72);
+ --border:rgba(255,255,255,.35);--shadow:0 20px 40px rgba(15,110,86,.12);
+}
+body{background:linear-gradient(135deg,#edf8f4,#f7fbfa);min-height:100vh}
+.hero{
+padding:40px;border-radius:24px;color:#fff;margin:24px auto;
+background:linear-gradient(135deg,var(--primary),var(--primary2));
+box-shadow:var(--shadow);position:relative;overflow:hidden}
+.hero:before{content:"";position:absolute;inset:-30%;background:radial-gradient(circle,rgba(255,255,255,.18),transparent 60%);animation=float 10s linear infinite}
+@keyframes float{to{transform:rotate(360deg)}}
+.glass{background:var(--glass);backdrop-filter:blur(18px);border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow)}
+.form-floating>.form-control,.form-floating>.form-select{border-radius:14px}
+.actions{display:flex;gap:12px;justify-content:flex-end}
+.loading{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2000;align-items:center;justify-content:center}
+.loading.show{display:flex}
+.spinner-border{width:4rem;height:4rem}
+</style>
+
+<div class="container py-4">
+
+<div class="hero">
+<h2 class="fw-bold mb-2">Edit Tournament</h2>
+<p class="mb-0 opacity-75">Update tournament information</p>
+</div>
+
+<div class="glass p-4">
+
+<form id="editForm"
+      th:action="@{/tournaments/update}"
+      th:object="${tournament}"
+      method="post">
+
+<input type="hidden" th:field="*{id}"/>
+
+<div class="row g-4">
+
+<div class="col-md-6">
+<div class="form-floating">
+<input class="form-control" th:field="*{name}" placeholder="Tournament Name" required>
+<label>Tournament Name</label>
+</div>
+</div>
+
+<div class="col-md-6">
+<div class="form-floating">
+<input class="form-control" th:field="*{location}" placeholder="Location">
+<label>Location</label>
+</div>
+</div>
+
+<div class="col-md-6">
+<div class="form-floating">
+<input type="date" class="form-control" th:field="*{startDate}">
+<label>Start Date</label>
+</div>
+</div>
+
+<div class="col-md-6">
+<div class="form-floating">
+<input type="date" class="form-control" th:field="*{endDate}">
+<label>End Date</label>
+</div>
+</div>
+
+<div class="col-md-6">
+<div class="form-floating">
+<select class="form-select" th:field="*{tournamentType}">
+<option value="League">League</option>
+<option value="Knockout">Knockout</option>
+<option value="Round Robin">Round Robin</option>
+</select>
+<label>Tournament Type</label>
+</div>
+</div>
+
+<div class="col-md-6">
+<div class="form-floating">
+<select class="form-select" th:field="*{status}">
+<option value="UPCOMING">Upcoming</option>
+<option value="LIVE">Live</option>
+<option value="COMPLETED">Completed</option>
+</select>
+<label>Status</label>
+</div>
+</div>
+
+<div class="col-12">
+<div class="form-floating">
+<textarea class="form-control" style="height:160px" th:field="*{description}" placeholder="Description"></textarea>
+<label>Description</label>
+</div>
+</div>
+
+</div>
+
+<hr class="my-4">
+
+<div class="actions">
+<a th:href="@{/tournaments}" class="btn btn-outline-secondary">
+<i class="bi bi-arrow-left"></i> Back
+</a>
+
+<button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#confirmModal">
+<i class="bi bi-check2-circle"></i> Update Tournament
+</button>
+</div>
+
+<div class="modal fade" id="confirmModal" tabindex="-1">
+<div class="modal-dialog modal-dialog-centered">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title">Confirm Update</h5>
+<button class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+<div class="modal-body">
+Are you sure you want to update this tournament?
+</div>
+<div class="modal-footer">
+<button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+<button class="btn btn-success" id="confirmSave" type="button">Yes, Update</button>
+</div>
+</div>
+</div>
+</div>
+
+</form>
+
+</div>
+</div>
+
+<div class="loading" id="loading">
+<div class="spinner-border text-light"></div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<script>
+const form=document.getElementById("editForm");
+document.getElementById("confirmSave").onclick=function(){
+const s=document.querySelector('[name="startDate"]');
+const e=document.querySelector('[name="endDate"]');
+if(s&&e&&s.value&&e.value&&e.value<s.value){
+alert("End Date must be after Start Date");
+return;
+}
+document.getElementById("loading").classList.add("show");
+form.submit();
+};
+</script>
+
+</body>
+</html>

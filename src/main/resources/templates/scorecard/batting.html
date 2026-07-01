@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Add Batting | PLAY26</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet"></head>
+<body>
+<div class="play26-hero"><div class="container"><h1><i class="bi bi-bat-fill me-2"></i>Add Batting Score</h1><p>Innings <span th:text="${innings}">1</span></p></div></div>
+<div class="container pb-5">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a th:href="@{/scorecard/match/{id}(id=${match.id})}">Scorecard</a></li><li class="breadcrumb-item active">Batting</li></ol></nav>
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="glass-card">
+                <form th:action="@{/scorecard/match/{id}/batting/save(id=${match.id})}" th:object="${battingScore}" method="post">
+                    <input type="hidden" th:field="*{scorecardId}"><input type="hidden" name="innings" th:value="${innings}">
+                    <div class="row g-3">
+                        <div class="col-md-8"><label class="form-label">Batter *</label>
+                            <select class="form-select" th:field="*{playerId}" required><option value="">Select Batter</option><option th:each="p : ${players}" th:value="${p.id}" th:text="${p.playerName}"></option></select></div>
+                        <div class="col-md-4"><label class="form-label">Position</label><input type="number" class="form-control" th:field="*{battingPosition}" min="1"></div>
+                        <div class="col-3"><label class="form-label">Runs</label><input type="number" class="form-control" th:field="*{runs}" id="runs" min="0"></div>
+                        <div class="col-3"><label class="form-label">Balls</label><input type="number" class="form-control" th:field="*{balls}" id="balls" min="0"></div>
+                        <div class="col-3"><label class="form-label">4s</label><input type="number" class="form-control" th:field="*{fours}" min="0"></div>
+                        <div class="col-3"><label class="form-label">6s</label><input type="number" class="form-control" th:field="*{sixes}" min="0"></div>
+                        
+                        <!-- Dismissal Section -->
+                        <div class="col-12 mt-4">
+                            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" th:field="*{isOut}" id="isOut"><label class="form-check-label" for="isOut">Is Out?</label></div>
+                        </div>
+                        <div class="col-12" id="dismissalSection" style="display:none">
+                            <div class="row g-3 p-3 rounded" style="background:rgba(255,255,255,0.03);border:1px solid var(--play26-border)">
+                                <div class="col-md-4"><label class="form-label">Dismissal Type</label>
+                                    <select class="form-select" th:field="*{dismissalType}"><option value="">Select Type</option>
+                                        <option value="BOWLED">Bowled</option><option value="CAUGHT">Caught</option><option value="LBW">LBW</option><option value="RUN_OUT">Run Out</option>
+                                        <option value="STUMPED">Stumped</option><option value="HIT_WICKET">Hit Wicket</option><option value="RETIRED">Retired</option></select></div>
+                                <div class="col-md-4"><label class="form-label">Bowler</label>
+                                    <select class="form-select" th:field="*{bowlerId}"><option value="">Select Bowler</option>
+                                        <option th:each="b : ${bowlers}" th:value="${b.id}" th:text="${b.playerName}"></option></select></div>
+                                <div class="col-md-4"><label class="form-label">Fielder</label>
+                                    <select class="form-select" th:field="*{fielderId}"><option value="">Select Fielder</option>
+                                        <option th:each="b : ${bowlers}" th:value="${b.id}" th:text="${b.playerName}"></option></select></div>
+                            </div>
+                        </div>
+                        <div class="col-12 d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-play26"><i class="bi bi-plus-lg me-1"></i>Save Score</button>
+                            <a th:href="@{/scorecard/match/{id}(id=${match.id})}" class="btn btn-outline-play26">Done</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="glass-card text-center mb-4">
+                <h6 class="text-muted mb-1">Live Strike Rate</h6>
+                <div class="fs-1 fw-bold text-accent" id="strikeRateDisplay">0.00</div>
+            </div>
+            <div class="glass-card">
+                <h6 class="section-title">Current Innings Batting</h6>
+                <div class="table-responsive">
+                    <table class="table scorecard-table mb-0 text-white">
+                        <thead><tr><th>Batter</th><th>R</th><th>B</th><th></th></tr></thead>
+                        <tbody>
+                            <tr th:each="bs : ${battingScores}">
+                                <td><span th:text="${bs.playerName}">Player</span><br><small class="text-muted" th:if="${bs.isOut}" th:text="${bs.dismissalType}">Out</small></td>
+                                <td th:text="${bs.runs}">0</td>
+                                <td th:text="${bs.balls}">0</td>
+                                <td><form th:action="@{/scorecard/match/{mid}/batting/delete/{id}(mid=${match.id},id=${bs.id})}" method="post" class="d-inline">
+                                    <input type="hidden" name="innings" th:value="${innings}">
+                                    <button type="submit" class="btn btn-link text-danger p-0 m-0 btn-delete" data-confirm="Delete this score?"><i class="bi bi-x-circle"></i></button></form></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/play26.js}"></script>
+</body></html>

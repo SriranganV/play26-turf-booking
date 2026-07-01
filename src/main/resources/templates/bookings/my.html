@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle})}"></head>
+<body>
+    <nav th:replace="~{fragments/layout :: nav}"></nav>
+
+    <style>
+    .bookings-shell {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px 20px 80px
+    }
+
+    .page-hdr {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+        gap: 12px
+    }
+
+    .page-hdr h1 {
+        font-size: 28px;
+        font-weight: 800;
+        color: #0d1117;
+        margin: 0
+    }
+
+    .count-chip {
+        background: #dcfce7;
+        color: #166534;
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 700
+    }
+
+    .btn-browse {
+        padding: 10px 20px;
+        background: #0F6E56;
+        color: #fff;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 700;
+        transition: all .2s
+    }
+
+    .btn-browse:hover {
+        background: #085041
+    }
+
+    .flash {
+        padding: 14px 18px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px
+    }
+
+    .flash-success {
+        background: #f0fdf4;
+        border: 1px solid #86efac;
+        color: #166534
+    }
+
+    .flash-error {
+        background: #fef2f2;
+        border: 1px solid #fca5a5;
+        color: #991b1b
+    }
+
+    .booking-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 22px 24px;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+        flex-wrap: wrap;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, .04);
+        transition: all .2s;
+        animation: fade-up .4s ease both;
+    }
+
+    .booking-card:hover {
+        border-color: #0F6E56;
+        box-shadow: 0 4px 24px rgba(15, 110, 86, .1);
+        transform: translateY(-2px)
+    }
+
+    @keyframes fade-up {
+        from {
+            opacity: 0;
+            transform:translateY(16px)
+        }
+
+        to {
+            opacity: 1;
+            transform: none
+        }
+    }
+
+    .booking-date-col {
+        background: #0F6E56;
+        color: #fff;
+        border-radius: 10px;
+        padding: 10px 16px;
+        text-align: center;
+        min-width: 64px;
+        flex-shrink: 0;
+    }
+
+    .booking-date-col .day {
+        font-size: 28px;
+        font-weight: 900;
+        line-height: 1
+    }
+
+    .booking-date-col .month {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        opacity: .85
+    }
+
+    .booking-info {
+        flex: 1;
+        min-width: 200px
+    }
+
+    .booking-info h3 {
+        font-size: 17px;
+        font-weight: 800;
+        color: #0d1117;
+        margin: 0 0 5px
+    }
+
+    .booking-info .loc {
+        font-size: 13px;
+        color: #6b7280;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 4px
+    }
+
+    .booking-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px
+    }
+
+    .meta-chip {
+        font-size: 13px;
+        color: #374151;
+        background: #f3f4f6;
+        padding: 4px 12px;
+        border-radius: 16px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 4px
+    }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700
+    }
+
+    .badge-confirmed {
+        background: #dcfce7;
+        color: #166534
+    }
+
+    .badge-cancelled {
+        background: #fee2e2;
+        color: #991b1b
+    }
+
+    .booking-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-shrink: 0
+    }
+
+    .btn-cancel {
+        padding: 9px 18px;
+        background: #fff;
+        color: #dc2626;
+        border: 1.5px solid #fca5a5;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all .2s;
+    }
+
+    .btn-cancel:hover {
+        background: #fef2f2;
+        border-color: #dc2626
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: #f8fffe;
+        border: 1.5px dashed rgba(15, 110, 86, .2);
+        border-radius: 16px
+    }
+
+    .empty-state .icon {
+        font-size: 56px;
+        margin-bottom: 16px
+    }
+
+    .empty-state h2 {
+        font-size: 20px;
+        font-weight: 800;
+        color: #0d1117;
+        margin-bottom: 8px
+    }
+
+    .empty-state p {
+        color: #6b7280;
+        margin-bottom: 24px
+    }
+
+    .tab-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 24px
+    }
+
+    .tab {
+        padding: 8px 18px;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 24px;
+        background: #fff;
+        font-size: 13px;
+        font-weight: 600;
+        color: #6b7280;
+        cursor: pointer;
+        transition: all .2s
+    }
+
+    .tab.active {
+        border-color: #0F6E56;
+        color: #0F6E56;
+        background: #f0fdf8
+    }
+    </style>
+
+    <div class="bookings-shell">
+        <div class="page-hdr">
+            <div>
+                <h1> My Bookings</h1>
+            </div>
+            <a class="btn-browse" th:href="@{/turfs}">+ Book a Turf</a>
+        </div>
+
+        <div class="flash flash-success" th:if="${successMessage}">
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div class="flash flash-error" th:if="${errorMessage}">
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tab-row" th:if="${!#lists.isEmpty(bookings)}">
+            <button class="tab active" onclick="filterBookings('all',this)">All</button>
+            <button class="tab" onclick="filterBookings('CONFIRMED',this)">Confirmed</button>
+            <button class="tab" onclick="filterBookings('CANCELLED',this)">Cancelled</button>
+        </div>
+
+        <!-- Empty -->
+        <div class="empty-state" th:if="${#lists.isEmpty(bookings)}">
+            <div class="icon">ðŸŸï¸</div>
+            <h2>No bookings yet</h2>
+            <p>Browse available turfs and book your first slot today.</p>
+            <a class="btn-browse" th:href="@{/turfs}">Browse Turfs</a>
+        </div>
+
+        <!-- Booking cards -->
+        <div id="bookingsList">
+            <div class="booking-card" th:each="b,iter : ${bookings}" th:attr="data-status=${b.bookingStatus},style='animation-delay:' + ${iter.index * 0.05} + 's'">
+
+                <!-- Date column -->
+                <div class="booking-date-col" th:style="${b.bookingStatus == 'CANCELLED'} ? 'background:#9ca3af' : 'background:#0F6E56'">
+                    <div class="day" th:text="${#temporals.day(b.slotDate)}">28</div>
+                    <div class="month" th:text="${#temporals.monthName(b.slotDate).substring(0,3)}">Jun</div>
+                </div>
+
+                <!-- Info -->
+                <div class="booking-info">
+                    <h3 th:text="${b.turfName}">Green Arena</h3>
+                    <div class="loc">
+                        <span th:text="${b.turfLocation}">City Center</span>
+                    </div>
+                    <div class="booking-meta">
+                        <span class="meta-chip">
+                            <span th:text="${b.startTime + ' - ' + b.endTime}">18:00 - 19:00</span>
+                        </span>
+                        <span class="meta-chip">
+                            <span th:text="${b.slotDate}">2026-06-28</span>
+                        </span>
+                        <span class="badge badge-confirmed" th:if="${b.bookingStatus == 'CONFIRMED'}"> Confirmed</span>
+                        <span class="badge badge-cancelled" th:if="${b.bookingStatus == 'CANCELLED'}">âŒ Cancelled</span>
+                    </div>
+                </div>
+
+                <!-- Cancel -->
+                <div class="booking-actions">
+                    <form th:action="@{/bookings/cancel/{id}(id=${b.id})}" method="post" th:if="${b.bookingStatus == 'CONFIRMED'}" onsubmit="return confirm('Cancel this booking? The slot will be released.')">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <button class="btn-cancel" type="submit">Cancel</button>
+                    </form>
+                    <span style="color:#9ca3af;font-size:13px" th:if="${b.bookingStatus == 'CANCELLED'}">Cancelled</span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function filterBookings(status, btn) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.booking-card').forEach(card => {
+            card.style.display = (status === 'all' || card.dataset.status === status) ? '' : 'none';
+        });
+    }
+    </script>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

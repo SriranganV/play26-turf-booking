@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Scorecard Dashboard | PLAY26</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<div class="play26-hero"><div class="container"><h1><i class="bi bi-clipboard-data-fill me-2"></i>Scorecard Hub</h1><p>Cricket scoring &amp; live match management</p></div></div>
+<div class="container pb-5">
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3"><div class="stat-card accent"><i class="bi bi-trophy stat-icon"></i><div class="stat-value" th:text="${totalTournaments} ?: 0">0</div><div class="stat-label">Tournaments</div></div></div>
+        <div class="col-6 col-md-3"><div class="stat-card primary"><i class="bi bi-controller stat-icon"></i><div class="stat-value" th:text="${totalMatches} ?: 0">0</div><div class="stat-label">Matches</div></div></div>
+        <div class="col-6 col-md-3"><div class="stat-card secondary"><i class="bi bi-people stat-icon"></i><div class="stat-value" th:text="${totalTeams} ?: 0">0</div><div class="stat-label">Teams</div></div></div>
+        <div class="col-6 col-md-3"><div class="stat-card"><i class="bi bi-person stat-icon"></i><div class="stat-value" th:text="${totalPlayers} ?: 0">0</div><div class="stat-label">Players</div></div></div>
+    </div>
+    <div class="row g-3 mb-4">
+        <div class="col-md-4"><div class="glass-card text-center"><span class="badge badge-live fs-6 px-3 py-2"><i class="bi bi-broadcast me-1"></i>LIVE</span><div class="stat-value mt-2" th:text="${liveMatches} ?: 0">0</div></div></div>
+        <div class="col-md-4"><div class="glass-card text-center"><span class="badge badge-upcoming fs-6 px-3 py-2">Upcoming</span><div class="stat-value mt-2" th:text="${upcomingMatches} ?: 0">0</div></div></div>
+        <div class="col-md-4"><div class="glass-card text-center"><span class="badge badge-completed fs-6 px-3 py-2">Completed</span><div class="stat-value mt-2" th:text="${completedMatches} ?: 0">0</div></div></div>
+    </div>
+    <!-- Recent Matches -->
+    <h3 class="section-title"><i class="bi bi-clock-history me-2"></i>Recent Matches</h3>
+    <div th:if="${recentMatches != null and !recentMatches.isEmpty()}" class="glass-card mb-4">
+        <div class="table-responsive">
+            <table class="table table-dark-custom mb-0">
+                <thead><tr><th>Match</th><th>Date</th><th>Venue</th><th>Status</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr th:each="m : ${recentMatches}">
+                        <td><strong><span th:text="${m.teamAName}">A</span> vs <span th:text="${m.teamBName}">B</span></strong></td>
+                        <td th:text="${m.matchDate}">Date</td>
+                        <td th:text="${m.venue}">Venue</td>
+                        <td><span class="badge" th:classappend="${m.status == 'LIVE' ? 'badge-live' : (m.status == 'UPCOMING' ? 'badge-upcoming' : 'badge-completed')}" th:text="${m.status}">S</span></td>
+                        <td><a th:href="@{/scorecard/match/{id}(id=${m.id})}" class="btn btn-glass btn-sm"><i class="bi bi-clipboard-data me-1"></i>Score</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div th:if="${recentMatches == null or recentMatches.isEmpty()}" class="empty-state glass-card"><i class="bi bi-controller"></i><p>No matches yet</p></div>
+    <!-- Quick Actions -->
+    <h3 class="section-title"><i class="bi bi-lightning me-2"></i>Quick Actions</h3>
+    <div class="row g-3">
+        <div class="col-6 col-md-3"><a th:href="@{/tournaments/new}" class="quick-action"><i class="bi bi-trophy"></i>New Tournament</a></div>
+        <div class="col-6 col-md-3"><a th:href="@{/matches/new}" class="quick-action"><i class="bi bi-controller"></i>New Match</a></div>
+        <div class="col-6 col-md-3"><a th:href="@{/teams/new}" class="quick-action"><i class="bi bi-people"></i>New Team</a></div>
+        <div class="col-6 col-md-3"><a th:href="@{/players/new}" class="quick-action"><i class="bi bi-person-plus"></i>New Player</a></div>
+    </div>
+</div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/play26.js}"></script>
+</body></html>

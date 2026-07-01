@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle})}">
+    
+</head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<style>
+        /* ── Login Page Styles ── */
+        .login-shell {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            background: #f4f6f5;
+        }
+
+        .login-card {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            width: 100%;
+            max-width: 860px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 32px rgba(0, 0, 0, 0.10);
+        }
+
+        /* ── Left Panel ── */
+        .login-left {
+            background: #0F6E56;
+            padding: 3rem 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .turf-bg {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .brand-wrap {
+            position: relative;
+            z-index: 2;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+            color: #fff;
+        }
+
+        .brand-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            line-height: 1.2;
+        }
+
+        .brand-tagline {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.55);
+            font-weight: 400;
+            display: block;
+        }
+
+        .hero-wrap {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-eyebrow {
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .hero-headline {
+            font-size: 30px;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.2;
+            margin-bottom: 14px;
+        }
+
+        .hero-headline span {
+            color: #9FE1CB;
+        }
+
+        .hero-desc {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.65);
+            line-height: 1.7;
+        }
+
+        .feature-list {
+            position: relative;
+            z-index: 2;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            font-size: 12.5px;
+            color: rgba(255, 255, 255, 0.72);
+        }
+
+        .feature-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #9FE1CB;
+            flex-shrink: 0;
+        }
+
+        /* ── Right Panel ── */
+        .login-right {
+            background: #ffffff;
+            padding: 3rem 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-heading {
+            margin-bottom: 1.75rem;
+        }
+
+        .form-heading h1 {
+            font-size: 21px;
+            font-weight: 600;
+            color: #111;
+            margin-bottom: 4px;
+        }
+
+        .form-heading p {
+            font-size: 13px;
+            color: #6b7280;
+            margin: 0;
+        }
+
+        /* ── Alerts ── */
+        .alert {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 10px 13px;
+            border-radius: 9px;
+            font-size: 13px;
+            margin-bottom: 1.2rem;
+        }
+
+        .alert-success {
+            background: #E1F5EE;
+            color: #085041;
+            border: 0.5px solid #5DCAA5;
+        }
+
+        .alert-error {
+            background: #FCEBEB;
+            color: #791F1F;
+            border: 0.5px solid #F09595;
+        }
+
+        /* ── Role Tabs ── */
+        .role-tabs {
+            display: flex;
+            gap: 7px;
+            margin-bottom: 1.5rem;
+        }
+
+        .role-tab {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 9px;
+            background: #f9fafb;
+            font-size: 13px;
+            color: #6b7280;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.15s ease;
+            text-decoration: none;
+        }
+
+        .role-tab.active,
+        .role-tab:focus {
+            background: #E1F5EE;
+            border-color: #0F6E56;
+            color: #085041;
+            outline: none;
+        }
+
+        .role-tab:hover:not(.active) {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+        }
+
+        /* ── Form Fields ── */
+        .field-group {
+            margin-bottom: 1rem;
+        }
+
+        .field-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 5px;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap .input-icon {
+            position: absolute;
+            left: 11px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 15px;
+            color: #9ca3af;
+            pointer-events: none;
+        }
+
+        .input-wrap input {
+            width: 100%;
+            height: 40px;
+            padding: 0 40px 0 36px;
+            font-size: 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 9px;
+            background: #f9fafb;
+            color: #111;
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+            font-family: inherit;
+        }
+
+        .input-wrap input:focus {
+            border-color: #0F6E56;
+            box-shadow: 0 0 0 3px rgba(15, 110, 86, 0.12);
+            background: #fff;
+        }
+
+        .input-wrap input::placeholder {
+            color: #9ca3af;
+        }
+
+        .eye-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #9ca3af;
+            font-size: 15px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            line-height: 1;
+        }
+
+        .eye-btn:hover {
+            color: #6b7280;
+        }
+
+        /* ── Forgot Link ── */
+        .forgot-row {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: -4px;
+            margin-bottom: 1.4rem;
+        }
+
+        .forgot-link {
+            font-size: 12.5px;
+            color: #0F6E56;
+            text-decoration: none;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        /* ── Submit Button ── */
+        .btn-submit {
+            width: 100%;
+            height: 42px;
+            background: #0F6E56;
+            color: #fff;
+            border: none;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: inherit;
+            transition: background 0.15s, transform 0.1s;
+        }
+
+        .btn-submit:hover {
+            background: #085041;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        /* ── Divider ── */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 1.25rem 0;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e5e7eb;
+        }
+
+        /* ── Register Row ── */
+        .register-row {
+            text-align: center;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .register-row a {
+            color: #0F6E56;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .register-row a:hover {
+            text-decoration: underline;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .login-card {
+                grid-template-columns: 1fr;
+                max-width: 420px;
+            }
+
+            .login-left {
+                padding: 2rem 1.75rem;
+                min-height: 200px;
+            }
+
+            .hero-headline {
+                font-size: 22px;
+            }
+
+            .login-right {
+                padding: 2rem 1.75rem;
+            }
+
+            .feature-list {
+                display: none;
+            }
+        }
+    </style>
+<main class="login-shell">
+    <div class="login-card">
+
+        <!-- ── Left Panel ── -->
+        <div class="login-left">
+            <!-- Decorative turf field lines -->
+            <svg class="turf-bg" viewBox="0 0 380 560" preserveAspectRatio="xMidYMid slice"
+                 xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <ellipse cx="190" cy="280" rx="80" ry="80" fill="none"
+                         stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/>
+                <line x1="0" y1="280" x2="380" y2="280"
+                      stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/>
+                <rect x="20" y="100" width="100" height="55" rx="2" fill="none"
+                      stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/>
+                <rect x="260" y="405" width="100" height="55" rx="2" fill="none"
+                      stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/>
+                <line x1="0" y1="0" x2="0" y2="560"
+                      stroke="rgba(255,255,255,0.05)" stroke-width="14"/>
+                <line x1="380" y1="0" x2="380" y2="560"
+                      stroke="rgba(255,255,255,0.05)" stroke-width="14"/>
+            </svg>
+
+            <!-- Brand -->
+            <div class="brand-wrap">
+                <div class="brand-logo">
+                    <div class="brand-icon">&#9917;</div>
+                    <div>
+                        <div class="brand-name">TurfPlay</div>
+                        <span class="brand-tagline">Sports Hub</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hero text -->
+            <div class="hero-wrap">
+                <div class="hero-eyebrow">Welcome back</div>
+                <div class="hero-headline">Book your turf,<br><span>play your game.</span></div>
+                <p class="hero-desc">Manage bookings, track scorecards, and follow tournaments &mdash; all in one place.</p>
+            </div>
+
+            <!-- Feature bullets -->
+            <ul class="feature-list">
+                <li><span class="feature-dot"></span>Turf booking &amp; slot management</li>
+                <li><span class="feature-dot"></span>Cricket scorecard generator</li>
+                <li><span class="feature-dot"></span>League &amp; tournament tables</li>
+                <li><span class="feature-dot"></span>Sports news &amp; blogs</li>
+            </ul>
+        </div>
+
+        <!-- ── Right Panel ── -->
+        <div class="login-right">
+            <div class="form-heading">
+                <h1>Sign in to your account</h1>
+                <p>Enter your credentials to continue</p>
+            </div>
+
+            <!-- Alert: registered successfully -->
+            <div class="alert alert-success" th:if="${registered}">
+                &#10003;&nbsp; Account created successfully. Login to continue.
+            </div>
+
+            <!-- Alert: bad credentials -->
+            <div class="alert alert-error" th:if="${param.error}">
+                &#9888;&nbsp; Invalid email or password. Please try again.
+            </div>
+
+            <!-- Alert: logged out -->
+            <div class="alert alert-success" th:if="${param.logout}">
+                &#10003;&nbsp; You have been logged out successfully.
+            </div>
+
+            <!-- Role tabs (visual only — Spring Security assigns roles via credentials) -->
+            <div class="role-tabs" role="group" aria-label="Select login role">
+                <button type="button" class="role-tab active" id="tab-user"
+                        onclick="setRole('user')" aria-pressed="true">
+                    &#128100;&nbsp; Player
+                </button>
+                <button type="button" class="role-tab" id="tab-admin"
+                        onclick="setRole('admin')" aria-pressed="false">
+                    &#128737;&nbsp; Admin
+                </button>
+            </div>
+
+            <!-- Login form — th:action, name, CSRF all preserved -->
+            <form th:action="@{/login}" method="post" id="loginForm" novalidate>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                <!-- Email field -->
+                <div class="field-group">
+                    <label for="email">Email address</label>
+                    <div class="input-wrap">
+                        <span class="input-icon" aria-hidden="true">&#9993;</span>
+                        <input id="email"
+                               type="email"
+                               name="email"
+                               placeholder="you@example.com"
+                               autocomplete="email"
+                               required>
+                    </div>
+                </div>
+
+                <!-- Password field -->
+                <div class="field-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrap">
+                        <span class="input-icon" aria-hidden="true">&#128274;</span>
+                        <input id="password"
+                               type="password"
+                               name="password"
+                               placeholder="Enter your password"
+                               autocomplete="current-password"
+                               required>
+                        <button type="button"
+                                class="eye-btn"
+                                id="eyeBtn"
+                                onclick="togglePassword()"
+                                aria-label="Show password">
+                            &#128065;
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Forgot password -->
+                <div class="forgot-row">
+                    <a href="/forgot-password" class="forgot-link">Forgot password?</a>
+                </div>
+
+                <!-- Submit -->
+                <button class="btn-submit" type="submit">
+                    &#10148;&nbsp; Sign in
+                </button>
+            </form>
+
+            <div class="divider">or</div>
+
+            <div class="register-row">
+                New to TurfPlay? <a href="/register">Create an account</a>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<script>
+    /* ── Password visibility toggle ── */
+    function togglePassword() {
+        var input = document.getElementById('password');
+        var btn   = document.getElementById('eyeBtn');
+        if (input.type === 'password') {
+            input.type = 'text';
+            btn.setAttribute('aria-label', 'Hide password');
+            btn.innerHTML = '&#128064;';
+        } else {
+            input.type = 'password';
+            btn.setAttribute('aria-label', 'Show password');
+            btn.innerHTML = '&#128065;';
+        }
+    }
+
+    /* ── Role tab switcher (visual only — backend handles actual role assignment) ── */
+    function setRole(role) {
+        var userTab  = document.getElementById('tab-user');
+        var adminTab = document.getElementById('tab-admin');
+        if (role === 'user') {
+            userTab.classList.add('active');
+            adminTab.classList.remove('active');
+            userTab.setAttribute('aria-pressed', 'true');
+            adminTab.setAttribute('aria-pressed', 'false');
+        } else {
+            adminTab.classList.add('active');
+            userTab.classList.remove('active');
+            adminTab.setAttribute('aria-pressed', 'true');
+            userTab.setAttribute('aria-pressed', 'false');
+        }
+    }
+
+    /* ── Basic client-side validation ── */
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+        var email    = document.getElementById('email').value.trim();
+        var password = document.getElementById('password').value;
+        if (!email || !password) {
+            e.preventDefault();
+            alert('Please fill in both email and password.');
+        }
+    });
+</script>
+</body>
+</html>

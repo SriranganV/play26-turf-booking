@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<style>
+/* ══════════════════════════════════════════════════════════════
+   PLAY26 — Home Page v3 · "The Pitch" Design
+   Signature idea: the hero reads like a floodlit pitch at kickoff —
+   painted sideline markings, a live "quick book" scoreboard card,
+   and stat chips that count up like a live score ticking over.
+   ══════════════════════════════════════════════════════════════ */
+
+.p26-home * { box-sizing: border-box; }
+
+/* ── Hero ─────────────────────────────────────────────────────── */
+.p26-hero {
+    position: relative;
+    min-height: 92vh;
+    display: flex;
+    align-items: center;
+    background: radial-gradient(1200px 600px at 85% -10%, rgba(159,225,203,0.25), transparent 60%),
+                linear-gradient(160deg, #06342a 0%, var(--play26-primary-dark) 38%, var(--play26-primary) 100%);
+    overflow: hidden;
+    padding: 7.5rem 0 6rem;
+}
+/* painted pitch lines, faint, like floodlit turf markings */
+.p26-hero .pitch-lines {
+    position: absolute; inset: 0;
+    opacity: 0.14;
+    background-image:
+        repeating-linear-gradient(90deg, transparent 0 7.5%, rgba(255,255,255,0.6) 7.5% 7.6%),
+        linear-gradient(transparent, transparent);
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 20%, #000 80%, transparent 100%);
+            mask-image: linear-gradient(180deg, transparent 0%, #000 20%, #000 80%, transparent 100%);
+}
+.p26-hero .pitch-circle {
+    position: absolute; left: 50%; top: 62%;
+    width: 340px; height: 340px;
+    border: 2px solid rgba(255,255,255,0.18);
+    border-radius: 50%;
+    transform: translate(-50%,-50%);
+    pointer-events: none;
+}
+.p26-hero .glow-orb {
+    position: absolute; border-radius: 50%; filter: blur(70px);
+    background: radial-gradient(circle, rgba(159,225,203,0.55), transparent 70%);
+    pointer-events: none;
+}
+.p26-hero .glow-orb.one { width: 420px; height: 420px; top: -120px; right: -80px; }
+.p26-hero .glow-orb.two { width: 300px; height: 300px; bottom: -100px; left: -60px;
+    background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 70%); }
+
+.p26-hero .container-inner {
+    position: relative; z-index: 2;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 3rem;
+    align-items: center;
+}
+@media (max-width: 991px) {
+    .p26-hero .container-inner { grid-template-columns: 1fr; text-align: center; }
+}
+
+.p26-kickoff-badge {
+    display: inline-flex; align-items: center; gap: .5rem;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #fff; font-weight: 700; font-size: .8rem;
+    letter-spacing: .06em; text-transform: uppercase;
+    padding: .5rem 1rem; border-radius: 50px;
+    backdrop-filter: blur(6px);
+}
+.p26-kickoff-badge .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #4ADE80; box-shadow: 0 0 0 0 rgba(74,222,128,0.6);
+    animation: p26-dot-ping 1.8s infinite;
+}
+@keyframes p26-dot-ping {
+    0% { box-shadow: 0 0 0 0 rgba(74,222,128,0.6); }
+    70% { box-shadow: 0 0 0 8px rgba(74,222,128,0); }
+    100% { box-shadow: 0 0 0 0 rgba(74,222,128,0); }
+}
+
+.p26-hero h1 {
+    font-size: clamp(2.4rem, 4.4vw, 3.6rem);
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 1.2rem 0 1.1rem;
+}
+.p26-hero h1 .accent {
+    background: linear-gradient(90deg, #9FE1CB, #ffffff);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.p26-hero .lead-text { color: rgba(255,255,255,0.82); font-size: 1.15rem; max-width: 520px; }
+@media (max-width: 991px) { .p26-hero .lead-text { max-width: none; margin-inline: auto; } }
+
+.p26-hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 2rem; }
+@media (max-width: 991px) { .p26-hero-actions { justify-content: center; } }
+
+.p26-btn-glow {
+    background: #ffffff; color: var(--play26-primary);
+    padding: .95rem 2.2rem; border-radius: 50px; font-weight: 800;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    transition: all .3s cubic-bezier(.4,0,.2,1);
+    display: inline-flex; align-items: center; gap: .5rem;
+}
+.p26-btn-glow:hover { transform: translateY(-3px); color: var(--play26-primary-dark); box-shadow: 0 16px 32px rgba(0,0,0,0.3); }
+.p26-btn-ghost {
+    background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.4);
+    color: #fff; padding: .9rem 2.2rem; border-radius: 50px; font-weight: 800;
+    transition: all .3s ease; display: inline-flex; align-items: center; gap: .5rem;
+}
+.p26-btn-ghost:hover { background: #fff; color: var(--play26-primary); border-color: #fff; }
+
+.p26-trust-row { display: flex; gap: 1.5rem; margin-top: 2.2rem; flex-wrap: wrap; }
+@media (max-width: 991px) { .p26-trust-row { justify-content: center; } }
+.p26-trust-row span { color: rgba(255,255,255,0.75); font-size: .85rem; display: flex; align-items: center; gap: .4rem; }
+.p26-trust-row i { color: #9FE1CB; }
+
+/* ── Quick-book scoreboard card ──────────────────────────────── */
+.p26-quickbook {
+    background: rgba(255,255,255,0.97);
+    border-radius: 1.5rem;
+    padding: 1.75rem;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.35);
+    position: relative;
+    transform: rotate(-1deg);
+    transition: transform .4s ease;
+}
+.p26-quickbook:hover { transform: rotate(0deg); }
+.p26-quickbook::before {
+    content: 'LIVE SLOTS'; position: absolute; top: -14px; left: 24px;
+    background: var(--play26-heading); color: #fff; font-size: .68rem; font-weight: 800;
+    letter-spacing: .1em; padding: .3rem .8rem; border-radius: 6px;
+}
+.p26-quickbook h5 { font-weight: 800; color: var(--play26-heading); margin-bottom: 1.1rem; }
+.p26-quickbook .form-label { font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; }
+.p26-sport-chip-row { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1rem; }
+.p26-sport-chip {
+    border: 1.5px solid var(--play26-border); background: #fff;
+    color: var(--play26-text); font-weight: 700; font-size: .82rem;
+    padding: .4rem .9rem; border-radius: 50px; cursor: pointer;
+    transition: all .2s ease; user-select: none;
+}
+.p26-sport-chip.active, .p26-sport-chip:hover {
+    background: var(--play26-primary); border-color: var(--play26-primary); color: #fff;
+}
+.p26-quickbook .btn-submit-search {
+    width: 100%; background: var(--play26-gradient); color: #fff; border: none;
+    padding: .85rem; border-radius: .75rem; font-weight: 800; margin-top: .3rem;
+    transition: all .25s ease; box-shadow: 0 10px 20px rgba(15,110,86,0.25);
+}
+.p26-quickbook .btn-submit-search:hover { transform: translateY(-2px); box-shadow: 0 14px 26px rgba(15,110,86,0.35); }
+.p26-float-tag {
+    position: absolute; background: #fff; border-radius: 1rem;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15); padding: .7rem 1rem;
+    display: flex; align-items: center; gap: .6rem; font-weight: 700; font-size: .85rem;
+    color: var(--play26-heading);
+    animation: p26-float 3.5s ease-in-out infinite;
+}
+.p26-float-tag.tag-a { top: -22px; right: -18px; }
+.p26-float-tag.tag-b { bottom: -20px; left: -22px; animation-delay: 1.2s; }
+.p26-float-tag i { color: var(--play26-primary); font-size: 1.1rem; }
+@keyframes p26-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@media (max-width: 575px) { .p26-float-tag { display: none; } }
+
+/* ── Stats strip ──────────────────────────────────────────────── */
+.p26-stats-strip {
+    background: #fff; border-radius: 1.5rem; padding: 2.2rem;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.08); border: 1px solid var(--play26-border);
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;
+}
+@media (max-width: 767px) { .p26-stats-strip { grid-template-columns: repeat(2, 1fr); } }
+.p26-stat { text-align: center; }
+.p26-stat .p26-stat-icon {
+    width: 54px; height: 54px; margin: 0 auto .8rem; border-radius: 14px;
+    background: rgba(15,110,86,0.08); color: var(--play26-primary);
+    display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+}
+.p26-stat h3 { font-weight: 900; font-size: 1.9rem; color: var(--play26-heading); margin: 0; }
+.p26-stat p { color: var(--play26-text-muted); font-weight: 600; font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; margin: .2rem 0 0; }
+
+/* ── Sport filter tabs + venue cards ─────────────────────────── */
+.p26-filter-row { display: flex; flex-wrap: wrap; gap: .75rem; justify-content: center; }
+.p26-filter-pill {
+    padding: .7rem 1.5rem; background: #fff; border: 2px solid var(--play26-border);
+    border-radius: 50px; font-weight: 700; color: var(--play26-heading); cursor: pointer;
+    transition: all .25s cubic-bezier(.4,0,.2,1); display: flex; align-items: center; gap: .5rem;
+}
+.p26-filter-pill:hover { border-color: var(--play26-primary); color: var(--play26-primary); }
+.p26-filter-pill.active {
+    background: var(--play26-gradient); border-color: transparent; color: #fff;
+    box-shadow: 0 10px 20px rgba(15,110,86,0.25); transform: translateY(-2px);
+}
+.p26-venue-card {
+    background: #fff; border-radius: 1.25rem; overflow: hidden; height: 100%;
+    border: 1px solid var(--play26-border); box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+    transition: all .4s cubic-bezier(.4,0,.2,1);
+}
+.p26-venue-card:hover { transform: translateY(-10px); box-shadow: 0 24px 45px rgba(15,110,86,0.15); border-color: var(--play26-accent); }
+.p26-venue-img { position: relative; height: 210px; overflow: hidden; }
+.p26-venue-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; }
+.p26-venue-card:hover .p26-venue-img img { transform: scale(1.08); }
+.p26-venue-tag { position: absolute; top: 14px; left: 14px; background: rgba(255,255,255,0.95); color: var(--play26-primary);
+    font-weight: 800; font-size: .72rem; padding: .35rem .8rem; border-radius: 50px; text-transform: uppercase; letter-spacing: .04em; }
+.p26-venue-body { padding: 1.5rem; }
+.p26-venue-body h4 { font-weight: 800; color: var(--play26-heading); }
+.p26-venue-actions { display: flex; gap: .6rem; margin-top: 1.1rem; }
+.p26-venue-actions a { flex: 1; text-align: center; font-size: .88rem; padding: .55rem; }
+.p26-fade-item { transition: opacity .3s ease, transform .3s ease; }
+.p26-fade-item.p26-hidden { display: none; }
+
+/* ── Timeline steps ───────────────────────────────────────────── */
+.p26-steps-wrap { position: relative; }
+.p26-step {
+    background: #fff; border-radius: 1.5rem; padding: 2.4rem 1.8rem; text-align: center;
+    border: 1px solid var(--play26-border); box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+    height: 100%; position: relative; transition: all .35s ease;
+}
+.p26-step:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(15,110,86,0.1); }
+.p26-step .step-idx {
+    position: absolute; top: 18px; right: 22px; font-weight: 900; font-size: 2.6rem;
+    color: rgba(15,110,86,0.06);
+}
+.p26-step .step-ico {
+    width: 68px; height: 68px; border-radius: 18px; margin: 0 auto 1.3rem;
+    background: var(--play26-gradient); color: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 1.7rem; box-shadow: 0 12px 24px rgba(15,110,86,0.22);
+}
+
+/* ── Testimonials ─────────────────────────────────────────────── */
+.p26-quote-card { background: #fff; border-radius: 1.5rem; padding: 2.4rem; text-align: center; max-width: 700px; margin: 0 auto; border: 1px solid var(--play26-border); box-shadow: 0 15px 35px rgba(0,0,0,0.05); }
+.p26-quote-card i.bi-quote { font-size: 2rem; color: var(--play26-accent); }
+.p26-quote-card p.quote-text { font-size: 1.15rem; color: var(--play26-heading); font-weight: 500; margin: 1rem 0 1.4rem; }
+.p26-avatar-initial {
+    width: 46px; height: 46px; border-radius: 50%; background: var(--play26-gradient); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-weight: 800; margin: 0 auto .6rem;
+}
+#p26Carousel .carousel-indicators [data-bs-target] { background: var(--play26-primary); width: 8px; height: 8px; border-radius: 50%; }
+
+/* ── FAQ ──────────────────────────────────────────────────────── */
+.p26-accordion .accordion-item { border: 1px solid var(--play26-border); border-radius: 1rem !important; overflow: hidden; margin-bottom: .9rem; }
+.p26-accordion .accordion-button { font-weight: 700; color: var(--play26-heading); background: #fff; }
+.p26-accordion .accordion-button:not(.collapsed) { color: var(--play26-primary); background: rgba(15,110,86,0.05); box-shadow: none; }
+.p26-accordion .accordion-button:focus { box-shadow: none; }
+
+/* ── CTA ──────────────────────────────────────────────────────── */
+.p26-cta {
+    border-radius: 2rem; position: relative; overflow: hidden;
+    background: linear-gradient(135deg, rgba(6,52,42,0.96), rgba(15,110,86,0.94)),
+                url('https://images.unsplash.com/photo-1518605368461-1e129223789a?auto=format&fit=crop&w=1600&q=70') center/cover;
+    padding: 4rem 2rem; text-align: center;
+}
+.p26-cta h2 { color: #fff; font-weight: 900; font-size: clamp(1.8rem, 3.5vw, 2.8rem); }
+.p26-cta p { color: rgba(255,255,255,0.8); max-width: 560px; margin: 0 auto 2rem; }
+
+/* ── Back to top ──────────────────────────────────────────────── */
+#p26BackTop {
+    position: fixed; right: 22px; bottom: 22px; width: 46px; height: 46px; border-radius: 50%;
+    background: var(--play26-primary); color: #fff; border: none; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 10px 25px rgba(15,110,86,0.35); opacity: 0; visibility: hidden; transform: translateY(10px);
+    transition: all .3s ease; z-index: 999; font-size: 1.1rem;
+}
+#p26BackTop.show { opacity: 1; visibility: visible; transform: translateY(0); }
+#p26BackTop:hover { background: var(--play26-primary-dark); }
+
+.p26-reveal { opacity: 0; transform: translateY(32px); transition: opacity .7s cubic-bezier(.4,0,.2,1), transform .7s cubic-bezier(.4,0,.2,1); }
+.p26-reveal.active { opacity: 1; transform: translateY(0); }
+</style>
+
+<main class="p26-home">
+
+    <!-- ══════════════ HERO ══════════════ -->
+    <section class="p26-hero">
+        <div class="pitch-lines"></div>
+        <div class="pitch-circle"></div>
+        <div class="glow-orb one"></div>
+        <div class="glow-orb two"></div>
+
+        <div class="container container-inner">
+            <div class="hero-copy">
+                <span class="p26-kickoff-badge"><span class="dot"></span> Slots updating live, right now</span>
+                <h1>Book the pitch.<br>Run the <span class="accent">whole game.</span></h1>
+                <p class="lead-text">From floodlit turfs to full cricket tournaments — PLAY26 handles your booking, your scorecards, and your standings in one place.</p>
+
+                <div class="p26-hero-actions">
+                    <a class="p26-btn-glow" href="/turfs"><i class="bi bi-calendar2-check-fill"></i> Book a Turf</a>
+                    <a class="p26-btn-ghost" href="/blogs"><i class="bi bi-globe"></i> Live Standings</a>
+                </div>
+
+                <div class="p26-trust-row">
+                    <span><i class="bi bi-shield-check"></i> Verified turfs only</span>
+                    <span><i class="bi bi-lightning-charge"></i> Instant confirmation</span>
+                    <span><i class="bi bi-clock"></i> Book 24/7</span>
+                </div>
+            </div>
+
+            <div class="hero-widget">
+                <form class="p26-quickbook" action="/turfs" method="get" id="p26QuickBook">
+                    <div class="p26-float-tag tag-a"><i class="bi bi-star-fill"></i> 4.8 rated</div>
+                    <div class="p26-float-tag tag-b"><i class="bi bi-people-fill"></i> 500+ players</div>
+
+                    <h5><i class="bi bi-search me-1 text-play26"></i> Find a Slot</h5>
+
+                    <label class="form-label d-block text-muted">Choose a sport</label>
+                    <div class="p26-sport-chip-row" id="p26ChipRow">
+                        <span class="p26-sport-chip active" data-sport="Football">Football</span>
+                        <span class="p26-sport-chip" data-sport="Cricket">Cricket</span>
+                        <span class="p26-sport-chip" data-sport="Kabaddi">Kabaddi</span>
+                        <span class="p26-sport-chip" data-sport="Badminton">Badminton</span>
+                        <span class="p26-sport-chip" data-sport="Volleyball">Volleyball</span>
+                        <span class="p26-sport-chip" data-sport="Basketball">Basketball</span>
+                    </div>
+                    <input type="hidden" name="sport" id="p26SportInput" value="Football">
+
+                    <label class="form-label d-block text-muted mt-2" for="p26Date">Pick a date</label>
+                    <input type="date" class="form-control mb-3" id="p26Date" name="date">
+
+                    <button type="submit" class="btn-submit-search"><i class="bi bi-search me-1"></i> Search Available Turfs</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ STATS STRIP ══════════════ -->
+    <section class="container position-relative" style="margin-top: -55px; z-index: 5;">
+        <div class="p26-stats-strip p26-reveal">
+            <div class="p26-stat">
+                <div class="p26-stat-icon"><i class="bi bi-clock-history"></i></div>
+                <h3>24/7</h3>
+                <p>Booking Access</p>
+            </div>
+            <div class="p26-stat">
+                <div class="p26-stat-icon"><i class="bi bi-trophy"></i></div>
+                <h3 class="p26-count" data-target="6">0</h3>
+                <p>Sports Supported</p>
+            </div>
+            <div class="p26-stat">
+                <div class="p26-stat-icon"><i class="bi bi-lightning-charge"></i></div>
+                <h3 class="p26-count" data-target="100" data-suffix="%">0%</h3>
+                <p>Instant Confirmation</p>
+            </div>
+            <div class="p26-stat">
+                <div class="p26-stat-icon"><i class="bi bi-activity"></i></div>
+                <h3>Live</h3>
+                <p>Score Tracking</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ VENUES BY SPORT ══════════════ -->
+    <section class="container py-5 mt-4">
+        <div class="text-center mb-4 p26-reveal">
+            <h2 class="display-6 fw-bold text-heading">Explore Facilities by Sport</h2>
+            <p class="text-muted lead mx-auto" style="max-width: 640px;">Tap a sport to see the venues built for it — every turf is checked for the right surface, markings, and gear.</p>
+        </div>
+
+        <div class="p26-filter-row mb-5 p26-reveal" id="p26FilterRow">
+            <div class="p26-filter-pill active" data-filter="Football"><i class="bi bi-dribbble"></i> Football</div>
+            <div class="p26-filter-pill" data-filter="Cricket"><i class="bi bi-circle-fill" style="font-size:.6rem;"></i> Cricket</div>
+            <div class="p26-filter-pill" data-filter="Kabaddi"><i class="bi bi-person-arms-up"></i> Kabaddi</div>
+            <div class="p26-filter-pill" data-filter="Badminton"><i class="bi bi-record-circle"></i> Badminton</div>
+            <div class="p26-filter-pill" data-filter="Volleyball"><i class="bi bi-globe"></i> Volleyball</div>
+            <div class="p26-filter-pill" data-filter="Basketball"><i class="bi bi-circle"></i> Basketball</div>
+        </div>
+
+        <div class="row g-4" id="p26VenueGrid">
+            <div class="col-lg-4 col-md-6 p26-fade-item" data-sport="Football">
+                <article class="p26-venue-card p26-reveal">
+                    <div class="p26-venue-img">
+                        <img src="https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?auto=format&fit=crop&w=900&q=80" alt="Football turf">
+                        <span class="p26-venue-tag">Floodlit</span>
+                    </div>
+                    <div class="p26-venue-body">
+                        <h4>Football Turfs</h4>
+                        <p class="text-muted mb-0">FIFA-standard artificial grass, playable day or night, 5-a-side to 11-a-side.</p>
+                        <div class="p26-venue-actions">
+                            <a href="/turfs" class="btn btn-play26">Book Slot</a>
+                            <a href="/sports" class="btn btn-outline-play26">Rules</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <div class="col-lg-4 col-md-6 p26-fade-item p26-hidden" data-sport="Cricket">
+                <article class="p26-venue-card p26-reveal">
+                    <div class="p26-venue-img">
+                        <img src="https://images.unsplash.com/photo-1531415074968-036ba1b575da?auto=format&fit=crop&w=900&q=80" alt="Cricket ground">
+                        <span class="p26-venue-tag">Scorecard Ready</span>
+                    </div>
+                    <div class="p26-venue-body">
+                        <h4>Cricket Grounds</h4>
+                        <p class="text-muted mb-0">Leather and tennis-ball pitches, with live scorecards built right into your booking.</p>
+                        <div class="p26-venue-actions">
+                            <a href="/turfs" class="btn btn-play26">Book Slot</a>
+                            <a href="/sports" class="btn btn-outline-play26">Rules</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <div class="col-lg-4 col-md-6 p26-fade-item p26-hidden" data-sport="Kabaddi">
+                <article class="p26-venue-card p26-reveal">
+                    <div class="p26-venue-img">
+                        <img src="https://images.unsplash.com/photo-1552667466-07770ae110d0?auto=format&fit=crop&w=900&q=80" alt="Kabaddi court">
+                        <span class="p26-venue-tag">Mat Court</span>
+                    </div>
+                    <div class="p26-venue-body">
+                        <h4>Kabaddi Courts</h4>
+                        <p class="text-muted mb-0">Regulation-marked mat courts for raid-and-tackle matches, indoor and outdoor.</p>
+                        <div class="p26-venue-actions">
+                            <a href="/turfs" class="btn btn-play26">Book Slot</a>
+                            <a href="/sports" class="btn btn-outline-play26">Rules</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <div class="col-lg-4 col-md-6 p26-fade-item p26-hidden" data-sport="Badminton">
+                <article class="p26-venue-card p26-reveal">
+                    <div class="p26-venue-img">
+                        <img src="https://images.unsplash.com/photo-1521537634581-0dced2fee2ef?auto=format&fit=crop&w=900&q=80" alt="Badminton court">
+                        <span class="p26-venue-tag">Indoor</span>
+                    </div>
+                    <div class="p26-venue-body">
+                        <h4>Badminton Courts</h4>
+                        <p class="text-muted mb-0">Wooden and synthetic indoor courts with proper lighting for singles or doubles.</p>
+                        <div class="p26-venue-actions">
+                            <a href="/turfs" class="btn btn-play26">Book Slot</a>
+                            <a href="/sports" class="btn btn-outline-play26">Rules</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <div class="col-lg-4 col-md-6 p26-fade-item p26-hidden" data-sport="Volleyball">
+                <article class="p26-venue-card p26-reveal">
+                    <div class="p26-venue-img">
+                        <img src="https://images.unsplash.com/photo-1592656094267-764a45160876?auto=format&fit=crop&w=900&q=80" alt="Volleyball court">
+                        <span class="p26-venue-tag">Sand & Court</span>
+                    </div>
+                    <div class="p26-venue-body">
+                        <h4>Volleyball Courts</h4>
+                        <p class="text-muted mb-0">Sand and hardcourt options with net heights set for your match format.</p>
+                        <div class="p26-venue-actions">
+                            <a href="/turfs" class="btn btn-play26">Book Slot</a>
+                            <a href="/sports" class="btn btn-outline-play26">Rules</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <div class="col-lg-4 col-md-6 p26-fade-item p26-hidden" data-sport="Basketball">
+                <article class="p26-venue-card p26-reveal">
+                    <div class="p26-venue-img">
+                        <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=900&q=80" alt="Basketball court">
+                        <span class="p26-venue-tag">Full & Half Court</span>
+                    </div>
+                    <div class="p26-venue-body">
+                        <h4>Basketball Courts</h4>
+                        <p class="text-muted mb-0">Full and half-court options with proper hoops and markings for pickup or league play.</p>
+                        <div class="p26-venue-actions">
+                            <a href="/turfs" class="btn btn-play26">Book Slot</a>
+                            <a href="/sports" class="btn btn-outline-play26">Rules</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ HOW IT WORKS ══════════════ -->
+    <section class="py-5" style="background: linear-gradient(180deg, var(--play26-bg) 0%, #fff 100%);">
+        <div class="container py-4">
+            <div class="text-center mb-5 p26-reveal">
+                <h2 class="display-6 fw-bold text-heading">How PLAY26 Works</h2>
+                <p class="text-muted lead mx-auto" style="max-width: 600px;">Three steps between you and kickoff.</p>
+            </div>
+            <div class="row g-4 p26-steps-wrap">
+                <div class="col-md-4 p26-reveal">
+                    <div class="p26-step">
+                        <div class="step-idx">01</div>
+                        <div class="step-ico"><i class="bi bi-search"></i></div>
+                        <h4 class="fw-bold text-heading">Find a Turf</h4>
+                        <p class="text-muted mb-0">Filter by sport and check real-time slot availability near you.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 p26-reveal">
+                    <div class="p26-step">
+                        <div class="step-idx">02</div>
+                        <div class="step-ico"><i class="bi bi-calendar-check"></i></div>
+                        <h4 class="fw-bold text-heading">Book Instantly</h4>
+                        <p class="text-muted mb-0">Pick your slot and confirm in one click — no calls, no waiting.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 p26-reveal">
+                    <div class="p26-step">
+                        <div class="step-idx">03</div>
+                        <div class="step-ico"><i class="bi bi-clipboard-data"></i></div>
+                        <h4 class="fw-bold text-heading">Play & Track</h4>
+                        <p class="text-muted mb-0">Run your match, keep a live scorecard, and follow the standings.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ TESTIMONIALS ══════════════ -->
+    <section class="container py-5">
+        <div class="text-center mb-4 p26-reveal">
+            <h2 class="display-6 fw-bold text-heading">What Players Are Saying</h2>
+        </div>
+        <div id="p26Carousel" class="carousel slide p26-reveal" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="p26-quote-card">
+                        <i class="bi bi-quote"></i>
+                        <p class="quote-text">"Booking a floodlit turf for our Sunday match used to take a dozen calls. Now it's done in under a minute."</p>
+                        <div class="p26-avatar-initial">RA</div>
+                        <strong>SRIRANGAN </strong>
+                        <div class="text-muted small">Weekend Football League</div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="p26-quote-card">
+                        <i class="bi bi-quote"></i>
+                        <p class="quote-text">"The scorecard tool keeps our team's stats straight every single game — no more arguing over run rates."</p>
+                        <div class="p26-avatar-initial">SK</div>
+                        <strong>RAHUL</strong>
+                        <div class="text-muted small">Turf Cricket Captain</div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="p26-quote-card">
+                        <i class="bi bi-quote"></i>
+                        <p class="quote-text">"We run our whole local tournament through PLAY26 — fixtures, standings, everything in one dashboard."</p>
+                        <div class="p26-avatar-initial">MJ</div>
+                        <strong>SURIYA</strong>
+                        <div class="text-muted small">Tournament Organizer</div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-indicators position-relative mt-4" style="bottom:auto;">
+                <button type="button" data-bs-target="#p26Carousel" data-bs-slide-to="0" class="active"></button>
+                <button type="button" data-bs-target="#p26Carousel" data-bs-slide-to="1"></button>
+                <button type="button" data-bs-target="#p26Carousel" data-bs-slide-to="2"></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ FAQ ══════════════ -->
+    <section class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="text-center mb-4 p26-reveal">
+                    <h2 class="display-6 fw-bold text-heading">Quick Questions</h2>
+                </div>
+                <div class="accordion p26-accordion p26-reveal" id="p26Faq">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                How do I book a turf slot?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#p26Faq">
+                            <div class="accordion-body text-muted">Browse turfs, open the one you like, pick an available date and time slot, and confirm — your booking is instant.</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                Can I cancel a booking?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#p26Faq">
+                            <div class="accordion-body text-muted">Yes, cancel anytime from your booking history in your dashboard.</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                How does the cricket scorecard work?
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#p26Faq">
+                            <div class="accordion-body text-muted">Start a scorecard for your match, add batting and bowling entries as you play, and PLAY26 calculates run rate, strike rate, and economy for you live.</div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                Do you support tournaments?
+                            </button>
+                        </h2>
+                        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#p26Faq">
+                            <div class="accordion-body text-muted">Yes — create tournaments, add teams and players, and track match results and standings all in one place.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ CTA ══════════════ -->
+    <section class="container my-5 p26-reveal">
+        <div class="p26-cta">
+            <h2>Ready for your next game?</h2>
+            <p>Choose a turf, pick a slot, and confirm your booking in minutes.</p>
+            <a class="p26-btn-glow" href="/turfs"><i class="bi bi-arrow-right me-1"></i> Start Booking Now</a>
+        </div>
+    </section>
+</main>
+
+<button id="p26BackTop" aria-label="Back to top"><i class="bi bi-arrow-up"></i></button>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/play26.js}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // Default the quick-book date to today
+    var dateInput = document.getElementById('p26Date');
+    if (dateInput) {
+        var today = new Date().toISOString().split('T')[0];
+        dateInput.value = today;
+        dateInput.min = today;
+    }
+
+    // Sport chips inside the quick-book widget
+    var chipRow = document.getElementById('p26ChipRow');
+    var sportInput = document.getElementById('p26SportInput');
+    if (chipRow && sportInput) {
+        chipRow.querySelectorAll('.p26-sport-chip').forEach(function (chip) {
+            chip.addEventListener('click', function () {
+                chipRow.querySelectorAll('.p26-sport-chip').forEach(function (c) { c.classList.remove('active'); });
+                chip.classList.add('active');
+                sportInput.value = chip.dataset.sport;
+            });
+        });
+    }
+
+    // Sport filter pills -> filters venue cards below
+    var filterRow = document.getElementById('p26FilterRow');
+    var venueGrid = document.getElementById('p26VenueGrid');
+    if (filterRow && venueGrid) {
+        filterRow.querySelectorAll('.p26-filter-pill').forEach(function (pill) {
+            pill.addEventListener('click', function () {
+                filterRow.querySelectorAll('.p26-filter-pill').forEach(function (p) { p.classList.remove('active'); });
+                pill.classList.add('active');
+                var sport = pill.dataset.filter;
+                venueGrid.querySelectorAll('.p26-fade-item').forEach(function (item) {
+                    item.classList.toggle('p26-hidden', item.dataset.sport !== sport);
+                });
+            });
+        });
+    }
+
+    // Scroll reveal
+    var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.p26-reveal').forEach(function (el) { observer.observe(el); });
+
+    // Count-up stats
+    var countEls = document.querySelectorAll('.p26-count');
+    var counted = false;
+    function runCounters() {
+        if (counted) return;
+        counted = true;
+        countEls.forEach(function (el) {
+            var target = parseInt(el.dataset.target, 10) || 0;
+            var suffix = el.dataset.suffix || '';
+            var current = 0;
+            var step = Math.max(1, Math.ceil(target / 40));
+            var timer = setInterval(function () {
+                current += step;
+                if (current >= target) { current = target; clearInterval(timer); }
+                el.textContent = current + suffix;
+            }, 30);
+        });
+    }
+    var statsStrip = document.querySelector('.p26-stats-strip');
+    if (statsStrip) {
+        var statsObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) { runCounters(); statsObserver.disconnect(); }
+            });
+        }, { threshold: 0.4 });
+        statsObserver.observe(statsStrip);
+    }
+
+    // Back to top button
+    var backTop = document.getElementById('p26BackTop');
+    if (backTop) {
+        window.addEventListener('scroll', function () {
+            backTop.classList.toggle('show', window.scrollY > 500);
+        });
+        backTop.addEventListener('click', function () {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+});
+</script>
+</body>
+</html>

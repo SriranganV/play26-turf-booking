@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<style>
+:root{--p:#0f6e56;--s:#19a974;--glass:rgba(255,255,255,.72);--shadow:0 20px 40px rgba(15,110,86,.15);}
+body{background:linear-gradient(135deg,#eef8f5,#f9fbfb)}
+.hero{background:linear-gradient(135deg,var(--p),var(--s));color:#fff;padding:40px;border-radius:24px;margin:24px 0;box-shadow:var(--shadow)}
+.glass{background:var(--glass);backdrop-filter:blur(18px);border-radius:22px;padding:28px;box-shadow:var(--shadow)}
+.form-floating>.form-control,.form-floating>.form-select{border-radius:14px}
+.loading{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);justify-content:center;align-items:center;z-index:9999}
+.loading.show{display:flex}
+</style>
+
+<div class="container py-4">
+<div class="hero d-flex justify-content-between align-items-center">
+<div><h2 class="fw-bold">Edit Match</h2><p class="mb-0 opacity-75">Update scheduled match</p></div>
+<a th:href="@{/scorecard/matches}" class="btn btn-light"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+
+<div class="glass">
+<form id="matchForm" th:action="@{/scorecard/matches/update}" th:object="${match}" method="post">
+<input type="hidden" th:field="*{id}"/>
+
+<div class="row g-4">
+
+<div class="col-md-6"><div class="form-floating">
+<select class="form-select" th:field="*{tournamentId}">
+<option th:each="t:${tournaments}" th:value="${t.id}" th:text="${t.name}"></option>
+</select><label>Tournament</label></div></div>
+
+<div class="col-md-6"><div class="form-floating">
+<input class="form-control" th:field="*{matchNumber}" placeholder="Match Number" required>
+<label>Match Number</label></div></div>
+
+<div class="col-md-6"><div class="form-floating">
+<select class="form-select" th:field="*{teamAId}">
+<option th:each="team:${teams}" th:value="${team.id}" th:text="${team.teamName}"></option>
+</select><label>Team A</label></div></div>
+
+<div class="col-md-6"><div class="form-floating">
+<select class="form-select" th:field="*{teamBId}">
+<option th:each="team:${teams}" th:value="${team.id}" th:text="${team.teamName}"></option>
+</select><label>Team B</label></div></div>
+
+<div class="col-md-6"><div class="form-floating">
+<input type="date" class="form-control" th:field="*{matchDate}">
+<label>Match Date</label></div></div>
+
+<div class="col-md-6"><div class="form-floating">
+<input type="time" class="form-control" th:field="*{matchTime}">
+<label>Match Time</label></div></div>
+
+<div class="col-md-6"><div class="form-floating">
+<input class="form-control" th:field="*{venue}" placeholder="Venue">
+<label>Venue</label></div></div>
+
+<div class="col-md-6"><div class="form-floating">
+<input type="number" class="form-control" th:field="*{overs}">
+<label>Overs</label></div></div>
+
+<div class="col-md-6"><div class="form-floating">
+<select class="form-select" th:field="*{tossWinner}">
+<option th:each="team:${teams}" th:value="${team.id}" th:text="${team.teamName}"></option>
+</select><label>Toss Winner</label></div></div>
+
+<div class="col-md-6"><div class="form-floating">
+<select class="form-select" th:field="*{tossDecision}">
+<option value="BAT">Bat</option><option value="BOWL">Bowl</option>
+</select><label>Toss Decision</label></div></div>
+
+<div class="col-md-6"><div class="form-floating">
+<select class="form-select" th:field="*{status}">
+<option value="UPCOMING">Upcoming</option>
+<option value="LIVE">Live</option>
+<option value="COMPLETED">Completed</option>
+</select><label>Status</label></div></div>
+
+</div>
+
+<hr class="my-4">
+
+<div class="d-flex justify-content-end gap-2">
+<a th:href="@{/scorecard/matches}" class="btn btn-outline-secondary">Cancel</a>
+<button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#confirmModal">
+<i class="bi bi-pencil-square"></i> Update Match
+</button>
+</div>
+
+<div class="modal fade" id="confirmModal" tabindex="-1">
+<div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header"><h5 class="modal-title">Confirm Update</h5>
+<button class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">Save changes to this match?</div>
+<div class="modal-footer">
+<button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+<button type="button" class="btn btn-success" id="updateBtn">Update</button>
+</div></div></div></div>
+
+</form>
+</div>
+</div>
+
+<div id="loading" class="loading"><div class="spinner-border text-light"></div></div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<script>
+document.getElementById("updateBtn").onclick=function(){
+const a=document.querySelector('[name="teamAId"]').value;
+const b=document.querySelector('[name="teamBId"]').value;
+if(a===b){alert("Team A and Team B cannot be the same.");return;}
+document.getElementById("loading").classList.add("show");
+document.getElementById("matchForm").submit();
+};
+</script>
+</body>
+</html>

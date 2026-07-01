@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" style="scroll-behavior: smooth;">
+
+<!-- ── 1. HEAD FRAGMENT ── -->
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">PLAY26 - 24×7 Sports Booking</title>
+    
+    <!-- Premium Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Your original stylesheet -->
+    <link rel="stylesheet" th:href="@{/css/styles.css?v=2.0}">
+    
+</head>
+
+<body>
+
+<!-- ── 2. NAVBAR FRAGMENT ── -->
+<nav class="site-nav" th:fragment="nav">
+    <style>
+        /* ── GLOBAL STYLES & SUBTLE GRAPHIC BACKGROUND ── */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            overflow-x: hidden;
+            /* Page Load Fade-In */
+            animation: fadeInPage 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeInPage {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── GLOBAL SCROLL ANIMATION CLASSES ── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            will-change: opacity, transform;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── NAVBAR STYLES ── */
+        .site-nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.85rem 4%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+            border-top: 4px solid #0F6E56; /* Accent Graphic Line */
+            transition: all 0.3s ease;
+        }
+
+        /* Logo Picture & Hover Subtitle inside Nav */
+        .site-nav .brand {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .brand-logo-img {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            object-fit: cover;
+            box-shadow: 0 4px 10px rgba(15, 110, 86, 0.15);
+        }
+
+        .brand-text-wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .brand-name {
+            font-size: 22px;
+            font-weight: 800;
+            color: #111;
+            line-height: 1;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-hover-subtitle {
+            font-size: 10px;
+            font-weight: 700;
+            color: #0F6E56;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        /* The Interactive Hover Effect for the Tagline */
+        .site-nav .brand:hover .brand-hover-subtitle {
+            height: 12px;
+            opacity: 1;
+            margin-top: 4px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        /* Animated Underline Transition for Nav Links */
+        .nav-links a:not(.btn-nav) {
+            font-size: 14px;
+            font-weight: 600;
+            color: #4b5563;
+            text-decoration: none;
+            padding: 6px 4px;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:not(.btn-nav)::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2.5px;
+            bottom: 0;
+            left: 0;
+            background-color: #0F6E56;
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .nav-links a:not(.btn-nav):hover {
+            color: #0F6E56;
+        }
+
+        .nav-links a:not(.btn-nav):hover::after {
+            width: 100%;
+        }
+
+        /* Admin Links Styling */
+        .nav-links a[href^="/admin"]:not(.btn-nav) {
+            color: #b45309;
+        }
+        .nav-links a[href^="/admin"]:not(.btn-nav)::after {
+            background-color: #b45309;
+        }
+
+        /* Nav Buttons */
+        .btn-nav {
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-login {
+            color: #0F6E56;
+            border: 1.5px solid #0F6E56;
+            margin-left: 10px;
+        }
+
+        .btn-login:hover {
+            background: #0F6E56;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(15, 110, 86, 0.2);
+        }
+
+        .btn-register {
+            background: #0F6E56;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(15, 110, 86, 0.3);
+        }
+
+        .btn-register:hover {
+            background: #085041;
+            box-shadow: 0 6px 16px rgba(15, 110, 86, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* ── RICH FOOTER WITH PLAY26 BRANDING ── */
+        .site-footer {
+            /* Graphic Background with Gradient Overlay */
+            background: linear-gradient(135deg, rgba(15, 110, 86, 0.97) 0%, rgba(17, 24, 39, 0.98) 100%), 
+                        url('https://images.unsplash.com/photo-1518605368461-1e129223789a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover fixed no-repeat;
+            color: #ffffff;
+            padding: 5rem 4% 2rem;
+            margin-top: auto;
+            position: relative;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            padding-bottom: 3rem;
+        }
+
+        .footer-col h3 {
+            font-size: 18px;
+            font-weight: 800;
+            color: #ffffff;
+            margin: 0 0 1rem 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-col p {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1.7;
+            margin: 0 0 1rem 0;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .footer-links li a {
+            color: rgba(255, 255, 255, 0.75);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-links li a::before {
+            content: '→';
+            color: #9FE1CB;
+            font-weight: bold;
+            font-size: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .footer-links li a:hover {
+            color: #ffffff;
+            transform: translateX(5px);
+        }
+
+        .footer-links li a:hover::before {
+            transform: translateX(3px);
+        }
+
+        /* Footer Picture Gallery Grid */
+        .footer-gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .footer-gallery img {
+            width: 100%;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .footer-gallery img:hover {
+            transform: scale(1.05) rotate(2deg);
+            border-color: #9FE1CB;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            z-index: 2;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 990px) {
+            .footer-grid { grid-template-columns: repeat(2, 1fr); }
+            .nav-links { justify-content: center; width: 100%; margin-top: 1rem; }
+            .site-nav .brand { margin: 0 auto; }
+        }
+        @media (max-width: 600px) {
+            .footer-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+    <!-- Brand Name (Left) -->
+    <a class="brand" href="/">
+        <!-- UPLOADED PLAY26 LOGO -->
+        <img src="/logoMAIN.png" alt="PLAY26 Logo" class="brand-logo-img">
+        <div class="brand-text-wrapper">
+            <span class="brand-name">PLAY26</span>
+            <span class="brand-hover-subtitle">Book • Play • Compete</span>
+        </div>
+    </a>
+    
+    <div class="nav-links">
+        <a href="/about">About</a> <!-- Added About Page Link -->
+        <a href="/sports">Sports</a>
+        <a href="/turfs">Turfs</a>
+        <a href="/rules">Rules</a>
+        <a href="/blogs">Blogs</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/bookings/my">My Bookings</a>
+        
+        <a href="/admin/turfs">Admin Turfs</a>
+        <a href="/admin/slots">Admin Slots</a>
+        <a href="/admin/bookings">Admin Bookings</a>
+        <a href="/admin/rules">Admin Rules</a>
+        
+        <a href="/login" class="btn-nav btn-login">Login</a>
+        <a href="/register" class="btn-nav btn-register">Register</a>
+    </div>
+</nav>
+
+<!-- ── 3. FOOTER FRAGMENT ── -->
+<footer class="site-footer" th:fragment="footer">
+    <div class="footer-grid">
+        
+        <!-- PLAY26 Brand Column -->
+        <div class="footer-col reveal">
+            <h3>⚽ PLAY26</h3>
+            <p style="color: #9FE1CB; font-weight: 700; font-size: 15px; margin-bottom: 8px;">Book • Play • Compete</p>
+            <p style="font-weight: 600; color: #ffffff;">24×7 Sports Booking Platform</p>
+            <p>PLAY26 represents "24 Hours + 2 Clicks to Book"—our vision of making sports venue booking fast, simple, secure, and available anytime.</p>
+            <p style="font-size: 12px; color: #9FE1CB; opacity: 0.9; margin-top: 1rem;">Powered by PLAY26</p>
+        </div>
+
+        <!-- Quick Links Column -->
+        <div class="footer-col reveal" style="transition-delay: 0.1s;">
+            <h3 style="color: #9FE1CB;">Quick Links</h3>
+            <ul class="footer-links">
+                <li><a href="/about">Who We Are</a></li>
+                <li><a href="/turfs">Browse Turfs</a></li>
+                <li><a href="/sports">Sports Leagues</a></li>
+                <li><a href="/rules">Facility Rules</a></li>
+                <li><a href="/blogs">Latest Blogs</a></li>
+            </ul>
+        </div>
+
+        <!-- Support Column -->
+        <div class="footer-col reveal" style="transition-delay: 0.2s;">
+            <h3 style="color: #9FE1CB;">Player Support</h3>
+            <ul class="footer-links">
+                <li><a href="/dashboard">My Dashboard</a></li>
+                <li><a href="/bookings/my">Manage Bookings</a></li>
+                <li><a href="/register">Create Account</a></li>
+                <li><a href="/contact">Contact Support</a></li>
+            </ul>
+        </div>
+
+        <!-- Facility Picture Gallery -->
+        <div class="footer-col reveal" style="transition-delay: 0.3s;">
+            <h3 style="color: #9FE1CB;">Our Facilities</h3>
+            <div class="footer-gallery">
+                <img src="https://images.unsplash.com/photo-1575361204480-aadea25e6e68?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Turf Graphic 1">
+                <img src="https://images.unsplash.com/photo-1529900965600-71fc1c0a1316?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Turf Graphic 2">
+                <img src="https://images.unsplash.com/photo-1556056504-5c7696c4c28d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Turf Graphic 3">
+                <img src="https://images.unsplash.com/photo-1518605368461-1e129223789a?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Turf Graphic 4">
+            </div>
+        </div>
+    </div>
+
+    <!-- Copyright Bottom Bar -->
+    <div class="footer-bottom">
+        <p>&copy; 2026 PLAY26. All Rights Reserved.</p>
+    </div>
+
+    <!-- GLOBAL SCROLL ANIMATION ENGINE -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.15
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            const revealElements = document.querySelectorAll('.reveal');
+            revealElements.forEach(el => observer.observe(el));
+        });
+    </script>
+</footer>
+
+</body>
+</html>

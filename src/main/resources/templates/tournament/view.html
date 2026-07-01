@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} + ' | PLAY26'">Tournament | PLAY26</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+</head>
+<body>
+<div class="toast-container">
+    <div th:if="${successMessage}" class="toast play26-toast success" role="alert"><div class="toast-body"><i class="bi bi-check-circle-fill text-success me-2"></i><span th:text="${successMessage}"></span></div></div>
+</div>
+<div class="play26-hero"><div class="container">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb mb-2"><li class="breadcrumb-item"><a th:href="@{/tournaments}" style="color:rgba(255,255,255,.7)">Tournaments</a></li><li class="breadcrumb-item active" style="color:#fff" th:text="${tournament.tournamentName}">Name</li></ol></nav>
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <h1 class="mb-0" th:text="${tournament.tournamentName}">Tournament</h1>
+        <span class="badge fs-6 px-3 py-2" th:classappend="${tournament.status == 'LIVE' ? 'badge-live' : (tournament.status == 'UPCOMING' ? 'badge-upcoming' : (tournament.status == 'COMPLETED' ? 'badge-completed' : 'badge-cancelled'))}" th:text="${tournament.status}">STATUS</span>
+    </div>
+</div></div>
+<div class="container pb-5">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="glass-card mb-4">
+                <h5 class="section-title"><i class="bi bi-info-circle me-2"></i>Details</h5>
+                <p th:text="${tournament.description}" style="color:var(--play26-text-muted)">Description</p>
+                <div class="row g-3 mt-2">
+                    <div class="col-6 col-md-4"><small class="text-muted d-block">Type</small><strong th:text="${tournament.tournamentType} ?: 'N/A'">League</strong></div>
+                    <div class="col-6 col-md-4"><small class="text-muted d-block">Match Format</small><strong th:text="${tournament.matchType} ?: 'N/A'">T20</strong></div>
+                    <div class="col-6 col-md-4"><small class="text-muted d-block">Overs</small><strong th:text="${tournament.overs} ?: 'N/A'">20</strong></div>
+                    <div class="col-6 col-md-4"><small class="text-muted d-block">Ball Type</small><strong th:text="${tournament.ballType} ?: 'N/A'">Leather</strong></div>
+                    <div class="col-6 col-md-4"><small class="text-muted d-block">Entry Fee</small><strong>₹<span th:text="${tournament.entryFee} ?: '0'">0</span></strong></div>
+                    <div class="col-6 col-md-4"><small class="text-muted d-block">Prize Pool</small><strong>₹<span th:text="${tournament.prizePool} ?: '0'">0</span></strong></div>
+                </div>
+            </div>
+            <div class="glass-card" th:if="${tournament.rules != null and !tournament.rules.isEmpty()}">
+                <h5 class="section-title"><i class="bi bi-book me-2"></i>Rules</h5>
+                <p th:text="${tournament.rules}" style="white-space:pre-line;color:var(--play26-text-muted)">Rules</p>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="glass-card mb-4">
+                <h5 class="section-title"><i class="bi bi-calendar me-2"></i>Schedule</h5>
+                <p><small class="text-muted">Venue</small><br><strong th:text="${tournament.venue} ?: 'TBD'">Venue</strong></p>
+                <p><small class="text-muted">Start</small><br><strong th:text="${tournament.startDate}">Date</strong></p>
+                <p><small class="text-muted">End</small><br><strong th:text="${tournament.endDate}">Date</strong></p>
+                <p><small class="text-muted">Teams</small><br><strong><span th:text="${tournament.registeredTeams} ?: 0">0</span> / <span th:text="${tournament.maximumTeams} ?: 8">8</span></strong></p>
+            </div>
+            <div class="glass-card" th:if="${tournament.banner != null and !tournament.banner.isEmpty()}">
+                <img th:src="${tournament.banner}" class="img-fluid rounded" alt="Banner">
+            </div>
+            <div class="d-flex gap-2 mt-3">
+                <a th:href="@{/tournaments/edit/{id}(id=${tournament.id})}" class="btn btn-play26 flex-fill"><i class="bi bi-pencil me-1"></i>Edit</a>
+                <form th:action="@{/tournaments/delete/{id}(id=${tournament.id})}" method="post" class="flex-fill">
+                    <button type="submit" class="btn btn-outline-play26 w-100 text-danger btn-delete" data-confirm="Delete this tournament?"><i class="bi bi-trash me-1"></i>Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/play26.js}"></script>
+</body>
+</html>

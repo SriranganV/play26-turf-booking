@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Edit Player | PLAY26</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet"></head>
+<body>
+<div class="play26-hero"><div class="container"><h1><i class="bi bi-pencil-square me-2"></i>Edit Player</h1></div></div>
+<div class="container pb-5">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a th:href="@{/players}">Players</a></li><li class="breadcrumb-item active">Edit</li></ol></nav>
+    <div class="glass-card">
+        <form th:action="@{/players/update}" th:object="${player}" method="post" data-loading>
+            <input type="hidden" th:field="*{id}">
+            <div class="row g-3">
+                <div class="col-md-6"><label class="form-label">Player Name *</label><input type="text" class="form-control" th:field="*{playerName}" required></div>
+                <div class="col-md-3"><label class="form-label">Jersey #</label><input type="number" class="form-control" th:field="*{jerseyNumber}" min="0"></div>
+                <div class="col-md-3"><label class="form-label">Role</label>
+                    <select class="form-select" th:field="*{role}"><option value="">Select</option><option value="BATSMAN">Batsman</option><option value="BOWLER">Bowler</option><option value="ALL_ROUNDER">All Rounder</option><option value="WICKET_KEEPER">Wicket Keeper</option></select></div>
+                <div class="col-md-6"><label class="form-label">Tournament</label>
+                    <select class="form-select" th:field="*{tournamentId}"><option value="">Select</option>
+                        <option th:each="t : ${tournaments}" th:value="${t.id}" th:text="${t.tournamentName}"></option></select></div>
+                <div class="col-md-6"><label class="form-label">Team</label>
+                    <select class="form-select" th:field="*{teamId}"><option value="">Select</option>
+                        <option th:each="t : ${teams}" th:value="${t.id}" th:text="${t.teamName}"></option></select></div>
+                <div class="col-md-4"><label class="form-label">Batting Style</label>
+                    <select class="form-select" th:field="*{battingStyle}"><option value="">Select</option><option value="RIGHT_HAND">Right Hand</option><option value="LEFT_HAND">Left Hand</option></select></div>
+                <div class="col-md-4"><label class="form-label">Bowling Style</label>
+                    <select class="form-select" th:field="*{bowlingStyle}"><option value="">Select</option><option value="RIGHT_ARM_FAST">Right Arm Fast</option><option value="LEFT_ARM_FAST">Left Arm Fast</option><option value="RIGHT_ARM_SPIN">Right Arm Spin</option><option value="LEFT_ARM_SPIN">Left Arm Spin</option><option value="RIGHT_ARM_MEDIUM">Right Arm Medium</option></select></div>
+                <div class="col-md-4"><label class="form-label">Status</label>
+                    <select class="form-select" th:field="*{status}"><option value="ACTIVE">Active</option><option value="INACTIVE">Inactive</option></select></div>
+                <div class="col-md-4 d-flex gap-3 align-items-center pt-3">
+                    <div class="form-check"><input type="checkbox" class="form-check-input" th:field="*{captain}"><label class="form-check-label">Captain</label></div>
+                    <div class="form-check"><input type="checkbox" class="form-check-input" th:field="*{viceCaptain}"><label class="form-check-label">VC</label></div>
+                    <div class="form-check"><input type="checkbox" class="form-check-input" th:field="*{wicketKeeper}"><label class="form-check-label">WK</label></div>
+                </div>
+                <div class="col-12 d-flex gap-2 mt-3">
+                    <button type="submit" class="btn btn-play26"><i class="bi bi-check-lg me-1"></i>Update Player</button>
+                    <a th:href="@{/players/view/{id}(id=${player.id})}" class="btn btn-outline-play26">Cancel</a></div>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="loadingOverlay" class="loading-overlay"><div class="loading-spinner"></div></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/play26.js}"></script>
+</body></html>

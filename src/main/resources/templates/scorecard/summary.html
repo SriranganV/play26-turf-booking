@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Scorecard Summary | PLAY26</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet"></head>
+<body>
+<div class="toast-container">
+    <div th:if="${successMessage}" class="toast play26-toast success" role="alert"><div class="toast-body"><i class="bi bi-check-circle-fill text-success me-2"></i><span th:text="${successMessage}"></span></div></div>
+    <div th:if="${errorMessage}" class="toast play26-toast error" role="alert"><div class="toast-body"><i class="bi bi-x-circle-fill text-danger me-2"></i><span th:text="${errorMessage}"></span></div></div>
+</div>
+<div class="play26-hero"><div class="container">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb mb-2"><li class="breadcrumb-item"><a th:href="@{/scorecard}" style="color:rgba(255,255,255,.7)">Scorecard</a></li><li class="breadcrumb-item active" style="color:#fff">Summary</li></ol></nav>
+    <div class="text-center">
+        <span class="badge" th:classappend="${match.status == 'LIVE' ? 'badge-live' : (match.status == 'COMPLETED' ? 'badge-completed' : 'badge-upcoming')}" th:text="${match.status}">STATUS</span>
+        <h1 class="mt-2"><span th:text="${match.teamAName} ?: 'Team A'">A</span> <span style="opacity:.6">vs</span> <span th:text="${match.teamBName} ?: 'Team B'">B</span></h1>
+        <p class="mb-0"><span th:text="${match.tournamentName}">Tournament</span> | <span th:text="${match.venue}">Venue</span> | <span th:text="${match.matchDate}">Date</span></p>
+    </div>
+</div></div>
+<div class="container pb-5">
+    <!-- Quick Actions -->
+    <div class="d-flex gap-2 mb-4 flex-wrap">
+        <a th:href="@{/scorecard/match/{id}/start(id=${match.id})}" class="btn btn-play26" th:if="${scorecards == null or scorecards.isEmpty()}"><i class="bi bi-play-fill me-1"></i>Start Innings 1</a>
+        <a th:href="@{/scorecard/live/{id}(id=${match.id})}" class="btn btn-outline-play26"><i class="bi bi-broadcast me-1"></i>Live View</a>
+        <a th:href="@{/scorecard/match/{id}/result(id=${match.id})}" class="btn btn-outline-play26"><i class="bi bi-trophy me-1"></i>Result</a>
+    </div>
+
+    <!-- Each Innings -->
+    <div th:each="sc : ${scorecards}" class="mb-4">
+        <div class="innings-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-cricket me-2"></i>Innings <span th:text="${sc.innings}">1</span> &mdash; <span th:text="${sc.battingTeamName}">Batting Team</span></span>
+                <span class="score-big"><span th:text="${sc.totalRuns} ?: 0">0</span>/<span th:text="${sc.totalWickets} ?: 0">0</span></span>
+                <span class="score-overs">(<span th:text="${sc.totalOvers} ?: '0.0'">0.0</span> Ov)</span>
+            </div>
+        </div>
+
+        <!-- Batting Table -->
+        <div class="glass-card mb-3">
+            <h6><i class="bi bi-bat-fill me-1"></i>Batting</h6>
+            <div class="table-responsive">
+                <table class="table scorecard-table mb-0">
+                    <thead><tr><th>Batter</th><th>Dismissal</th><th class="runs-col">R</th><th>B</th><th>4s</th><th>6s</th><th>SR</th></tr></thead>
+                    <tbody>
+                        <tr th:each="bs : ${battingScores[sc.id]}" th:if="${battingScores[sc.id] != null}">
+                            <td th:text="${bs.playerName}">Player</td>
+                            <td class="small text-muted"><span th:if="${bs.isOut}" th:text="${bs.dismissalType}">Bowled</span><span th:unless="${bs.isOut}">not out</span></td>
+                            <td class="runs-col" th:text="${bs.runs}">0</td>
+                            <td th:text="${bs.balls}">0</td>
+                            <td th:text="${bs.fours}">0</td>
+                            <td th:text="${bs.sixes}">0</td>
+                            <td th:text="${bs.strikeRate}">0.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="extras-row mt-2" th:if="${extrasMap[sc.id] != null}">
+                Extras: <span th:text="${extrasMap[sc.id].total} ?: 0">0</span>
+                <small>(W <span th:text="${extrasMap[sc.id].wides} ?: 0">0</span>, NB <span th:text="${extrasMap[sc.id].noBalls} ?: 0">0</span>, B <span th:text="${extrasMap[sc.id].byes} ?: 0">0</span>, LB <span th:text="${extrasMap[sc.id].legByes} ?: 0">0</span>)</small>
+            </div>
+            <div class="total-row p-2 rounded mt-2">Total: <strong><span th:text="${sc.totalRuns} ?: 0">0</span>/<span th:text="${sc.totalWickets} ?: 0">0</span></strong> (<span th:text="${sc.totalOvers} ?: '0.0'">0.0</span> Ov)</div>
+            <div class="d-flex gap-2 mt-2">
+                <a th:href="@{/scorecard/match/{mid}/batting/{inn}(mid=${match.id},inn=${sc.innings})}" class="btn btn-glass btn-sm"><i class="bi bi-plus me-1"></i>Add Batting</a>
+                <a th:href="@{/scorecard/match/{mid}/extras/{inn}(mid=${match.id},inn=${sc.innings})}" class="btn btn-glass btn-sm"><i class="bi bi-plus me-1"></i>Add Extras</a>
+            </div>
+        </div>
+
+        <!-- Bowling Table -->
+        <div class="glass-card mb-3">
+            <h6><i class="bi bi-circle me-1"></i>Bowling</h6>
+            <div class="table-responsive">
+                <table class="table scorecard-table mb-0">
+                    <thead><tr><th>Bowler</th><th>O</th><th>M</th><th>R</th><th>W</th><th>Econ</th></tr></thead>
+                    <tbody>
+                        <tr th:each="bw : ${bowlingScores[sc.id]}" th:if="${bowlingScores[sc.id] != null}">
+                            <td th:text="${bw.playerName}">Bowler</td>
+                            <td th:text="${bw.overs}">0</td>
+                            <td th:text="${bw.maidens}">0</td>
+                            <td th:text="${bw.runs}">0</td>
+                            <td class="runs-col" th:text="${bw.wickets}">0</td>
+                            <td th:text="${bw.economy}">0.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-2">
+                <a th:href="@{/scorecard/match/{mid}/bowling/{inn}(mid=${match.id},inn=${sc.innings})}" class="btn btn-glass btn-sm"><i class="bi bi-plus me-1"></i>Add Bowling</a>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${scorecards == null or scorecards.isEmpty()}" class="empty-state glass-card">
+        <i class="bi bi-clipboard-data"></i><p>No scorecard data yet. Start the first innings!</p>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/play26.js}"></script>
+</body></html>

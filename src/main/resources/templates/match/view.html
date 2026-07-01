@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} + ' | PLAY26'">Match | PLAY26</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+</head>
+<body>
+<div class="toast-container">
+    <div th:if="${successMessage}" class="toast play26-toast success" role="alert"><div class="toast-body"><i class="bi bi-check-circle-fill text-success me-2"></i><span th:text="${successMessage}"></span></div></div>
+</div>
+<div class="play26-hero"><div class="container">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb mb-2"><li class="breadcrumb-item"><a th:href="@{/matches}" style="color:rgba(255,255,255,.7)">Matches</a></li><li class="breadcrumb-item active" style="color:#fff">Details</li></ol></nav>
+    <div class="text-center">
+        <span class="badge" th:classappend="${match.status == 'LIVE' ? 'badge-live' : (match.status == 'UPCOMING' ? 'badge-upcoming' : (match.status == 'COMPLETED' ? 'badge-completed' : 'badge-cancelled'))}" th:text="${match.status}">STATUS</span>
+        <h1 class="mt-2"><span th:text="${match.teamAName} ?: 'Team A'">A</span> <span style="opacity:.6">vs</span> <span th:text="${match.teamBName} ?: 'Team B'">B</span></h1>
+        <p th:text="${match.tournamentName}">Tournament</p>
+    </div>
+</div></div>
+<div class="container pb-5">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="glass-card mb-4">
+                <h5 class="section-title"><i class="bi bi-info-circle me-2"></i>Match Info</h5>
+                <div class="row g-3">
+                    <div class="col-6 col-md-4"><small class="text-muted d-block">Match #</small><strong th:text="${match.matchNumber} ?: 'N/A'">M1</strong></div>
+                    <div class="col-6 col-md-4"><small class="text-muted d-block">Stage</small><strong th:text="${match.matchStage} ?: 'League'">League</strong></div>
+                    <div class="col-6 col-md-4"><small class="text-muted d-block">Overs</small><strong th:text="${match.overs} ?: 'N/A'">20</strong></div>
+                    <div class="col-6 col-md-4"><small class="text-muted d-block">Date</small><strong th:text="${match.matchDate}">Date</strong></div>
+                    <div class="col-6 col-md-4"><small class="text-muted d-block">Time</small><strong th:text="${match.matchTime}">Time</strong></div>
+                    <div class="col-6 col-md-4"><small class="text-muted d-block">Venue</small><strong th:text="${match.venue} ?: ${match.turfName} ?: 'TBD'">Venue</strong></div>
+                </div>
+            </div>
+            <div class="glass-card mb-4" th:if="${match.tossWinnerName != null}">
+                <h5 class="section-title"><i class="bi bi-coin me-2"></i>Toss</h5>
+                <p><strong th:text="${match.tossWinnerName}">Team</strong> won the toss and elected to <strong th:text="${match.tossDecision}">BAT</strong></p>
+            </div>
+            <div class="glass-card" th:if="${match.result != null}">
+                <h5 class="section-title"><i class="bi bi-trophy me-2"></i>Result</h5>
+                <p class="fs-5" th:text="${match.result}" style="color:var(--play26-accent)">Result</p>
+                <p th:if="${match.winnerName != null}">Winner: <strong th:text="${match.winnerName}">Team</strong></p>
+                <p th:if="${match.manOfMatchName != null}">Man of the Match: <strong th:text="${match.manOfMatchName}">Player</strong></p>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="glass-card mb-3">
+                <h5 class="section-title"><i class="bi bi-clipboard-data me-2"></i>Scorecard</h5>
+                <a th:href="@{/scorecard/match/{id}(id=${match.id})}" class="btn btn-play26 w-100 mb-2"><i class="bi bi-clipboard-data me-1"></i>View Scorecard</a>
+                <a th:href="@{/scorecard/live/{id}(id=${match.id})}" class="btn btn-outline-play26 w-100"><i class="bi bi-broadcast me-1"></i>Live Score</a>
+            </div>
+            <div class="d-flex gap-2">
+                <a th:href="@{/matches/edit/{id}(id=${match.id})}" class="btn btn-play26 flex-fill"><i class="bi bi-pencil me-1"></i>Edit</a>
+                <form th:action="@{/matches/delete/{id}(id=${match.id})}" method="post" class="flex-fill">
+                    <button type="submit" class="btn btn-outline-play26 w-100 text-danger btn-delete" data-confirm="Delete this match?"><i class="bi bi-trash me-1"></i>Delete</button></form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/play26.js}"></script>
+</body>
+</html>

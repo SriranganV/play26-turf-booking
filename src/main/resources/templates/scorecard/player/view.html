@@ -1,0 +1,1811 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>PLAY26 | Player Details</title>
+
+    <!-- Bootstrap -->
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+            rel="stylesheet">
+
+    <!-- Google Font -->
+
+    <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet">
+
+
+</head>
+
+<body>
+
+<!-- Animated Background -->
+<style>
+/*==================================================
+            PLAYER VIEW SPECIFIC STYLES
+==================================================*/
+
+.profile-card{
+
+    background:rgba(255,255,255,.08);
+
+    backdrop-filter:blur(20px);
+
+    border-radius:24px;
+
+    padding:40px;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    box-shadow:0 20px 45px rgba(0,0,0,.25);
+
+    transition:.35s;
+
+}
+
+.profile-card:hover{
+
+    box-shadow:0 25px 55px rgba(0,255,153,.18);
+
+}
+
+/*==================================================
+                PLAYER IMAGE
+==================================================*/
+
+.player-image{
+
+    width:240px;
+
+    height:240px;
+
+    object-fit:cover;
+
+    border-radius:50%;
+
+    border:6px solid #00ff99;
+
+    background:#ffffff;
+
+    padding:8px;
+
+    transition:.35s;
+
+}
+
+.player-image:hover{
+
+    transform:scale(1.05);
+
+    box-shadow:0 20px 35px rgba(0,255,153,.30);
+
+}
+
+/*==================================================
+                PLAYER NAME
+==================================================*/
+
+.profile-card h3{
+
+    font-size:30px;
+
+    font-weight:700;
+
+    margin-top:20px;
+
+}
+
+.profile-card .badge{
+
+    font-size:15px;
+
+}
+
+/*==================================================
+                INFORMATION BOX
+==================================================*/
+
+.info-box{
+
+    background:rgba(255,255,255,.06);
+
+    border-radius:16px;
+
+    padding:18px 22px;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    height:100%;
+
+    transition:.30s;
+
+}
+
+.info-box:hover{
+
+    transform:translateY(-4px);
+
+    background:rgba(255,255,255,.10);
+
+}
+
+.info-box h6{
+
+    color:#00ff99;
+
+    margin-bottom:10px;
+
+    font-weight:600;
+
+}
+
+.info-box p{
+
+    margin:0;
+
+    font-size:16px;
+
+    color:#ffffff;
+
+    word-break:break-word;
+
+}
+
+/*==================================================
+                BADGES
+==================================================*/
+
+.badge{
+
+    border-radius:30px;
+
+    padding:10px 18px;
+
+    font-weight:600;
+
+    letter-spacing:.3px;
+
+}
+
+/*==================================================
+                BUTTONS
+==================================================*/
+
+.btn{
+
+    min-width:150px;
+
+}
+
+.btn-warning{
+
+    color:#111;
+
+}
+
+/*==================================================
+                PROFILE ANIMATION
+==================================================*/
+
+.profile-card{
+
+    animation:fadeProfile .6s ease;
+
+}
+
+@keyframes fadeProfile{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(25px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+/*==================================================
+        PLAY26 PLAYER VIEW - PREMIUM EFFECTS
+==================================================*/
+
+/*=========================================
+ Premium Glass Glow
+=========================================*/
+
+.profile-card{
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,.25),
+        inset 0 1px 1px rgba(255,255,255,.08);
+
+}
+
+.profile-card:hover{
+
+    box-shadow:
+        0 25px 60px rgba(0,255,153,.20),
+        inset 0 1px 1px rgba(255,255,255,.10);
+
+}
+
+/*=========================================
+ Profile Image Animation
+=========================================*/
+
+.player-image{
+
+    transition:
+        transform .35s,
+        box-shadow .35s;
+
+}
+
+.player-image:hover{
+
+    transform:
+        scale(1.08)
+        rotate(2deg);
+
+}
+
+/*=========================================
+ Information Cards
+=========================================*/
+
+.info-box{
+
+    transition:
+        transform .30s,
+        background .30s,
+        box-shadow .30s;
+
+}
+
+.info-box:hover{
+
+    transform:translateY(-6px);
+
+    box-shadow:0 12px 25px rgba(0,255,153,.15);
+
+}
+
+/*=========================================
+ Badge Animation
+=========================================*/
+
+.badge{
+
+    transition:.30s;
+
+}
+
+.badge:hover{
+
+    transform:scale(1.08);
+
+}
+
+/*=========================================
+ Button Animation
+=========================================*/
+
+.btn{
+
+    position:relative;
+
+    overflow:hidden;
+
+    transition:.30s;
+
+}
+
+.btn:hover{
+
+    transform:translateY(-3px);
+
+}
+
+.btn:active{
+
+    transform:scale(.97);
+
+}
+
+/*=========================================
+ Ripple Effect
+=========================================*/
+
+.ripple{
+
+    position:absolute;
+
+    border-radius:50%;
+
+    transform:scale(0);
+
+    background:rgba(255,255,255,.45);
+
+    animation:ripple .6s linear;
+
+}
+
+@keyframes ripple{
+
+    to{
+
+        transform:scale(4);
+
+        opacity:0;
+
+    }
+
+}
+
+/*=========================================
+ Fade Animation
+=========================================*/
+
+.fade-up{
+
+    animation:fadeUp .6s ease;
+
+}
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(20px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/*=========================================
+ Zoom Animation
+=========================================*/
+
+.zoom-in{
+
+    animation:zoomIn .45s ease;
+
+}
+
+@keyframes zoomIn{
+
+    from{
+
+        opacity:0;
+
+        transform:scale(.94);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:scale(1);
+
+    }
+
+}
+
+/*=========================================
+ Loading Shimmer
+=========================================*/
+
+.loading{
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+.loading::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:-150%;
+
+    top:0;
+
+    width:150%;
+
+    height:100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.12),
+            transparent);
+
+    animation:loading 1.3s infinite;
+
+}
+
+@keyframes loading{
+
+    from{
+
+        left:-150%;
+
+    }
+
+    to{
+
+        left:150%;
+
+    }
+
+}
+
+/*=========================================
+ Divider
+=========================================*/
+
+.profile-card hr{
+
+    border-color:rgba(255,255,255,.08);
+
+}
+
+/*=========================================
+ Title Glow
+=========================================*/
+
+.top-bar h2{
+
+    text-shadow:0 0 15px rgba(0,255,153,.25);
+
+}
+
+/*=========================================
+ Button Icons
+=========================================*/
+
+.btn i{
+
+    margin-right:6px;
+
+}
+
+/*=========================================
+ Profile Entrance
+=========================================*/
+
+.profile-card{
+
+    animation:profileEntry .7s ease;
+
+}
+
+@keyframes profileEntry{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(35px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/*=========================================
+ Toast Animation
+=========================================*/
+
+.toast.show{
+
+    animation:toastSlide .45s ease;
+
+}
+
+@keyframes toastSlide{
+
+    from{
+
+        opacity:0;
+
+        transform:translateX(100%);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateX(0);
+
+    }
+
+}
+
+
+</style>
+<div class="bg-circle bg-circle-1"></div>
+<div class="bg-circle bg-circle-2"></div>
+<div class="bg-circle bg-circle-3"></div>
+
+<div class="container-fluid">
+
+    <div class="row">
+
+        <!-- Sidebar -->
+
+        <aside class="col-lg-2 sidebar">
+
+            <div class="logo">
+
+                <i class="bi bi-trophy-fill"></i>
+
+                PLAY26
+
+            </div>
+
+            <ul class="menu">
+
+                <li>
+
+                    <a th:href="@{/dashboard}">
+
+                        <i class="bi bi-speedometer2"></i>
+
+                        Dashboard
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a th:href="@{/scorecard/tournaments}">
+
+                        <i class="bi bi-trophy-fill"></i>
+
+                        Tournament
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a th:href="@{/scorecard/teams}">
+
+                        <i class="bi bi-shield-fill"></i>
+
+                        Teams
+
+                    </a>
+
+                </li>
+
+                <li class="active">
+
+                    <a th:href="@{/scorecard/players}">
+
+                        <i class="bi bi-people-fill"></i>
+
+                        Players
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a th:href="@{/scorecard}">
+
+                        <i class="bi bi-clipboard-data-fill"></i>
+
+                        Scorecards
+
+                    </a>
+
+                </li>
+
+            </ul>
+
+        </aside>
+
+        <!-- Main -->
+
+        <main class="col-lg-10 content">
+
+            <div class="top-bar">
+
+                <div>
+
+                    <h2>
+
+                        <i class="bi bi-person-badge-fill"></i>
+
+                        Player Profile
+
+                    </h2>
+
+                    <small>
+
+                        View complete player information.
+
+                    </small>
+
+                </div>
+
+                <div class="profile">
+
+                    <img
+                            src="https://i.pravatar.cc/100?img=12">
+
+                    <div>
+
+                        <strong>
+
+                            Administrator
+
+                        </strong>
+
+                        <br>
+
+                        <small>
+
+                            PLAY26 Sports
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Player Profile Card -->
+
+            <div class="profile-card">
+
+                <div class="row">
+                <!-- ========================================= -->
+<!-- Player Photo -->
+<!-- ========================================= -->
+
+<div class="col-lg-4 text-center mb-4">
+
+    <img
+
+            th:if="${player.photo != null}"
+
+            th:src="@{'/uploads/players/' + ${player.photo}}"
+
+            class="player-image">
+
+    <img
+
+            th:unless="${player.photo != null}"
+
+            src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+
+            class="player-image">
+
+    <h3 class="mt-4" th:text="${player.playerName}">
+
+        Player Name
+
+    </h3>
+
+    <span class="badge bg-success px-3 py-2 fs-6"
+
+          th:text="${player.role}">
+
+        Batsman
+
+    </span>
+
+</div>
+
+<!-- ========================================= -->
+<!-- Player Information -->
+<!-- ========================================= -->
+
+<div class="col-lg-8">
+
+    <div class="row g-4">
+
+        <!-- Tournament -->
+
+        <div class="col-md-6">
+
+            <div class="info-box">
+
+                <h6>
+
+                    Tournament
+
+                </h6>
+
+                <p th:text="${tournamentName}">
+
+                    Summer Cricket Cup
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- Team -->
+
+        <div class="col-md-6">
+
+            <div class="info-box">
+
+                <h6>
+
+                    Team
+
+                </h6>
+
+                <p th:text="${teamName}">
+
+                    Royal Warriors
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- Jersey -->
+
+        <div class="col-md-6">
+
+            <div class="info-box">
+
+                <h6>
+
+                    Jersey Number
+
+                </h6>
+
+                <p>
+
+                    #
+
+                    <span th:text="${player.jerseyNumber}">
+
+                        18
+
+                    </span>
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- Status -->
+
+        <div class="col-md-6">
+
+            <div class="info-box">
+
+                <h6>
+
+                    Status
+
+                </h6>
+
+                <span
+
+                        class="badge bg-success"
+
+                        th:text="${player.status}">
+
+                    ACTIVE
+
+                </span>
+
+            </div>
+
+        </div>
+
+        <!-- Batting -->
+
+        <div class="col-md-6">
+
+            <div class="info-box">
+
+                <h6>
+
+                    Batting Style
+
+                </h6>
+
+                <p th:text="${player.battingStyle}">
+
+                    Right Hand
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- Bowling -->
+
+        <div class="col-md-6">
+
+            <div class="info-box">
+
+                <h6>
+
+                    Bowling Style
+
+                </h6>
+
+                <p th:text="${player.bowlingStyle}">
+
+                    Right Arm Fast
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- DOB -->
+
+        <div class="col-md-6">
+
+            <div class="info-box">
+
+                <h6>
+
+                    Date of Birth
+
+                </h6>
+
+                <p th:text="${player.dateOfBirth}">
+
+                    2002-10-14
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- Age -->
+
+        <div class="col-md-6">
+
+            <div class="info-box">
+
+                <h6>
+
+                    Age
+
+                </h6>
+
+                <p>
+
+                    <span th:text="${player.age}">
+
+                        23
+
+                    </span>
+
+                    Years
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- Nationality -->
+
+        <div class="col-md-6">
+
+            <div class="info-box">
+
+                <h6>
+
+                    Nationality
+
+                </h6>
+
+                <p th:text="${player.nationality}">
+
+                    India
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- Phone -->
+
+        <div class="col-md-6">
+
+            <div class="info-box">
+
+                <h6>
+
+                    Phone
+
+                </h6>
+
+                <p th:text="${player.phone}">
+
+                    9876543210
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- Email -->
+
+        <div class="col-md-12">
+
+            <div class="info-box">
+
+                <h6>
+
+                    Email
+
+                </h6>
+
+                <p th:text="${player.email}">
+
+                    player@email.com
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================================= -->
+<!-- Player Badges -->
+<!-- ========================================= -->
+
+<div class="col-12 mt-4">
+
+    <div class="d-flex flex-wrap gap-3">
+
+        <span
+
+                th:if="${player.wicketKeeper}"
+
+                class="badge bg-primary p-3">
+
+            🧤 Wicket Keeper
+
+        </span>
+
+        <span
+
+                th:if="${player.captain}"
+
+                class="badge bg-danger p-3">
+
+            ⭐ Captain
+
+        </span>
+
+        <span
+
+                th:if="${player.viceCaptain}"
+
+                class="badge bg-warning text-dark p-3">
+
+            🥈 Vice Captain
+
+        </span>
+
+    </div>
+
+</div>
+
+<!-- ========================================= -->
+<!-- Action Buttons -->
+<!-- ========================================= -->
+
+<div class="col-12 mt-5">
+
+    <div class="d-flex justify-content-end gap-3">
+
+        <a
+
+                th:href="@{/scorecard/players}"
+
+                class="btn btn-secondary">
+
+            <i class="bi bi-arrow-left-circle"></i>
+
+            Back
+
+        </a>
+
+        <a
+
+                th:href="@{'/scorecard/players/edit/' + ${player.id}}"
+
+                class="btn btn-warning">
+
+            <i class="bi bi-pencil-square"></i>
+
+            Edit
+
+        </a>
+
+        <a
+
+                th:href="@{'/scorecard/players/delete/' + ${player.id}}"
+
+                class="btn btn-danger"
+
+                onclick="return confirm('Delete this player?');">
+
+            <i class="bi bi-trash-fill"></i>
+
+            Delete
+
+        </a>
+
+    </div>
+
+</div>
+
+                </div>
+
+            </div>
+                        <!-- ========================================= -->
+            <!-- Footer -->
+            <!-- ========================================= -->
+
+            <footer class="text-center mt-5 mb-3">
+
+                <h6 class="mb-1">
+
+                    ⚽ PLAY26
+
+                </h6>
+
+                <small>
+
+                    24 Hours + 2 Clicks to Book
+
+                </small>
+
+                <br>
+
+                <small>
+
+                    Player Profile Management
+
+                </small>
+
+                <br>
+
+                <small>
+
+                    © 2026 PLAY26. All Rights Reserved.
+
+                </small>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+</div>
+
+<!-- ========================================= -->
+<!-- Success Toast -->
+<!-- ========================================= -->
+
+<div
+        class="toast-container position-fixed top-0 end-0 p-3">
+
+    <div
+            id="playToast"
+            class="toast"
+            role="alert"
+            aria-live="assertive"
+            aria-atomic="true">
+
+        <div class="toast-header">
+
+            <i class="bi bi-person-check-fill text-success me-2"></i>
+
+            <strong class="me-auto">
+
+                PLAY26
+
+            </strong>
+
+            <small>
+
+                Just Now
+
+            </small>
+
+            <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="toast">
+
+            </button>
+
+        </div>
+
+        <div
+                id="toastMessage"
+                class="toast-body">
+
+            Player Profile Loaded Successfully.
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================================= -->
+<!-- Loading Overlay -->
+<!-- ========================================= -->
+
+<div
+
+        id="loadingOverlay"
+
+        class="loading-overlay d-none">
+
+    <div class="text-center">
+
+        <div
+
+                class="spinner-border text-success"
+
+                role="status">
+
+            <span class="visually-hidden">
+
+                Loading...
+
+            </span>
+
+        </div>
+
+        <div class="mt-3 text-white">
+
+            Loading Player Details...
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================================= -->
+<!-- Delete Confirmation Modal -->
+<!-- ========================================= -->
+
+<div
+
+        class="modal fade"
+
+        id="deleteModal"
+
+        tabindex="-1"
+
+        aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+
+                    <i class="bi bi-exclamation-triangle-fill text-danger"></i>
+
+                    Delete Player
+
+                </h5>
+
+                <button
+
+                        type="button"
+
+                        class="btn-close"
+
+                        data-bs-dismiss="modal">
+
+                </button>
+
+            </div>
+
+            <div class="modal-body text-center">
+
+                <i
+
+                        class="bi bi-trash-fill text-danger"
+
+                        style="font-size:70px;">
+
+                </i>
+
+                <h4 class="mt-3">
+
+                    Delete this player?
+
+                </h4>
+
+                <p>
+
+                    This action cannot be undone.
+
+                </p>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+
+                        class="btn btn-secondary"
+
+                        data-bs-dismiss="modal">
+
+                    Cancel
+
+                </button>
+
+                <a
+
+                        id="deleteLink"
+
+                        href="#"
+
+                        class="btn btn-danger">
+
+                    Delete
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================================= -->
+<!-- Bootstrap -->
+<!-- ========================================= -->
+
+<script
+
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+/*=====================================================
+PLAY26 PLAYER VIEW
+JavaScript Part 3A
+======================================================*/
+
+document.addEventListener("DOMContentLoaded", function () {
+
+initializePlayerView();
+
+});
+
+/*=====================================================
+Initialization
+======================================================*/
+
+function initializePlayerView() {
+
+initializeRipple();
+
+initializeAnimations();
+
+initializeDeleteButton();
+
+initializeImageEffect();
+
+initializeKeyboardShortcuts();
+
+}
+
+/*=====================================================
+Image Hover Effect
+======================================================*/
+
+function initializeImageEffect() {
+
+const image = document.querySelector(".player-image");
+
+if (!image) return;
+
+image.addEventListener("mouseenter", function () {
+
+this.style.transform = "scale(1.06) rotate(2deg)";
+
+});
+
+image.addEventListener("mouseleave", function () {
+
+this.style.transform = "scale(1) rotate(0deg)";
+
+});
+
+}
+
+/*=====================================================
+Ripple Effect
+======================================================*/
+
+function initializeRipple() {
+
+document.querySelectorAll(".btn").forEach(button => {
+
+button.addEventListener("click", function (e) {
+
+    const ripple = document.createElement("span");
+
+    ripple.className = "ripple";
+
+    const rect = this.getBoundingClientRect();
+
+    ripple.style.left = (e.clientX - rect.left) + "px";
+    ripple.style.top = (e.clientY - rect.top) + "px";
+
+    this.appendChild(ripple);
+
+    setTimeout(() => {
+
+        ripple.remove();
+
+    }, 600);
+
+});
+
+});
+
+}
+
+/*=====================================================
+Profile Animation
+======================================================*/
+
+function initializeAnimations() {
+
+const profileCard = document.querySelector(".profile-card");
+
+if (!profileCard) return;
+
+profileCard.style.opacity = "0";
+
+profileCard.style.transform = "translateY(30px)";
+
+setTimeout(() => {
+
+profileCard.style.transition = ".5s";
+
+profileCard.style.opacity = "1";
+
+profileCard.style.transform = "translateY(0)";
+
+}, 150);
+
+}
+
+/*=====================================================
+Delete Button
+======================================================*/
+
+function initializeDeleteButton() {
+
+const deleteButton = document.querySelector(".btn-danger");
+
+if (!deleteButton) return;
+
+deleteButton.addEventListener("click", function (e) {
+
+e.preventDefault();
+
+const modal = new bootstrap.Modal(
+
+    document.getElementById("deleteModal")
+
+);
+
+const deleteLink = document.getElementById("deleteLink");
+
+deleteLink.href = this.href;
+
+modal.show();
+
+});
+
+}
+
+/*=====================================================
+Toast
+======================================================*/
+
+function showToast(message){
+
+const body = document.getElementById("toastMessage");
+
+if(body){
+
+body.innerHTML = message;
+
+}
+
+const toast = document.getElementById("playToast");
+
+if(toast){
+
+new bootstrap.Toast(toast).show();
+
+}
+
+}
+
+/*=====================================================
+Loading Overlay
+======================================================*/
+
+window.addEventListener("load", function(){
+
+const loader = document.getElementById("loadingOverlay");
+
+if(loader){
+
+loader.classList.add("d-none");
+
+}
+
+});
+
+/*=====================================================
+Keyboard Shortcuts
+======================================================*/
+
+function initializeKeyboardShortcuts(){
+
+document.addEventListener("keydown",function(e){
+
+/* ALT + B → Back */
+
+if(e.altKey && e.key==="b"){
+
+    window.location.href="/scorecard/players";
+
+}
+
+/* ALT + E → Edit */
+
+if(e.altKey && e.key==="e"){
+
+    const editButton=document.querySelector(".btn-warning");
+
+    if(editButton){
+
+        editButton.click();
+
+    }
+
+}
+
+});
+
+}
+
+/*=====================================================
+Welcome Toast
+======================================================*/
+
+setTimeout(function(){
+
+showToast("Player profile loaded successfully.");
+
+},800);
+
+/*=====================================================
+Console
+======================================================*/
+
+console.log(
+
+"%cPLAY26 Player View Ready",
+
+"color:#00ff99;font-size:16px;font-weight:bold;"
+
+);
+/*=====================================================
+PLAY26 PLAYER VIEW
+JavaScript Part 3B
+======================================================*/
+
+/*=====================================================
+Copy Email
+======================================================*/
+
+const emailElement = document.querySelector(".info-box p[th\\:text='${player.email}'], .info-box p");
+
+if (emailElement) {
+
+emailElement.style.cursor = "pointer";
+
+emailElement.title = "Click to copy";
+
+emailElement.addEventListener("click", function () {
+
+const text = this.innerText.trim();
+
+if (text.includes("@")) {
+
+    navigator.clipboard.writeText(text);
+
+    showToast("Email copied to clipboard.");
+
+}
+
+});
+
+}
+
+/*=====================================================
+Copy Phone
+======================================================*/
+
+document.querySelectorAll(".info-box p").forEach(item => {
+
+const value = item.innerText.trim();
+
+if (/^[0-9]{10}$/.test(value)) {
+
+item.style.cursor = "pointer";
+
+item.title = "Click to copy";
+
+item.addEventListener("click", function () {
+
+    navigator.clipboard.writeText(value);
+
+    showToast("Phone number copied.");
+
+});
+
+}
+
+});
+
+/*=====================================================
+Print Profile
+======================================================*/
+
+document.addEventListener("keydown", function (e) {
+
+if (e.ctrlKey && e.key === "p") {
+
+e.preventDefault();
+
+window.print();
+
+}
+
+});
+
+/*=====================================================
+Share Profile
+======================================================*/
+
+function shareProfile() {
+
+const shareData = {
+
+title: document.title,
+
+text: "PLAY26 Player Profile",
+
+url: window.location.href
+
+};
+
+if (navigator.share) {
+
+navigator.share(shareData);
+
+} else {
+
+navigator.clipboard.writeText(window.location.href);
+
+showToast("Profile link copied.");
+
+}
+
+}
+
+/*=====================================================
+Auto Hide Toast
+======================================================*/
+
+const toastElement = document.getElementById("playToast");
+
+if (toastElement) {
+
+toastElement.addEventListener("shown.bs.toast", function () {
+
+setTimeout(function () {
+
+    bootstrap.Toast.getInstance(toastElement).hide();
+
+}, 3000);
+
+});
+
+}
+
+/*=====================================================
+Info Card Hover Animation
+======================================================*/
+
+document.querySelectorAll(".info-box").forEach(card => {
+
+card.addEventListener("mouseenter", function () {
+
+this.style.transform = "translateY(-5px)";
+
+});
+
+card.addEventListener("mouseleave", function () {
+
+this.style.transform = "translateY(0)";
+
+});
+
+});
+
+/*=====================================================
+Smooth Scroll
+======================================================*/
+
+window.scrollTo({
+
+top: 0,
+
+behavior: "smooth"
+
+});
+
+/*=====================================================
+Keyboard Shortcuts
+======================================================*/
+
+document.addEventListener("keydown", function (e) {
+
+/* ALT + H */
+
+if (e.altKey && e.key === "h") {
+
+window.location.href = "/dashboard";
+
+}
+
+/* ALT + S */
+
+if (e.altKey && e.key === "s") {
+
+shareProfile();
+
+}
+
+});
+
+/*=====================================================
+Profile Loaded
+======================================================*/
+
+window.addEventListener("load", function () {
+
+showToast("Welcome to Player Profile");
+
+});
+
+/*=====================================================
+Console Banner
+======================================================*/
+
+console.log(
+
+"%cPLAYER VIEW MODULE COMPLETED",
+
+"color:#00ff99;font-size:18px;font-weight:bold;"
+
+);
+
+console.log(
+
+"%cPLAY26 - 24 Hours + 2 Clicks to Book",
+
+"color:#00bfff;font-size:14px;"
+
+);
+
+
+</script>
+
+<!-- ========================================= -->
+<!-- Page Script -->
+<!-- ========================================= -->
+
+<script>
+
+</script>
+
+</body>
+
+</html>
+            

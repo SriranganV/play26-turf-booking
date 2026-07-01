@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Match Result | PLAY26</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet"></head>
+<body>
+<div class="play26-hero" style="background:var(--play26-accent)"><div class="container text-center">
+    <h1 style="color:#000"><i class="bi bi-trophy-fill me-2"></i>Match Result</h1>
+    <p class="fs-4 fw-bold mb-0" style="color:#000" th:text="${resultText}">Result Text</p>
+    <p class="mt-2" style="color:rgba(0,0,0,0.7)"><span th:text="${match.teamAName}">A</span> vs <span th:text="${match.teamBName}">B</span></p>
+</div></div>
+<div class="container pb-5">
+    <div class="text-center mb-4">
+        <a th:href="@{/matches}" class="btn btn-outline-play26"><i class="bi bi-arrow-left me-1"></i>Back to Matches</a>
+        <a th:href="@{/scorecard/match/{id}(id=${match.id})}" class="btn btn-play26"><i class="bi bi-clipboard-data me-1"></i>Full Scorecard</a>
+    </div>
+    
+    <div th:if="${match.manOfMatchName != null}" class="glass-card text-center mb-4 mx-auto" style="max-width:500px;border-color:var(--play26-primary)">
+        <h6 class="text-play26 mb-2">Player of the Match</h6>
+        <div class="fs-3 fw-bold text-white"><i class="bi bi-star-fill text-warning me-2"></i><span th:text="${match.manOfMatchName}">Player Name</span></div>
+    </div>
+
+    <!-- Mini Scorecard Summary -->
+    <div class="row g-4">
+        <div class="col-md-6" th:each="sc : ${scorecards}">
+            <div class="glass-card h-100">
+                <h5 class="text-center mb-3"><span th:text="${sc.battingTeamName}">Team</span> Innings</h5>
+                <div class="text-center fs-2 fw-bold text-white mb-2">
+                    <span th:text="${sc.totalRuns} ?: 0">0</span>/<span th:text="${sc.totalWickets} ?: 0">0</span>
+                </div>
+                <div class="text-center text-muted mb-4">Overs: <span th:text="${sc.totalOvers} ?: '0.0'">0.0</span></div>
+                
+                <!-- Top 3 Batters -->
+                <h6 class="small text-muted mb-2 border-bottom border-secondary pb-1">Top Batters</h6>
+                <div th:each="bs, iterStat : ${battingScores[sc.id]}" th:if="${iterStat.index < 3}" class="d-flex justify-content-between text-white mb-1">
+                    <span th:text="${bs.playerName}">Player</span>
+                    <strong><span th:text="${bs.runs}">0</span> (<span th:text="${bs.balls}">0</span>)</strong>
+                </div>
+                
+                <!-- Top 3 Bowlers -->
+                <h6 class="small text-muted mt-3 mb-2 border-bottom border-secondary pb-1">Top Bowlers</h6>
+                <div th:each="bw, iterStat : ${bowlingScores[sc.id]}" th:if="${iterStat.index < 3}" class="d-flex justify-content-between text-white mb-1">
+                    <span th:text="${bw.playerName}">Player</span>
+                    <strong><span th:text="${bw.wickets}">0</span>/<span th:text="${bw.runs}">0</span> (<span th:text="${bw.overs}">0</span>)</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body></html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Match | PLAY26</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+</head>
+<body>
+<div class="play26-hero"><div class="container"><h1><i class="bi bi-plus-circle-fill me-2"></i>Schedule Match</h1></div></div>
+<div class="container pb-5">
+    <nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a th:href="@{/matches}">Matches</a></li><li class="breadcrumb-item active">New</li></ol></nav>
+    <div class="glass-card">
+        <form th:action="@{/matches/save}" th:object="${match}" method="post" data-loading>
+            <div class="row g-3">
+                <div class="col-md-6"><label class="form-label">Tournament</label>
+                    <select class="form-select" th:field="*{tournamentId}"><option value="">Select Tournament</option>
+                        <option th:each="t : ${tournaments}" th:value="${t.id}" th:text="${t.tournamentName}"></option></select></div>
+                <div class="col-md-3"><label class="form-label">Match Number</label><input type="text" class="form-control" th:field="*{matchNumber}" placeholder="M1"></div>
+                <div class="col-md-3"><label class="form-label">Match Stage</label>
+                    <select class="form-select" th:field="*{matchStage}"><option value="LEAGUE">League</option><option value="QUARTER_FINAL">Quarter Final</option><option value="SEMI_FINAL">Semi Final</option><option value="FINAL">Final</option></select></div>
+                <div class="col-md-6"><label class="form-label">Team A *</label>
+                    <select class="form-select" th:field="*{teamAId}" required><option value="">Select Team A</option>
+                        <option th:each="t : ${teams}" th:value="${t.id}" th:text="${t.teamName}"></option></select></div>
+                <div class="col-md-6"><label class="form-label">Team B *</label>
+                    <select class="form-select" th:field="*{teamBId}" required><option value="">Select Team B</option>
+                        <option th:each="t : ${teams}" th:value="${t.id}" th:text="${t.teamName}"></option></select></div>
+                <div class="col-md-4"><label class="form-label">Turf</label>
+                    <select class="form-select" th:field="*{turfId}"><option value="">Select Turf</option>
+                        <option th:each="t : ${turfs}" th:value="${t.id}" th:text="${t.name}"></option></select></div>
+                <div class="col-md-4"><label class="form-label">Match Date</label><input type="date" class="form-control" th:field="*{matchDate}"></div>
+                <div class="col-md-4"><label class="form-label">Match Time</label><input type="time" class="form-control" th:field="*{matchTime}"></div>
+                <div class="col-md-4"><label class="form-label">Venue</label><input type="text" class="form-control" th:field="*{venue}"></div>
+                <div class="col-md-4"><label class="form-label">Overs</label><input type="number" class="form-control" th:field="*{overs}" min="1"></div>
+                <div class="col-md-4"><label class="form-label">Status</label>
+                    <select class="form-select" th:field="*{status}"><option value="UPCOMING">Upcoming</option><option value="LIVE">Live</option><option value="COMPLETED">Completed</option><option value="CANCELLED">Cancelled</option></select></div>
+                <div class="col-12 d-flex gap-2 mt-3">
+                    <button type="submit" class="btn btn-play26"><i class="bi bi-check-lg me-1"></i>Schedule Match</button>
+                    <a th:href="@{/matches}" class="btn btn-outline-play26">Cancel</a></div>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="loadingOverlay" class="loading-overlay"><div class="loading-spinner"></div></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/play26.js}"></script>
+</body>
+</html>

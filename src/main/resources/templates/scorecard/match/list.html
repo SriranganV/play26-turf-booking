@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<style>
+:root{
+--primary:#0f6e56;--accent:#19a974;--glass:rgba(255,255,255,.72);
+--shadow:0 20px 40px rgba(15,110,86,.15);
+}
+body{background:linear-gradient(135deg,#eef8f5,#f9fbfb)}
+.hero{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;
+padding:40px;border-radius:24px;margin:25px 0;box-shadow:var(--shadow)}
+.glass{background:var(--glass);backdrop-filter:blur(18px);
+border-radius:20px;padding:24px;box-shadow:var(--shadow)}
+.stat{border-radius:18px;color:#fff;padding:22px}
+.table tbody tr:hover{background:#f3fbf8}
+.badge{font-size:.82rem}
+</style>
+
+<div class="container-fluid py-4">
+
+<div class="hero d-flex justify-content-between align-items-center flex-wrap">
+<div>
+<h2 class="fw-bold">Match Management</h2>
+<p class="mb-0 opacity-75">Manage cricket matches</p>
+</div>
+<a th:href="@{/scorecard/matches/create}" class="btn btn-light">
+<i class="bi bi-plus-circle"></i> New Match
+</a>
+</div>
+
+<div class="row g-3 mb-4">
+<div class="col-md-2"><div class="stat bg-success"><h3 th:text="${totalMatches}">0</h3><small>Total</small></div></div>
+<div class="col-md-2"><div class="stat bg-primary"><h3 th:text="${upcomingMatches}">0</h3><small>Upcoming</small></div></div>
+<div class="col-md-2"><div class="stat bg-warning"><h3 th:text="${liveMatches}">0</h3><small>Live</small></div></div>
+<div class="col-md-2"><div class="stat bg-dark"><h3 th:text="${completedMatches}">0</h3><small>Completed</small></div></div>
+<div class="col-md-2"><div class="stat bg-info"><h3 th:text="${todayMatches}">0</h3><small>Today</small></div></div>
+</div>
+
+<div class="glass">
+
+<form class="row g-3 mb-4" method="get" th:action="@{/scorecard/matches}">
+<div class="col-md-10">
+<input class="form-control" name="keyword" th:value="${keyword}" placeholder="Search by match number, venue or status">
+</div>
+<div class="col-md-2 d-grid">
+<button class="btn btn-success"><i class="bi bi-search"></i> Search</button>
+</div>
+</form>
+
+<div class="table-responsive">
+<table class="table align-middle">
+<thead class="table-success">
+<tr>
+<th>#</th>
+<th>Match</th>
+<th>Date</th>
+<th>Venue</th>
+<th>Overs</th>
+<th>Status</th>
+<th width="220">Actions</th>
+</tr>
+</thead>
+<tbody>
+<tr th:each="match,stat : ${matches}">
+<td th:text="${stat.count}">1</td>
+<td>
+<div class="fw-bold" th:text="${match.matchNumber}">M01</div>
+<small>
+<span th:text="${match.teamAId}"></span>
+vs
+<span th:text="${match.teamBId}"></span>
+</small>
+</td>
+<td>
+<div th:text="${match.matchDate}"></div>
+<small th:text="${match.matchTime}"></small>
+</td>
+<td th:text="${match.venue}"></td>
+<td th:text="${match.overs}"></td>
+<td>
+<span class="badge bg-success" th:text="${match.status}">UPCOMING</span>
+</td>
+<td>
+<div class="btn-group btn-group-sm">
+<a th:href="@{/scorecard/matches/view/{id}(id=${match.id})}" class="btn btn-info"><i class="bi bi-eye"></i></a>
+<a th:href="@{/scorecard/matches/edit/{id}(id=${match.id})}" class="btn btn-warning"><i class="bi bi-pencil"></i></a>
+<a th:href="@{/scorecard/matches/delete/{id}(id=${match.id})}"
+onclick="return confirm('Delete this match?')" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+</div>
+</td>
+</tr>
+<tr th:if="${#lists.isEmpty(matches)}">
+<td colspan="7" class="text-center py-5">No matches available.</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<nav th:if="${totalPages!=null and totalPages>1}">
+<ul class="pagination justify-content-center">
+<li class="page-item" th:classappend="${currentPage==0?'disabled':''}">
+<a class="page-link" th:href="@{/scorecard/matches(page=${currentPage-1},keyword=${keyword})}">Previous</a>
+</li>
+<li class="page-item" th:each="i:${#numbers.sequence(0,totalPages-1)}"
+th:classappend="${i==currentPage?'active':''}">
+<a class="page-link" th:text="${i+1}"
+th:href="@{/scorecard/matches(page=${i},keyword=${keyword})}">1</a>
+</li>
+<li class="page-item" th:classappend="${currentPage==totalPages-1?'disabled':''}">
+<a class="page-link" th:href="@{/scorecard/matches(page=${currentPage+1},keyword=${keyword})}">Next</a>
+</li>
+</ul>
+</nav>
+
+</div>
+
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} + ' | PLAY26'">Dashboard | PLAY26</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+</head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<style>
+    .quick-action {
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        background: var(--play26-card-bg); border: 1px solid var(--play26-border);
+        border-radius: 1rem; padding: 1.5rem; text-decoration: none; color: var(--play26-heading);
+        font-weight: 600; box-shadow: 0 4px 6px var(--play26-shadow); transition: all 0.2s;
+    }
+    .quick-action:hover {
+        transform: translateY(-4px); box-shadow: 0 10px 15px rgba(0,0,0,0.05);
+        color: var(--play26-primary); border-color: var(--play26-primary);
+    }
+    .quick-action i { font-size: 2rem; margin-bottom: 0.5rem; color: var(--play26-primary); }
+</style>
+<div class="play26-hero">
+    <div class="container position-relative">
+        <div class="position-absolute top-0 end-0 mt-3 me-3">
+            <a th:href="@{/admin}" class="btn btn-outline-light btn-sm" style="border-radius: 999px; backdrop-filter: blur(10px); background: rgba(255,255,255,0.1);">
+                <i class="bi bi-gear-fill me-1"></i> Admin Options
+            </a>
+        </div>
+        <h1><i class="bi bi-lightning-charge-fill me-2"></i>PLAY26 Dashboard</h1>
+        <p class="mb-0">24 Hours + 2 Clicks to Book &mdash; Your sports command center</p>
+    </div>
+</div>
+<div class="container pb-5">
+    <!-- Stats Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4 col-lg">
+            <div class="stat-card primary"><i class="bi bi-geo-alt-fill stat-icon"></i>
+                <div class="stat-value" th:text="${totalTurfs} ?: 0">0</div><div class="stat-label">Turfs</div></div>
+        </div>
+        <div class="col-6 col-md-4 col-lg">
+            <div class="stat-card accent"><i class="bi bi-trophy-fill stat-icon"></i>
+                <div class="stat-value" th:text="${totalTournaments} ?: 0">0</div><div class="stat-label">Tournaments</div></div>
+        </div>
+        <div class="col-6 col-md-4 col-lg">
+            <div class="stat-card secondary"><i class="bi bi-controller stat-icon"></i>
+                <div class="stat-value" th:text="${totalMatches} ?: 0">0</div><div class="stat-label">Matches</div></div>
+        </div>
+        <div class="col-6 col-md-4 col-lg">
+            <div class="stat-card primary"><i class="bi bi-people-fill stat-icon"></i>
+                <div class="stat-value" th:text="${totalTeams} ?: 0">0</div><div class="stat-label">Teams</div></div>
+        </div>
+        <div class="col-6 col-md-4 col-lg">
+            <div class="stat-card accent"><i class="bi bi-person-fill stat-icon"></i>
+                <div class="stat-value" th:text="${totalPlayers} ?: 0">0</div><div class="stat-label">Players</div></div>
+        </div>
+    </div>
+    <!-- Match Status -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="solid-card text-center"><span class="badge badge-live fs-6 px-3 py-2"><i class="bi bi-broadcast me-1"></i>LIVE</span>
+                <div class="stat-value mt-2 fs-3 fw-bold" th:text="${liveMatches} ?: 0">0</div></div>
+        </div>
+        <div class="col-md-4">
+            <div class="solid-card text-center"><span class="badge badge-upcoming fs-6 px-3 py-2"><i class="bi bi-clock me-1"></i>Upcoming</span>
+                <div class="stat-value mt-2 fs-3 fw-bold" th:text="${upcomingMatches} ?: 0">0</div></div>
+        </div>
+        <div class="col-md-4">
+            <div class="solid-card text-center"><span class="badge badge-completed fs-6 px-3 py-2"><i class="bi bi-check-circle me-1"></i>Completed</span>
+                <div class="stat-value mt-2 fs-3 fw-bold" th:text="${completedMatches} ?: 0">0</div></div>
+        </div>
+    </div>
+    <!-- Quick Actions -->
+    <h3 class="section-title"><i class="bi bi-lightning me-2"></i>Quick Actions</h3>
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3"><a th:href="@{/turfs}" class="quick-action"><i class="bi bi-geo-alt"></i>Browse Turfs</a></div>
+        <div class="col-6 col-md-3"><a th:href="@{/tournaments}" class="quick-action"><i class="bi bi-trophy"></i>Tournaments</a></div>
+        <div class="col-6 col-md-3"><a th:href="@{/matches}" class="quick-action"><i class="bi bi-controller"></i>Matches</a></div>
+        <div class="col-6 col-md-3"><a th:href="@{/scorecard}" class="quick-action"><i class="bi bi-clipboard-data"></i>Scorecard</a></div>
+        <div class="col-6 col-md-3"><a th:href="@{/teams}" class="quick-action"><i class="bi bi-people"></i>Teams</a></div>
+        <div class="col-6 col-md-3"><a th:href="@{/players}" class="quick-action"><i class="bi bi-person-badge"></i>Players</a></div>
+        <div class="col-6 col-md-3"><a th:href="@{/rules}" class="quick-action"><i class="bi bi-book"></i>Rules</a></div>
+        <div class="col-6 col-md-3"><a th:href="@{/admin}" class="quick-action"><i class="bi bi-gear"></i>Admin</a></div>
+    </div>
+</div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<div id="loadingOverlay" class="loading-overlay"><div class="loading-spinner"></div></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/play26.js}"></script>
+</body>
+</html>

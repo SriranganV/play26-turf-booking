@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<main class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+            <h1 class="fw-bold mb-1 text-heading"><i class="bi bi-calendar3"></i> Manage Slots</h1>
+            <p class="mb-0 text-muted"><span class="badge bg-secondary px-2 py-1" th:text="${slots.size() + ' total slots'}"></span> Available time slots for turfs.</p>
+        </div>
+        <a class="btn btn-play26" th:href="@{/admin/slots/new}">
+            <i class="bi bi-plus-circle me-1"></i> Add Slot
+        </a>
+    </div>
+
+    <div class="alert alert-success bg-transparent border-success text-success" th:if="${successMessage}">
+        <i class="bi bi-check-circle"></i> <span th:text="${successMessage}"></span>
+    </div>
+    <div class="alert alert-danger bg-transparent border-danger text-danger" th:if="${errorMessage}">
+        <i class="bi bi-exclamation-triangle"></i> <span th:text="${errorMessage}"></span>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-8 col-lg-6 d-flex gap-2">
+            <div class="form-floating flex-grow-1">
+                <select class="form-select" id="statusFilter" onchange="filterTable()">
+                    <option value="">All statuses</option>
+                    <option value="AVAILABLE">Available</option>
+                    <option value="BOOKED">Booked</option>
+                    <option value="CLOSED">Closed</option>
+                </select>
+                <label for="statusFilter">Filter by Status</label>
+            </div>
+            <div class="form-floating flex-grow-1">
+                <select class="form-select" id="dateFilter" onchange="filterTable()">
+                    <option value="">All dates</option>
+                    <option value="future">Future only</option>
+                    <option value="past">Past only</option>
+                </select>
+                <label for="dateFilter">Filter by Date</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="solid-card p-0 hover-lift">
+        <div class="card-body p-0">
+            <div th:if="${#lists.isEmpty(slots)}" class="text-center py-5">
+                <i class="bi bi-calendar-x fs-1 d-block mb-3 text-muted"></i>
+                <p class="text-muted fs-5 mb-4">No slots created yet.</p>
+                <a class="btn btn-play26" th:href="@{/admin/slots/new}"><i class="bi bi-plus-circle me-1"></i> Add First Slot</a>
+            </div>
+
+            <div class="table-responsive" th:if="${!#lists.isEmpty(slots)}">
+                <table class="table table-custom mb-0 align-middle" id="slotsTable">
+                    <thead>
+                        <tr>
+                            <th class="px-4 text-center">#</th>
+                            <th>Turf</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                            <th class="px-4 text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="slot,iter : ${slots}" th:attr="data-status=${slot.status},data-date=${slot.slotDate}">
+                            <td class="px-4 fw-bold text-center" th:text="${iter.index + 1}">1</td>
+                            <td class="fw-semibold text-play26" th:text="${slot.turfName}">Green Arena</td>
+                            <td>
+                                <i class="bi bi-calendar text-muted me-1"></i> <span th:text="${slot.slotDate}"></span>
+                                <span class="badge bg-warning bg-opacity-25 text-warning border border-warning ms-2" th:if="${slot.slotDate.toString() lt #dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
+                                    <i class="bi bi-clock-history"></i> Past
+                                </span>
+                            </td>
+                            <td><i class="bi bi-clock text-muted me-1"></i> <span th:text="${slot.startTime + ' - ' + slot.endTime}"></span></td>
+                            <td>
+                                <span class="badge badge-live" th:if="${slot.status == 'AVAILABLE'}"><i class="bi bi-check-circle me-1"></i> Available</span>
+                                <span class="badge badge-upcoming" th:if="${slot.status == 'BOOKED'}"><i class="bi bi-bookmark-check me-1"></i> Booked</span>
+                                <span class="badge badge-completed" th:if="${slot.status == 'CLOSED'}"><i class="bi bi-x-circle me-1"></i> Closed</span>
+                            </td>
+                            <td class="px-4 text-end">
+                                <div class="d-flex gap-2 justify-content-end">
+                                    <form th:action="@{/admin/slots/available/{id}(id=${slot.id})}" method="post" th:if="${slot.status != 'AVAILABLE'}" class="m-0">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                        <button class="btn btn-sm btn-outline-success" type="submit" title="Make Available"><i class="bi bi-check2-circle me-1"></i>Make Available</button>
+                                    </form>
+                                    <form th:action="@{/admin/slots/closed/{id}(id=${slot.id})}" method="post" th:if="${slot.status != 'CLOSED'}" class="m-0">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                        <button class="btn btn-sm btn-outline-warning" type="submit" title="Close"><i class="bi bi-dash-circle me-1"></i>Close</button>
+                                    </form>
+                                    <form th:action="@{/admin/slots/delete/{id}(id=${slot.id})}" method="post" onsubmit="return confirm('Delete this slot permanently?')" class="m-0">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                        <button class="btn btn-sm btn-outline-danger" type="submit" title="Delete"><i class="bi bi-trash me-1"></i>Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+const today = new Date().toISOString().split('T')[0];
+
+function filterTable() {
+    const statusVal = document.getElementById('statusFilter').value;
+    const dateVal = document.getElementById('dateFilter').value;
+    document.querySelectorAll('#slotsTable tbody tr').forEach(row => {
+        const status = row.dataset.status;
+        const date = row.dataset.date;
+        const statusOk = !statusVal || status === statusVal;
+        const dateOk = !dateVal 
+            || (dateVal === 'future' && date >= today) 
+            || (dateVal === 'past' && date < today);
+        row.style.display = (statusOk && dateOk) ? '' : 'none';
+    });
+}
+</script>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

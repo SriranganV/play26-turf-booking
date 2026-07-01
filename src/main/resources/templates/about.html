@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('About PLAY26')}"></head>
+<body>
+    <style>
+        /* ── About Page Styles (PLAY26 Theme) ── */
+
+        /* ── 1. Cinematic Animated Hero Section ── */
+        .about-hero {
+            position: relative;
+            height: 80vh;
+            min-height: 550px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+            border-bottom: 5px solid #9FE1CB;
+        }
+
+        /* The Image Layer: Slow Zoom Animation + Parallax */
+        .about-hero::before {
+            content: '';
+            position: absolute;
+            inset: -10%; /* Negative inset prevents white edges during zoom */
+            background: url('logo1.png') center/cover fixed no-repeat;
+            z-index: 0;
+            animation: cinematicZoom 20s ease-in-out infinite alternate;
+        }
+
+        /* The Dark Overlay Layer */
+        .about-hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(15, 110, 86, 0.6), rgba(17, 24, 39, 0.95));
+            z-index: 1;
+        }
+
+        @keyframes cinematicZoom {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.15); }
+        }
+
+        /* Glassmorphism Panel for the Text */
+        .hero-glass-panel {
+            position: relative;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 4rem 5rem;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            /* Entrance Animation */
+            opacity: 0;
+            animation: slideUpFade 1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s forwards;
+        }
+
+        /* Custom Entrance Animations */
+        @keyframes slideUpFade {
+            0% { opacity: 0; transform: translateY(40px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { text-shadow: 0 0 20px rgba(159, 225, 203, 0.4); }
+            50% { text-shadow: 0 0 40px rgba(159, 225, 203, 0.9), 0 0 10px #ffffff; }
+        }
+
+        @keyframes trackingIn {
+            0% { letter-spacing: -10px; opacity: 0; }
+            100% { letter-spacing: -2px; opacity: 1; }
+        }
+
+        /* Text Styling & Staggered Animations */
+        .hero-tagline {
+            font-size: 1.25rem;
+            color: #9FE1CB;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: inline-block;
+            opacity: 0;
+            animation: slideUpFade 0.8s ease-out 0.6s forwards;
+        }
+
+        .hero-title {
+            font-size: 5.5rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 1.5rem;
+            line-height: 1;
+            opacity: 0;
+            /* Combines the letter spacing entrance with the continuous glow */
+            animation: trackingIn 1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.8s forwards, 
+                       pulseGlow 3s ease-in-out 1.8s infinite alternate;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: #ffffff;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            background: rgba(15, 110, 86, 0.6);
+            border: 1px solid rgba(159, 225, 203, 0.4);
+            padding: 12px 30px;
+            border-radius: 999px;
+            display: inline-block;
+            opacity: 0;
+            transition: all 0.3s ease;
+            animation: slideUpFade 0.8s ease-out 1.2s forwards;
+            cursor: default;
+        }
+
+        .hero-subtitle:hover {
+            background: rgba(15, 110, 86, 0.9);
+            border-color: #ffffff;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* ── 2. Who We Are (Split Section with Logo) ── */
+        .who-we-are {
+            padding: 6rem 1rem;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+        }
+
+        .who-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            max-width: 1200px;
+            align-items: center;
+        }
+
+        .who-text h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #111;
+            margin-bottom: 1.5rem;
+            letter-spacing: -1px;
+        }
+
+        .who-text h2 span {
+            color: #0F6E56;
+        }
+
+        .who-text p {
+            font-size: 1.15rem;
+            color: #4b5563;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .who-text .highlight-box {
+            background: #E1F5EE;
+            border-left: 4px solid #0F6E56;
+            padding: 1.5rem;
+            border-radius: 0 12px 12px 0;
+            margin-top: 2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .who-text .highlight-box:hover {
+            transform: translateX(10px);
+        }
+
+        .highlight-box p {
+            margin: 0;
+            color: #0F6E56;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* Floating Logo Animation */
+        .who-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .who-image img {
+            width: 100%;
+            max-width: 450px;
+            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.1));
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* ── 3. The Meaning of 26 (Interactive Equation) ── */
+        .meaning-section {
+            padding: 6rem 1rem;
+            background: #f4f6f5;
+            text-align: center;
+        }
+
+        .meaning-header {
+            margin-bottom: 4rem;
+        }
+
+        .meaning-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #111;
+            margin-bottom: 1rem;
+        }
+
+        .meaning-header p {
+            font-size: 1.15rem;
+            color: #6b7280;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* The Equation Flexbox */
+        .equation-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+
+        .math-symbol {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #9ca3af;
+        }
+
+        .meaning-card {
+            background: #ffffff;
+            padding: 3rem 2rem;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            flex: 1;
+            min-width: 250px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+        }
+
+        .meaning-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 25px 50px rgba(15, 110, 86, 0.15);
+            border-color: #9FE1CB;
+        }
+
+        .card-number {
+            font-size: 4rem;
+            font-weight: 800;
+            color: #0F6E56;
+            line-height: 1;
+            margin-bottom: 1rem;
+        }
+
+        .meaning-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #111;
+            margin-bottom: 0.75rem;
+        }
+
+        .meaning-card p {
+            font-size: 1rem;
+            color: #6b7280;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .card-final {
+            background: linear-gradient(135deg, #0F6E56 0%, #159b79 100%);
+            color: #ffffff;
+        }
+
+        .card-final .card-number { color: #ffffff; }
+        .card-final h3 { color: #9FE1CB; }
+        .card-final p { color: rgba(255, 255, 255, 0.9); }
+
+        /* ── 4. Call to Action ── */
+        .cta-section {
+            padding: 6rem 1rem;
+            background: #111827;
+            text-align: center;
+            color: #ffffff;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-section p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 700px;
+            margin: 0 auto 3rem auto;
+            line-height: 1.6;
+        }
+
+        .btn-cta {
+            background: #9FE1CB;
+            color: #0F6E56;
+            padding: 16px 36px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 999px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-cta:hover {
+            background: #ffffff;
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .hero-glass-panel { padding: 3rem 2rem; margin: 0 20px; }
+            .hero-title { font-size: 3.5rem; }
+            .who-grid { grid-template-columns: 1fr; text-align: center; }
+            .who-text .highlight-box { text-align: left; }
+            .equation-container { flex-direction: column; }
+            .math-symbol { display: none; }
+        }
+    </style>
+
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<main>
+
+    <section class="about-hero">
+        <div class="hero-glass-panel">
+            <div class="hero-tagline">Welcome to</div>
+            <h1 class="hero-title">⚽ PLAY26</h1>
+            <div class="hero-subtitle">Book • Play • Compete</div>
+        </div>
+    </section>
+
+    <section class="who-we-are">
+        <div class="who-grid">
+            
+            <div class="who-text reveal">
+                <h2>Who We Are at <span>PLAY26</span></h2>
+                <p>PLAY26 is a modern sports booking platform designed to make turf reservations quick, secure, and incredibly convenient.</p>
+                <p>Whether you're organizing a football match, cricket practice, badminton game, or local tournament, PLAY26 lets you reserve sports facilities anytime with a fast and seamless booking experience.</p>
+                
+                <div class="highlight-box">
+                    <p>"Our vision is to make sports venue booking fast, simple, and available anytime you need it."</p>
+                </div>
+            </div>
+
+            <div class="who-image reveal">
+                <img src="logo2.png" alt="PLAY26 Logo">
+            </div>
+
+        </div>
+    </section>
+
+    <section class="meaning-section">
+        <div class="meaning-header reveal">
+            <h2>Why "26"?</h2>
+            <p>Our philosophy is simple, and our brand name reflects our ultimate promise to every athlete on our platform.</p>
+        </div>
+
+        <div class="equation-container">
+            
+            <div class="meaning-card reveal">
+                <div class="card-number">24</div>
+                <h3>Hours a Day</h3>
+                <p>The platform is online and available anytime. Book your late-night games or early morning practices without waiting for facility managers to wake up.</p>
+            </div>
+
+            <div class="math-symbol reveal" style="transition-delay: 0.1s;">+</div>
+
+            <div class="meaning-card reveal" style="transition-delay: 0.2s;">
+                <div class="card-number">2</div>
+                <h3>Clicks to Book</h3>
+                <p>A fast and simple booking experience. We removed the friction so you can spend less time navigating menus and more time on the playing field.</p>
+            </div>
+
+            <div class="math-symbol reveal" style="transition-delay: 0.3s;">=</div>
+
+            <div class="meaning-card card-final reveal" style="transition-delay: 0.4s;">
+                <div class="card-number">26</div>
+                <h3>PLAY26</h3>
+                <p>Represents speed, ultimate convenience, and your personal lucky number. <br><br><strong>24 Hours + 2 Clicks = PLAY26.</strong></p>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="cta-section reveal">
+        <h2>Play Smarter. Book Faster. Compete Better.</h2>
+        <p>Join the 24×7 Sports Booking Platform today and experience the easiest way to organize your next big match.</p>
+        <a th:href="@{/register}" class="btn-cta">
+            Join PLAY26 Today &#10148;
+        </a>
+    </section>
+
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

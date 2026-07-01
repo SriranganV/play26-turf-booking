@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle})}">
+
+</head>
+<body>
+
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+    <style>
+        /* ── Turfs Page Styles (TurfPlay Theme) ── */
+        .turfs-shell {
+            min-height: calc(100vh - 80px);
+            padding: 3rem 1rem;
+            background: #f4f6f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .turfs-container {
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        /* ── Header ── */
+        .page-header {
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: #111;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        .page-header p {
+            font-size: 15px;
+            color: #6b7280;
+            margin: 0;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* ── Grid & Cards ── */
+        .turf-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .turf-card {
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            position: relative;
+        }
+
+        .turf-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: #9FE1CB;
+        }
+
+        /* ── Card Graphic Header (Since no images are stored) ── */
+        .turf-graphic {
+            height: 120px;
+            background: linear-gradient(135deg, #0F6E56 0%, #159b79 100%);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .turf-graphic::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.15) 2px, transparent 2px);
+            background-size: 20px 20px;
+        }
+
+        .turf-price-tag {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #0F6E56;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+            z-index: 2;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .turf-price-tag span {
+            font-size: 16px;
+        }
+
+        /* ── Card Body ── */
+        .turf-body {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .turf-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #111;
+            margin: 0 0 6px 0;
+            line-height: 1.2;
+        }
+
+        .turf-location {
+            font-size: 13px;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 12px;
+        }
+
+        .turf-desc {
+            font-size: 13.5px;
+            color: #4b5563;
+            line-height: 1.6;
+            margin: 0 0 16px 0;
+            /* Clamp text to 3 lines */
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* ── Sports Badges ── */
+        .sports-container {
+            margin-top: auto; /* Pushes to bottom of body */
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .sport-badge {
+            background: #f3f4f6;
+            color: #374151;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            border: 1px solid #e5e7eb;
+        }
+
+        /* ── Card Footer ── */
+        .turf-footer {
+            padding: 1.25rem 1.5rem;
+            border-top: 1px solid #f3f4f6;
+            background: #f9fafb;
+        }
+
+        .btn-view {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 42px;
+            background: #0F6E56;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.15s, transform 0.1s;
+        }
+
+        .btn-view:hover {
+            background: #085041;
+        }
+
+        .btn-view:active {
+            transform: scale(0.98);
+        }
+
+        /* ── Empty State ── */
+        .empty-state {
+            grid-column: 1 / -1;
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px dashed #d1d5db;
+            padding: 5rem 2rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .empty-icon {
+            font-size: 54px;
+            margin-bottom: 1rem;
+            opacity: 0.4;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #111;
+            margin: 0 0 8px 0;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            color: #6b7280;
+            margin: 0;
+            max-width: 350px;
+        }
+    </style>
+<main class="turfs-shell">
+    <div class="turfs-container">
+        
+        <div class="page-header">
+            <h1>Available Turfs</h1>
+            <p>Explore premium turf grounds, view facilities, and book your perfect time slot today.</p>
+        </div>
+
+        <!-- Global Error Alert (from RedirectAttributes if applicable) -->
+        <div th:if="${errorMessage}" style="background: #FCEBEB; color: #791F1F; border: 1px solid #F09595; padding: 12px 16px; border-radius: 9px; margin-bottom: 2rem; font-size: 14px; font-weight: 500; text-align: center;">
+            &#9888;&nbsp; <span th:text="${errorMessage}"></span>
+        </div>
+
+        <section class="turf-grid">
+            
+            <!-- Empty State -->
+            <div class="empty-state" th:if="${#lists.isEmpty(turfs)}">
+                <div class="empty-icon">&#127807;</div>
+                <h3>No turfs currently available</h3>
+                <p>We are currently updating our grounds. Please check back again later to book your game.</p>
+            </div>
+
+            <!-- Turf Cards Loop -->
+            <article class="turf-card" th:each="turf : ${turfs}">
+                
+                <!-- Dynamic Graphic Header -->
+                <div class="turf-graphic">
+                    <div class="turf-price-tag">
+                        &#8377;<span th:text="${turf.pricePerHour}">1000</span> <span style="font-weight: 500; font-size: 11px;">/ hr</span>
+                    </div>
+                </div>
+
+                <!-- Turf Information -->
+                <div class="turf-body">
+                    <h2 class="turf-name" th:text="${turf.name}">Green Arena</h2>
+                    
+                    <div class="turf-location">
+                        &#128205; <span th:text="${turf.location}">City Center</span>
+                    </div>
+                    
+                    <p class="turf-desc" th:text="${turf.description}">
+                        Detailed description of the turf, facilities, lighting, parking, and other amenities available.
+                    </p>
+
+                    <!-- Split Supported Sports String by Comma and Display as Badges -->
+                    <div class="sports-container">
+                        <!-- We use string utilities to split the 'Cricket, Football' string into individual visually appealing tags -->
+                        <span class="sport-badge" 
+                              th:each="sport : ${#strings.arraySplit(turf.supportedSports, ',')}" 
+                              th:text="${#strings.trim(sport)}">
+                            Cricket
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <div class="turf-footer">
+                    <a class="btn-view" th:href="@{/turfs/{id}(id=${turf.id})}">
+                        View Details &amp; Book
+                    </a>
+                </div>
+
+            </article>
+
+        </section>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

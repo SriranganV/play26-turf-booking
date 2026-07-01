@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle})}"></head>
+<body>
+
+<style>
+    /* ── Register Page Styles ── */
+    .register-shell {
+        /* If nav/footer take up space, this ensures the whole page fits */
+        min-height: calc(100vh - 80px); 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem 1rem;
+        background: #f4f6f5;
+    }
+
+    .register-card {
+        display: grid;
+        /* Gave the form side a bit more width so elements don't wrap and cause vertical stretching */
+        grid-template-columns: 1fr 1.1fr; 
+        width: 100%;
+        max-width: 920px;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 32px rgba(0, 0, 0, 0.10);
+    }
+
+    /* ── Left Panel ── */
+    .register-left {
+        background: #0F6E56;
+        padding: 2rem 2.25rem; /* Reduced padding for desktop fit */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .turf-bg {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+    }
+
+    .brand-wrap {
+        position: relative;
+        z-index: 2;
+    }
+
+    .brand-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .brand-icon {
+        width: 34px; /* Slightly smaller */
+        height: 34px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        color: #fff;
+    }
+
+    .brand-name {
+        font-size: 15px;
+        font-weight: 600;
+        color: #fff;
+        line-height: 1.2;
+    }
+
+    .brand-tagline {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.55);
+        font-weight: 400;
+        display: block;
+    }
+
+    .hero-wrap {
+        position: relative;
+        z-index: 2;
+        margin-top: 1rem;
+    }
+
+    .hero-eyebrow {
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.5);
+        font-weight: 500;
+        margin-bottom: 6px;
+    }
+
+    .hero-headline {
+        font-size: 26px; /* Reduced to save vertical space */
+        font-weight: 700;
+        color: #fff;
+        line-height: 1.2;
+        margin-bottom: 10px;
+    }
+
+    .hero-headline span {
+        color: #9FE1CB;
+    }
+
+    .hero-desc {
+        font-size: 12.5px;
+        color: rgba(255, 255, 255, 0.65);
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    /* ── Steps list ── */
+    .steps-list {
+        position: relative;
+        z-index: 2;
+        list-style: none;
+        padding: 0;
+        margin: 1rem 0 0 0;
+        display: flex;
+        flex-direction: column;
+        gap: 12px; /* Tighter gap */
+    }
+
+    .steps-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .step-num {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 700;
+        color: #9FE1CB;
+        flex-shrink: 0;
+        margin-top: 1px;
+    }
+
+    .step-text {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.72);
+        line-height: 1.4;
+    }
+
+    .step-text strong {
+        display: block;
+        color: rgba(255, 255, 255, 0.92);
+        font-weight: 600;
+        margin-bottom: 1px;
+    }
+
+    /* ── Right Panel ── */
+    .register-right {
+        background: #ffffff;
+        padding: 2rem 2.5rem; /* Reduced vertical padding */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .form-heading {
+        margin-bottom: 1.2rem;
+    }
+
+    .form-heading h1 {
+        font-size: 21px;
+        font-weight: 600;
+        color: #111;
+        margin-bottom: 4px;
+    }
+
+    .form-heading p {
+        font-size: 13px;
+        color: #6b7280;
+        margin: 0;
+    }
+
+    /* ── Field Groups ── */
+    .field-group {
+        margin-bottom: 0.75rem; /* Tighter spacing between fields */
+    }
+
+    .field-group label {
+        display: block;
+        font-size: 12.5px;
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 4px;
+    }
+
+    .input-wrap {
+        position: relative;
+    }
+
+    .input-wrap .input-icon {
+        position: absolute;
+        left: 11px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 14px;
+        color: #9ca3af;
+        pointer-events: none;
+    }
+
+    .input-wrap input {
+        width: 100%;
+        height: 38px; /* Slightly shorter inputs */
+        padding: 0 38px 0 34px;
+        font-size: 13.5px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        background: #f9fafb;
+        color: #111;
+        outline: none;
+        transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+        font-family: inherit;
+    }
+
+    .input-wrap input:focus {
+        border-color: #0F6E56;
+        box-shadow: 0 0 0 3px rgba(15, 110, 86, 0.12);
+        background: #fff;
+    }
+
+    .input-wrap input::placeholder {
+        color: #9ca3af;
+    }
+
+    .eye-btn {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #9ca3af;
+        font-size: 15px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        line-height: 1;
+    }
+
+    .eye-btn:hover {
+        color: #6b7280;
+    }
+
+    /* ── Field-level error messages ── */
+    .field-error {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 4px;
+        font-size: 11.5px;
+        color: #791F1F;
+        background: #FCEBEB;
+        border: 0.5px solid #F09595;
+        border-radius: 6px;
+        padding: 5px 8px;
+    }
+
+    .field-error::before {
+        content: '⚠';
+        font-size: 11px;
+        flex-shrink: 0;
+    }
+
+    /* ── Password strength bar ── */
+    .strength-bar-wrap {
+        margin-top: 5px;
+        display: none;
+    }
+
+    .strength-bar-wrap.visible {
+        display: block;
+    }
+
+    .strength-track {
+        height: 3px;
+        background: #e5e7eb;
+        border-radius: 999px;
+        overflow: hidden;
+        margin-bottom: 3px;
+    }
+
+    .strength-fill {
+        height: 100%;
+        border-radius: 999px;
+        transition: width 0.3s ease, background 0.3s ease;
+        width: 0%;
+    }
+
+    .strength-label {
+        font-size: 10.5px;
+        color: #9ca3af;
+    }
+
+    /* ── Submit button ── */
+    .btn-submit {
+        width: 100%;
+        height: 40px;
+        background: #0F6E56;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-family: inherit;
+        transition: background 0.15s, transform 0.1s;
+        margin-top: 0.5rem;
+    }
+
+    .btn-submit:hover {
+        background: #085041;
+    }
+
+    .btn-submit:active {
+        transform: scale(0.98);
+    }
+
+    /* ── Terms note ── */
+    .terms-note {
+        font-size: 11px;
+        color: #9ca3af;
+        text-align: center;
+        margin-top: 0.75rem;
+        line-height: 1.4;
+    }
+
+    .terms-note a {
+        color: #0F6E56;
+        text-decoration: none;
+    }
+
+    .terms-note a:hover {
+        text-decoration: underline;
+    }
+
+    /* ── Divider ── */
+    .divider {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0.85rem 0;
+        font-size: 12px;
+        color: #9ca3af;
+    }
+
+    .divider::before,
+    .divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: #e5e7eb;
+    }
+
+    /* ── Login row ── */
+    .login-row {
+        text-align: center;
+        font-size: 12.5px;
+        color: #6b7280;
+    }
+
+    .login-row a {
+        color: #0F6E56;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .login-row a:hover {
+        text-decoration: underline;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 680px) {
+        .register-card {
+            grid-template-columns: 1fr;
+            max-width: 440px;
+        }
+
+        .register-left {
+            padding: 2rem 1.75rem;
+            min-height: 200px;
+        }
+
+        .hero-headline {
+            font-size: 22px;
+        }
+
+        .register-right {
+            padding: 2rem 1.75rem;
+        }
+
+        .steps-list {
+            display: none;
+        }
+    }
+</style>
+
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<main class="register-shell">
+    <div class="register-card">
+
+        <div class="register-left">
+            <svg class="turf-bg" viewBox="0 0 380 620" preserveAspectRatio="xMidYMid slice"
+                 xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <ellipse cx="190" cy="310" rx="90" ry="90" fill="none"
+                         stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/>
+                <line x1="0" y1="310" x2="380" y2="310"
+                      stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/>
+                <rect x="20" y="120" width="110" height="60" rx="2" fill="none"
+                      stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/>
+                <rect x="250" y="440" width="110" height="60" rx="2" fill="none"
+                      stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/>
+                <line x1="0" y1="0" x2="0" y2="620"
+                      stroke="rgba(255,255,255,0.05)" stroke-width="14"/>
+                <line x1="380" y1="0" x2="380" y2="620"
+                      stroke="rgba(255,255,255,0.05)" stroke-width="14"/>
+            </svg>
+
+            <div class="brand-wrap">
+                <div class="brand-logo">
+                    <div class="brand-icon">&#9917;</div>
+                    <div>
+                        <div class="brand-name">TurfPlay</div>
+                        <span class="brand-tagline">Sports Hub</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-wrap">
+                <div class="hero-eyebrow">Join the community</div>
+                <div class="hero-headline">Your game.<br><span>Your turf.</span></div>
+                <p class="hero-desc">Create a free account and start booking turfs, tracking scores, and following tournaments today.</p>
+            </div>
+
+            <ul class="steps-list">
+                <li>
+                    <div class="step-num">1</div>
+                    <div class="step-text">
+                        <strong>Create your account</strong>
+                        Fill in your name, email and password.
+                    </div>
+                </li>
+                <li>
+                    <div class="step-num">2</div>
+                    <div class="step-text">
+                        <strong>Browse available turfs</strong>
+                        Pick a ground near you and choose a time slot.
+                    </div>
+                </li>
+                <li>
+                    <div class="step-num">3</div>
+                    <div class="step-text">
+                        <strong>Book &amp; play</strong>
+                        Confirm your slot and head to the field!
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="register-right">
+            <div class="form-heading">
+                <h1>Create your account</h1>
+                <p>It's free and takes less than a minute</p>
+            </div>
+
+            <form th:action="@{/register}" th:object="${registerRequest}" method="post"
+                  id="registerForm" novalidate>
+
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                <div class="field-group">
+                    <label for="fullName">Full name</label>
+                    <div class="input-wrap">
+                        <span class="input-icon" aria-hidden="true">&#128100;</span>
+                        <input id="fullName" type="text" th:field="*{fullName}"
+                               placeholder="SRIRANGAN V"
+                               autocomplete="name" required>
+                    </div>
+                    <p class="field-error"
+                       th:if="${#fields.hasErrors('fullName')}"
+                       th:errors="*{fullName}"></p>
+                </div>
+
+                <div class="field-group">
+                    <label for="email">Email address</label>
+                    <div class="input-wrap">
+                        <span class="input-icon" aria-hidden="true">&#9993;</span>
+                        <input id="email" type="email" th:field="*{email}"
+                               placeholder="you@example.com"
+                               autocomplete="email" required>
+                    </div>
+                    <p class="field-error"
+                       th:if="${#fields.hasErrors('email')}"
+                       th:errors="*{email}"></p>
+                </div>
+
+                <div class="field-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrap">
+                        <span class="input-icon" aria-hidden="true">&#128274;</span>
+                        <input id="password" type="password" th:field="*{password}"
+                               placeholder="Create a strong password"
+                               autocomplete="new-password"
+                               oninput="checkStrength(this.value)" required>
+                        <button type="button" class="eye-btn" id="eyeBtn1"
+                                onclick="togglePassword('password','eyeBtn1')"
+                                aria-label="Show password">&#128065;</button>
+                    </div>
+                    <div class="strength-bar-wrap" id="strengthWrap">
+                        <div class="strength-track">
+                            <div class="strength-fill" id="strengthFill"></div>
+                        </div>
+                        <span class="strength-label" id="strengthLabel">Password strength</span>
+                    </div>
+                    <p class="field-error"
+                       th:if="${#fields.hasErrors('password')}"
+                       th:errors="*{password}"></p>
+                </div>
+
+                <div class="field-group">
+                    <label for="confirmPassword">Confirm password</label>
+                    <div class="input-wrap">
+                        <span class="input-icon" aria-hidden="true">&#128275;</span>
+                        <input id="confirmPassword" type="password" th:field="*{confirmPassword}"
+                               placeholder="Repeat your password"
+                               autocomplete="new-password" required>
+                        <button type="button" class="eye-btn" id="eyeBtn2"
+                                onclick="togglePassword('confirmPassword','eyeBtn2')"
+                                aria-label="Show confirm password">&#128065;</button>
+                    </div>
+                    <p class="field-error"
+                       th:if="${#fields.hasErrors('confirmPassword')}"
+                       th:errors="*{confirmPassword}"></p>
+                </div>
+
+                <button class="btn-submit" type="submit">
+                    &#10148;&nbsp; Create account
+                </button>
+
+                <p class="terms-note">
+                    By creating an account you agree to our
+                    <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+                </p>
+            </form>
+
+            <div class="divider">or</div>
+
+            <div class="login-row">
+                Already have an account? <a href="/login">Sign in</a>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<script>
+    /* ── Password visibility toggle ── */
+    function togglePassword(fieldId, btnId) {
+        var input = document.getElementById(fieldId);
+        var btn   = document.getElementById(btnId);
+        if (input.type === 'password') {
+            input.type = 'text';
+            btn.setAttribute('aria-label', 'Hide password');
+            btn.innerHTML = '&#128064;';
+        } else {
+            input.type = 'password';
+            btn.setAttribute('aria-label', 'Show password');
+            btn.innerHTML = '&#128065;';
+        }
+    }
+
+    /* ── Password strength indicator (visual only) ── */
+    function checkStrength(value) {
+        var wrap  = document.getElementById('strengthWrap');
+        var fill  = document.getElementById('strengthFill');
+        var label = document.getElementById('strengthLabel');
+        if (!value) { wrap.classList.remove('visible'); return; }
+        wrap.classList.add('visible');
+        var score = 0;
+        if (value.length >= 8)          score++;
+        if (/[A-Z]/.test(value))        score++;
+        if (/[0-9]/.test(value))        score++;
+        if (/[^A-Za-z0-9]/.test(value)) score++;
+        var levels = [
+            { pct: '25%', color: '#ef4444', text: 'Weak' },
+            { pct: '50%', color: '#f59e0b', text: 'Fair' },
+            { pct: '75%', color: '#3b82f6', text: 'Good' },
+            { pct: '100%', color: '#0F6E56', text: 'Strong' }
+        ];
+        var lvl = levels[score - 1] || levels[0];
+        fill.style.width      = lvl.pct;
+        fill.style.background = lvl.color;
+        label.textContent     = lvl.text;
+        label.style.color     = lvl.color;
+    }
+
+    /* ── Basic client-side validation ── */
+    document.getElementById('registerForm').addEventListener('submit', function (e) {
+        var fullName        = document.getElementById('fullName').value.trim();
+        var email           = document.getElementById('email').value.trim();
+        var password        = document.getElementById('password').value;
+        var confirmPassword = document.getElementById('confirmPassword').value;
+        if (!fullName || !email || !password || !confirmPassword) {
+            e.preventDefault();
+            alert('Please fill in all fields.');
+            return;
+        }
+        if (password !== confirmPassword) {
+            e.preventDefault();
+            alert('Passwords do not match. Please check and try again.');
+        }
+    });
+</script>
+</body>
+</html>

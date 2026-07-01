@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card glass-card bg-dark text-white border-0 shadow-lg rounded-4 p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <h1 class="fw-bold mb-1"><i class="bi bi-calendar-plus"></i> Add New Slot</h1>
+                    <p class="text-white-50 mb-0">Create a bookable time slot for a turf.</p>
+                </div>
+
+                <div class="alert alert-info bg-info bg-opacity-10 border-info text-info mb-4 d-flex gap-3 align-items-center rounded-3">
+                    <i class="bi bi-info-circle fs-4"></i>
+                    <div class="small">
+                        Slots with <strong>past dates</strong> are hidden from users. Always pick today or a future date so users can see and book the slot.
+                    </div>
+                </div>
+
+                <form th:action="@{/admin/slots/save}" th:object="${slot}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                    <div class="form-floating mb-3">
+                        <select id="turfId" class="form-select bg-dark text-white border-secondary" th:field="*{turfId}" required>
+                            <option value="">- Choose a turf -</option>
+                            <option th:each="turf : ${turfs}" th:value="${turf.id}" th:text="${turf.name + ' • ' + turf.location}"></option>
+                        </select>
+                        <label for="turfId" class="text-white-50">Select Turf *</label>
+                        <div class="form-text text-white-50 mt-1 small">Only active turfs are listed.</div>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input id="slotDate" type="date" class="form-control bg-dark text-white border-secondary" th:field="*{slotDate}" required>
+                        <label for="slotDate" class="text-white-50">Slot Date *</label>
+                        <div class="form-text mt-1 small" id="date-hint">Pick today or any future date. Past dates won't be visible to users.</div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input id="startTime" type="time" class="form-control bg-dark text-white border-secondary" th:field="*{startTime}" required>
+                                <label for="startTime" class="text-white-50">Start Time *</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mt-3 mt-md-0">
+                            <div class="form-floating">
+                                <input id="endTime" type="time" class="form-control bg-dark text-white border-secondary" th:field="*{endTime}" required>
+                                <label for="endTime" class="text-white-50">End Time *</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-floating mb-4">
+                        <select id="status" class="form-select bg-dark text-white border-secondary" th:field="*{status}">
+                            <option value="AVAILABLE">Available - users can book this slot</option>
+                            <option value="CLOSED">Closed - slot exists but is not bookable</option>
+                        </select>
+                        <label for="status" class="text-white-50">Status</label>
+                    </div>
+
+                    <div class="d-flex gap-3 pt-2 border-top border-secondary pt-4 mt-4">
+                        <button class="btn btn-primary btn-glass flex-grow-1 py-3 fw-bold" type="submit">
+                            <i class="bi bi-check2-circle"></i> Save Slot
+                        </button>
+                        <a class="btn btn-outline-light flex-grow-1 py-3 fw-bold" th:href="@{/admin/slots}">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+const today = new Date().toISOString().split('T')[0];
+const dateInput = document.getElementById('slotDate');
+dateInput.setAttribute('min', today);
+
+if (!dateInput.value) {
+    dateInput.value = today;
+}
+
+dateInput.addEventListener('change', function() {
+    const hint = document.getElementById('date-hint');
+    if (this.value < today) {
+        hint.classList.remove('text-white-50');
+        hint.classList.add('text-danger');
+        hint.innerHTML = '<i class="bi bi-exclamation-triangle"></i> This date is in the past - this slot will NOT appear to users!';
+    } else {
+        hint.classList.remove('text-danger');
+        hint.classList.add('text-white-50');
+        hint.textContent = 'Pick today or any future date. Past dates won\'t be visible to users.';
+    }
+});
+
+document.getElementById('endTime').addEventListener('change', function() {
+    const start = document.getElementById('startTime').value;
+    if (start && this.value && this.value <= start) {
+        this.setCustomValidity('End time must be after start time.');
+    } else {
+        this.setCustomValidity('');
+    }
+});
+</script>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

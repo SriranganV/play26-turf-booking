@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head(${pageTitle})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<style>
+/* â”€â”€ RESET & BASE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#0F6E56; --green-dark:#085041; --green-mid:#1a8a6c;
+  --green-light:#dcfce7; --green-pale:#f0fdf8;
+  --amber:#d97706; --red:#dc2626;
+  --text:#0d1117; --muted:#6b7280; --border:#e5e7eb;
+  --card:#ffffff; --page:#f4f6f5;
+  --shadow:0 8px 40px rgba(15,110,86,.10);
+  --radius:16px; --radius-sm:10px;
+  --transition:all .28s cubic-bezier(.4,0,.2,1);
+}
+
+/* â”€â”€ HERO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.turf-hero{
+  position:relative;overflow:hidden;
+  min-height:480px;display:flex;align-items:flex-end;
+  background:linear-gradient(135deg,#0a4434 0%,#0F6E56 60%,#1a8a6c 100%);
+}
+.hero-bg{
+  position:absolute;inset:0;z-index:0;
+  background-image:
+    url('https://images.unsplash.com/photo-1575361204480-aadea25e6e68?auto=format&fit=crop&w=1600&q=80');
+  background-size:cover;background-position:center;
+  filter:brightness(.35) saturate(1.2);
+  transition:filter 1.2s ease;
+}
+.turf-hero:hover .hero-bg{filter:brightness(.28) saturate(1.4)}
+
+/* Animated grass lines */
+.hero-lines{
+  position:absolute;inset:0;z-index:1;
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 48px,
+      rgba(255,255,255,.03) 48px,
+      rgba(255,255,255,.03) 50px
+    );
+}
+/* Corner sport icons */
+.hero-icons{
+  position:absolute;top:0;right:0;bottom:0;
+  width:180px;z-index:1;
+  display:flex;flex-direction:column;justify-content:center;
+  align-items:center;gap:28px;opacity:.12;
+  font-size:54px;pointer-events:none;
+}
+.hero-content{
+  position:relative;z-index:2;
+  width:100%;padding:48px 5%;
+  display:flex;flex-direction:column;gap:18px;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:6px 14px;background:rgba(255,255,255,.15);
+  border:1px solid rgba(255,255,255,.3);
+  border-radius:30px;backdrop-filter:blur(10px);
+  font-size:12px;font-weight:700;color:#fff;
+  letter-spacing:.5px;text-transform:uppercase;
+  width:fit-content;
+}
+.hero-badge .dot{
+  width:7px;height:7px;border-radius:50%;background:#4ade80;
+  animation:pulse-dot 2s infinite;
+}
+@keyframes pulse-dot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.7}}
+.hero-title{
+  font-size:clamp(36px,6vw,68px);font-weight:900;color:#fff;
+  line-height:1.0;letter-spacing:-2px;
+  text-shadow:0 2px 40px rgba(0,0,0,.4);
+}
+.hero-meta{
+  display:flex;flex-wrap:wrap;gap:18px;align-items:center;
+}
+.hero-meta span{
+  color:rgba(255,255,255,.85);font-size:14px;font-weight:500;
+  display:flex;align-items:center;gap:6px;
+}
+.hero-price{
+  font-size:32px;font-weight:900;color:#4ade80;
+  text-shadow:0 0 24px rgba(74,222,128,.4);
+}
+.hero-price sub{font-size:14px;font-weight:500;color:rgba(255,255,255,.7);vertical-align:middle}
+.hero-scroll-btn{
+  position:absolute;bottom:28px;left:50%;transform:translateX(-50%);
+  z-index:3;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);
+  color:#fff;padding:9px 18px;border-radius:24px;font-size:13px;font-weight:600;
+  cursor:pointer;text-decoration:none;backdrop-filter:blur(8px);
+  transition:var(--transition);display:flex;align-items:center;gap:6px;
+}
+.hero-scroll-btn:hover{background:rgba(255,255,255,.25);transform:translateX(-50%) translateY(-2px)}
+.arrow-bounce{animation:bounce 1.6s ease-in-out infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+
+/* â”€â”€ SPORT PILLS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.sport-pills{display:flex;flex-wrap:wrap;gap:8px}
+.sport-pill{
+  padding:5px 14px;border-radius:20px;font-size:13px;font-weight:600;
+  display:flex;align-items:center;gap:5px;
+}
+.sport-cricket{background:#dcfce7;color:#15803d}
+.sport-football{background:#dbeafe;color:#1d4ed8}
+.sport-kabaddi{background:#fef3c7;color:#92400e}
+.sport-badminton{background:#ede9fe;color:#6d28d9}
+.sport-volleyball{background:#fce7f3;color:#be185d}
+.sport-basketball{background:#ffedd5;color:#c2410c}
+.sport-default{background:#f3f4f6;color:#374151}
+
+/* â”€â”€ MAIN LAYOUT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.main-wrap{max-width:1200px;margin:0 auto;padding:48px 5% 80px;display:grid;grid-template-columns:2fr 1fr;gap:36px}
+@media(max-width:900px){.main-wrap{grid-template-columns:1fr}}
+
+/* â”€â”€ SECTION CARDS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.section-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:32px;
+  box-shadow:var(--shadow);
+  animation:fade-up .5s ease both;
+}
+.section-card+.section-card{margin-top:24px}
+@keyframes fade-up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.section-title{
+  font-size:20px;font-weight:800;color:var(--text);margin-bottom:20px;
+  padding-bottom:14px;border-bottom:2px solid var(--green-light);
+  display:flex;align-items:center;gap:8px;
+}
+.section-title::before{content:'';width:4px;height:22px;background:var(--green);border-radius:3px;display:inline-block}
+
+/* â”€â”€ INFO GRID â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.info-item{
+  background:var(--green-pale);border:1px solid rgba(15,110,86,.12);
+  border-radius:var(--radius-sm);padding:16px 18px;
+}
+.info-item .label{font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.info-item .value{font-size:15px;font-weight:700;color:var(--text)}
+
+/* â”€â”€ GALLERY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}
+.gallery-img{
+  width:100%;height:100px;object-fit:cover;border-radius:var(--radius-sm);
+  transition:var(--transition);cursor:pointer;
+}
+.gallery-img:hover{transform:scale(1.03);box-shadow:0 4px 20px rgba(0,0,0,.2)}
+.gallery-main{grid-column:1/-1;height:200px}
+
+/* â”€â”€ SLOTS SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.slots-section{scroll-margin-top:90px}
+.slot-filter{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.slot-filter-btn{
+  padding:7px 16px;border:1.5px solid var(--border);border-radius:24px;
+  background:#fff;font-size:13px;font-weight:600;color:var(--muted);
+  cursor:pointer;transition:var(--transition);
+}
+.slot-filter-btn.active,.slot-filter-btn:hover{
+  border-color:var(--green);color:var(--green);background:var(--green-pale);
+}
+.slots-grid{display:flex;flex-direction:column;gap:12px}
+.slot-card{
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  padding:18px 20px;
+  background:#fff;border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  transition:var(--transition);
+  animation:fade-up .4s ease both;
+}
+.slot-card:hover{border-color:var(--green);box-shadow:0 4px 20px rgba(15,110,86,.12);transform:translateY(-2px)}
+.slot-left{display:flex;align-items:center;gap:16px}
+.slot-date-badge{
+  background:var(--green);color:#fff;border-radius:10px;
+  padding:8px 14px;text-align:center;min-width:62px;
+}
+.slot-date-badge .day{font-size:24px;font-weight:900;line-height:1}
+.slot-date-badge .month{font-size:10px;font-weight:700;text-transform:uppercase;opacity:.85}
+.slot-time{font-size:16px;font-weight:700;color:var(--text)}
+.slot-duration{font-size:12px;color:var(--muted);margin-top:2px}
+.slot-status-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;display:inline-block;margin-right:4px}
+
+/* Book button */
+.btn-book{
+  padding:10px 22px;background:var(--green);color:#fff;border:none;
+  border-radius:var(--radius-sm);font-size:14px;font-weight:700;
+  cursor:pointer;transition:var(--transition);white-space:nowrap;
+}
+.btn-book:hover{background:var(--green-dark);transform:translateY(-2px);box-shadow:0 4px 16px rgba(15,110,86,.35)}
+.btn-login-book{
+  padding:10px 20px;background:#fff;color:var(--green);
+  border:1.5px solid var(--green);border-radius:var(--radius-sm);
+  font-size:14px;font-weight:700;text-decoration:none;
+  transition:var(--transition);white-space:nowrap;display:inline-block;
+}
+.btn-login-book:hover{background:var(--green-pale)}
+
+/* Empty slots state */
+.no-slots{
+  text-align:center;padding:40px 20px;
+  background:var(--green-pale);border:1.5px dashed rgba(15,110,86,.2);
+  border-radius:var(--radius-sm);
+}
+.no-slots .icon{font-size:44px;margin-bottom:12px}
+.no-slots p{color:var(--muted);font-size:15px}
+.no-slots strong{color:var(--text)}
+
+/* â”€â”€ SIDEBAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.sidebar{display:flex;flex-direction:column;gap:24px}
+.sticky-sidebar{position:sticky;top:96px}
+
+/* Booking CTA card */
+.cta-card{
+  background:linear-gradient(135deg,var(--green) 0%,var(--green-mid) 100%);
+  border-radius:var(--radius);padding:28px;color:#fff;
+  box-shadow:0 8px 40px rgba(15,110,86,.3);
+}
+.cta-card h3{font-size:20px;font-weight:800;margin-bottom:6px}
+.cta-card p{font-size:13px;opacity:.85;margin-bottom:20px;line-height:1.5}
+.cta-price{font-size:36px;font-weight:900;margin-bottom:4px}
+.cta-price sub{font-size:14px;font-weight:500;opacity:.8;vertical-align:middle}
+.cta-features{list-style:none;margin-bottom:22px;display:flex;flex-direction:column;gap:7px}
+.cta-features li{font-size:13px;opacity:.9;display:flex;align-items:center;gap:7px}
+.cta-features li::before{content:'';font-weight:900;color:#4ade80}
+.btn-cta{
+  width:100%;padding:14px;background:#fff;color:var(--green);
+  border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:800;
+  cursor:pointer;transition:var(--transition);text-decoration:none;display:block;text-align:center;
+}
+.btn-cta:hover{background:rgba(255,255,255,.9);transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,.15)}
+.btn-cta-outline{
+  width:100%;padding:12px;background:transparent;color:#fff;
+  border:1.5px solid rgba(255,255,255,.4);border-radius:var(--radius-sm);
+  font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;
+  display:block;text-align:center;margin-top:10px;transition:var(--transition);
+}
+.btn-cta-outline:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.7)}
+
+/* Quick info sidebar */
+.quick-info{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px}
+.quick-info h4{font-size:15px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.qi-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f3f4f6}
+.qi-item:last-child{border-bottom:none}
+.qi-icon{font-size:20px;width:32px;text-align:center;flex-shrink:0}
+.qi-label{font-size:12px;color:var(--muted)}
+.qi-val{font-size:14px;font-weight:600;color:var(--text)}
+
+/* â”€â”€ FLASH MESSAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.flash-wrap{max-width:1200px;margin:16px auto 0;padding:0 5%}
+.flash{
+  padding:14px 20px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;
+  display:flex;align-items:center;gap:10px;
+  animation:fade-up .4s ease;
+}
+.flash-success{background:#f0fdf4;border:1px solid #86efac;color:#166534}
+.flash-error  {background:#fef2f2;border:1px solid #fca5a5;color:#991b1b}
+
+/* â”€â”€ BACK LINK â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.back-bar{max-width:1200px;margin:0 auto;padding:20px 5% 0;display:flex;align-items:center;gap:8px}
+.back-link{
+  color:var(--green);font-size:14px;font-weight:600;text-decoration:none;
+  display:inline-flex;align-items:center;gap:5px;transition:var(--transition);
+}
+.back-link:hover{gap:8px}
+
+/* â”€â”€ COUNTDOWN TIMER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.slot-countdown{font-size:11px;color:var(--amber);font-weight:600;background:#fef3c7;padding:2px 8px;border-radius:10px;display:inline-block;margin-left:6px}
+
+/* â”€â”€ RESPONSIVE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+@media(max-width:600px){
+  .turf-hero{min-height:360px}
+  .hero-title{font-size:36px;letter-spacing:-1px}
+  .info-grid{grid-template-columns:1fr}
+  .gallery{grid-template-columns:1fr 1fr}
+  .gallery-main{height:160px}
+}
+</style>
+<!-- â”€â”€ BACK LINK â”€â”€ -->
+<div class="back-bar">
+  <a class="back-link" th:href="@{/turfs}">Back All Turfs</a>
+</div>
+<!-- â”€â”€ FLASH MESSAGES â”€â”€ -->
+<div class="flash-wrap">
+  <div class="flash flash-success" th:if="${successMessage}">
+     <span th:text="${successMessage}"></span>
+  </div>
+  <div class="flash flash-error" th:if="${errorMessage}">
+    Warning <span th:text="${errorMessage}"></span>
+  </div>
+</div>
+<!-- â”€â”€ HERO â”€â”€ -->
+<section class="turf-hero">
+  <div class="hero-bg"></div>
+  <div class="hero-lines"></div>
+  <div class="hero-icons"></div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Open Now - Slots Available
+    </div>
+    <h1 class="hero-title" th:text="${turf.name}">Green Arena</h1>
+    <div class="hero-meta">
+      <span> <span th:text="${turf.location}">City Center</span></span>
+      <span> <span th:text="${turf.supportedSports}">Cricket, Football</span></span>
+      <span class="hero-price">&#8377;<span th:text="${turf.pricePerHour}">1000</span><sub>/hr</sub></span>
+    </div>
+  </div>
+  <a class="hero-scroll-btn" href="#slots-anchor">
+    View Slots <span class="arrow-bounce"></span>
+  </a>
+</section>
+<!-- â”€â”€ MAIN â”€â”€ -->
+<div class="main-wrap">
+  <!-- LEFT COLUMN -->
+  <div class="left-col">
+    <!-- About -->
+    <div class="section-card" style="animation-delay:.05s">
+      <div class="section-title">About This Turf</div>
+      <p style="color:var(--muted);line-height:1.75;font-size:15px" th:text="${turf.description}">
+        World-class synthetic turf with professional lighting, changing rooms, and equipment rental available on-site.
+      </p>
+      <div class="info-grid" style="margin-top:22px">
+        <div class="info-item">
+          <div class="label"> Location</div>
+          <div class="value" th:text="${turf.location}">City Center</div>
+        </div>
+        <div class="info-item">
+          <div class="label"> Price/Hour</div>
+          <div class="value">&#8377;<span th:text="${turf.pricePerHour}">1000</span></div>
+        </div>
+        <div class="info-item" style="grid-column:1/-1">
+          <div class="label"> Supported Sports</div>
+          <div style="margin-top:8px">
+            <div class="sport-pills" id="sportPills">
+              <!-- Generated by JS below from turf.supportedSports -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Photo Gallery -->
+    <div class="section-card" style="animation-delay:.1s">
+      <div class="section-title">Gallery</div>
+      <div class="gallery">
+        <img class="gallery-img gallery-main"
+             src="https://images.unsplash.com/photo-1575361204480-aadea25e6e68?auto=format&fit=crop&w=1200&q=80"
+             alt="Turf main view">
+        <img class="gallery-img"
+             src="https://images.unsplash.com/photo-1529900965600-71fc1c0a1316?auto=format&fit=crop&w=400&q=80"
+             alt="Cricket pitch">
+        <img class="gallery-img"
+             src="https://images.unsplash.com/photo-1556056504-5c7696c4c28d?auto=format&fit=crop&w=400&q=80"
+             alt="Football field">
+        <img class="gallery-img"
+             src="https://images.unsplash.com/photo-1518605368461-1e129223789a?auto=format&fit=crop&w=400&q=80"
+             alt="Turf lights">
+      </div>
+    </div>
+    <!-- Available Slots -->
+    <div class="section-card slots-section" id="slots-anchor" style="animation-delay:.15s">
+      <div class="section-title">Available Slots</div>
+      <!-- Filter buttons -->
+      <div class="slot-filter" id="slotFilter">
+        <button class="slot-filter-btn active" data-filter="all" onclick="filterSlots('all',this)">All</button>
+        <button class="slot-filter-btn" data-filter="today" onclick="filterSlots('today',this)">Today</button>
+        <button class="slot-filter-btn" data-filter="tomorrow" onclick="filterSlots('tomorrow',this)">Tomorrow</button>
+        <button class="slot-filter-btn" data-filter="week" onclick="filterSlots('week',this)">This Week</button>
+      </div>
+      <!-- NO SLOTS STATE -->
+      <div class="no-slots" th:if="${#lists.isEmpty(slots)}">
+        <div class="icon"></div>
+        <p><strong>No available slots right now.</strong></p>
+        <p style="margin-top:6px;font-size:13px">
+          The admin hasn't added future slots for this turf yet.<br>
+          Please check back soon or contact us.
+        </p>
+      </div>
+      <!-- SLOTS LIST -->
+      <div class="slots-grid" id="slotsGrid" th:if="${!#lists.isEmpty(slots)}">
+        <div class="slot-card" th:each="slot,iter : ${slots}"
+             th:attr="data-date=${slot.slotDate},style='animation-delay:' + ${iter.index * 0.06} + 's'">
+          <div class="slot-left">
+            <!-- Date badge -->
+            <div class="slot-date-badge">
+              <div class="day" th:text="${#temporals.day(slot.slotDate)}">28</div>
+              <div class="month" th:text="${#temporals.monthName(slot.slotDate).substring(0,3)}">Jun</div>
+            </div>
+            <!-- Time + info -->
+            <div>
+              <div class="slot-time">
+                <span th:text="${slot.startTime}">18:00</span>
+                <span style="color:var(--muted)"> - </span>
+                <span th:text="${slot.endTime}">19:00</span>
+              </div>
+              <div class="slot-duration">
+                <span class="slot-status-dot"></span>Available
+                | <span th:text="${slot.slotDate}">2026-06-28</span>
+              </div>
+            </div>
+          </div>
+          <!-- BOOK BUTTON: login-guarded -->
+          <div sec:authorize="isAuthenticated()">
+            <form th:action="@{/bookings/create/{slotId}(slotId=${slot.id})}" method="post" style="display:inline">
+              <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+              <button class="btn-book" type="submit"
+                      onclick="this.textContent='Booking...';this.disabled=true;this.closest('form').submit()">
+                Book Slot
+              </button>
+            </form>
+          </div>
+          <div sec:authorize="!isAuthenticated()">
+            <a class="btn-login-book" th:href="@{/login}">
+               Login to Book
+            </a>
+          </div>
+        </div>
+      </div>
+      <!-- Empty filter result -->
+      <div id="emptyFilter" style="display:none" class="no-slots">
+        <div class="icon"></div>
+        <p>No slots match this filter. Try "All" to see everything.</p>
+      </div>
+    </div>
+  </div><!-- /left -->
+  <!-- RIGHT SIDEBAR -->
+  <div class="sidebar">
+    <div class="sticky-sidebar">
+      <!-- CTA Card -->
+      <div class="cta-card">
+        <h3 th:text="${turf.name}">Green Arena</h3>
+        <p>Premium sports turf - book your slot in 2 clicks</p>
+        <div class="cta-price">&#8377;<span th:text="${turf.pricePerHour}">1000</span><sub>/hour</sub></div>
+        <ul class="cta-features">
+          <li>Changing rooms included</li>
+          <li>Flood lighting till midnight</li>
+          <li>Free parking available</li>
+          <li>Instant booking confirmation</li>
+        </ul>
+        <a class="btn-cta" href="#slots-anchor">View Available Slots</a>
+        <a class="btn-cta-outline" th:href="@{/turfs}">Browse Other Turfs</a>
+      </div>
+      <!-- Quick Info -->
+      <div class="quick-info">
+        <h4> Quick Info</h4>
+        <div class="qi-item">
+          <div class="qi-icon"></div>
+          <div>
+            <div class="qi-label">Location</div>
+            <div class="qi-val" th:text="${turf.location}">City Center</div>
+          </div>
+        </div>
+        <div class="qi-item">
+          <div class="qi-icon"></div>
+          <div>
+            <div class="qi-label">Sports</div>
+            <div class="qi-val" th:text="${turf.supportedSports}">Cricket, Football</div>
+          </div>
+        </div>
+        <div class="qi-item">
+          <div class="qi-icon"></div>
+          <div>
+            <div class="qi-label">Rate</div>
+            <div class="qi-val">&#8377;<span th:text="${turf.pricePerHour}">1000</span>/hr</div>
+          </div>
+        </div>
+        <div class="qi-item">
+          <div class="qi-icon"></div>
+          <div>
+            <div class="qi-label">Available Slots</div>
+            <div class="qi-val" th:text="${slots.size() + ' slots'}">0 slots</div>
+          </div>
+        </div>
+        <div class="qi-item">
+          <div class="qi-icon"></div>
+          <div>
+            <div class="qi-label">Hours</div>
+            <div class="qi-val">6 AM - 12 AM</div>
+          </div>
+        </div>
+        <div class="qi-item">
+          <div class="qi-icon"></div>
+          <div>
+            <div class="qi-label">Status</div>
+            <div class="qi-val" style="color:#16a34a;font-weight:700">â— Active</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /sidebar -->
+</div><!-- /main-wrap -->
+<script>
+/* â”€â”€ SPORT PILLS â”€â”€ */
+(function() {
+  const supported = /*[[${turf.supportedSports}]]*/ 'Cricket, Football';
+  const colorMap = {
+    cricket:'sport-cricket', football:'sport-football',
+    kabaddi:'sport-kabaddi', badminton:'sport-badminton',
+    volleyball:'sport-volleyball', basketball:'sport-basketball'
+  };
+  const emojiMap = {
+    cricket:'', football:'', kabaddi:'ðŸ¤¼', badminton:'',
+    volleyball:'', basketball:''
+  };
+  const container = document.getElementById('sportPills');
+  if (!container) return;
+  supported.split(',').forEach(s => {
+    const key = s.trim().toLowerCase();
+    const cls = colorMap[key] || 'sport-default';
+    const em  = emojiMap[key] || '';
+    const pill = document.createElement('span');
+    pill.className = 'sport-pill ' + cls;
+    pill.textContent = em + ' ' + s.trim();
+    container.appendChild(pill);
+  });
+})();
+
+/* â”€â”€ SLOT DATE FILTER â”€â”€ */
+function filterSlots(mode, btn) {
+  document.querySelectorAll('.slot-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const today = new Date().toISOString().split('T')[0];
+  const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+  const weekEnd = new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0];
+
+  let visibleCount = 0;
+  document.querySelectorAll('.slot-card').forEach(card => {
+    const date = card.dataset.date;
+    let show = false;
+    if (mode === 'all')                       show = true;
+    else if (mode === 'today')                show = date === today;
+    else if (mode === 'tomorrow')             show = date === tomorrow;
+    else if (mode === 'week')                 show = date >= today && date <= weekEnd;
+    card.style.display = show ? '' : 'none';
+    if (show) visibleCount++;
+  });
+
+  const empty = document.getElementById('emptyFilter');
+  if (empty) empty.style.display = (visibleCount === 0) ? '' : 'none';
+}
+
+/* â”€â”€ SCROLL REVEAL â”€â”€ */
+(function() {
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'none';
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.slot-card').forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = `opacity .4s ease ${i * 0.05}s, transform .4s ease ${i * 0.05}s`;
+    obs.observe(el);
+  });
+})();
+
+/* â”€â”€ GALLERY LIGHTBOX â”€â”€ */
+document.querySelectorAll('.gallery-img').forEach(img => {
+  img.addEventListener('click', () => {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(4px)';
+    const big = document.createElement('img');
+    big.src = img.src.replace('w=400','w=1200').replace('w=200','w=1200');
+    big.style.cssText = 'max-width:90vw;max-height:90vh;border-radius:16px;box-shadow:0 20px 80px rgba(0,0,0,.5)';
+    overlay.appendChild(big);
+    overlay.onclick = () => document.body.removeChild(overlay);
+    document.body.appendChild(overlay);
+  });
+});
+</script>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
