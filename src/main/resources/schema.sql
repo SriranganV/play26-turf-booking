@@ -67,7 +67,8 @@ CREATE TABLE IF NOT EXISTS sports_rules (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     sport_name VARCHAR(100),
     title VARCHAR(200),
-    description TEXT
+    content TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS tournaments (

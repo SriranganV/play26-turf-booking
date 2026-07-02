@@ -109,6 +109,20 @@ public class DatabaseMigrationService {
                     }
                 }
                 logger.info("Default slots seeded successfully.");
+
+                // 4. Seed Sports Rules
+                jdbcTemplate.update("INSERT INTO sports_rules (sport_name, title, content) VALUES (?, ?, ?)",
+                        "Cricket", "Box Cricket Bowling", "Bowling must be strictly underarm. The ball must be released below the waist level. Overarm bowling is a penalty.");
+                jdbcTemplate.update("INSERT INTO sports_rules (sport_name, title, content) VALUES (?, ?, ?)",
+                        "Cricket", "Boundary Runs", "Hitting the side nets on the fly counts as 1 run. Hitting the roof net directly is declared out.");
+                jdbcTemplate.update("INSERT INTO sports_rules (sport_name, title, content) VALUES (?, ?, ?)",
+                        "Football", "No Offsides", "Since turf games are short-sided (5-a-side / 7-a-side), the official offside rule is not active. Cherry-picking is allowed!");
+                jdbcTemplate.update("INSERT INTO sports_rules (sport_name, title, content) VALUES (?, ?, ?)",
+                        "Football", "Goalkeeper Restrictions", "Goalkeepers are not allowed to slide tackle outside the penalty box area. Doing so will result in an indirect free kick.");
+                jdbcTemplate.update("INSERT INTO sports_rules (sport_name, title, content) VALUES (?, ?, ?)",
+                        "Tennis", "Service Rule", "Serves must be delivered cross-court into the opposite service box. If the ball touches the net but lands in the correct box, it is a let and replayed.");
+                
+                logger.info("Default sports rules seeded successfully.");
             } else {
                 logger.info("Database already contains data. Seeding skipped.");
             }
