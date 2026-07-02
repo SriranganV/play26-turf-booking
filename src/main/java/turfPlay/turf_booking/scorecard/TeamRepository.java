@@ -4,6 +4,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import turfPlay.turf_booking.GeneratedKeyExtractor;
 import java.sql.*;
 import java.util.List;
 import java.util.Optional;
@@ -62,7 +63,8 @@ public class TeamRepository {
             ps.setString(9,t.getHomeGround()); ps.setString(10,t.getStatus()==null?"ACTIVE":t.getStatus());
             return ps;
         }, kh);
-        return kh.getKey().longValue();
+        Long id = GeneratedKeyExtractor.extractId(kh);
+        return id != null ? id : 0L;
     }
 
     public void update(Team t) {

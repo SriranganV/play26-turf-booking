@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import turfPlay.turf_booking.GeneratedKeyExtractor;
 
 import java.sql.*;
 import java.util.List;
@@ -65,7 +66,8 @@ public class BowlingScoreRepository {
             ps.setObject(9, bw.getWides()); ps.setObject(10, bw.getNoBalls());
             return ps;
         }, kh);
-        return kh.getKey().longValue();
+        Long id = GeneratedKeyExtractor.extractId(kh);
+        return id != null ? id : 0L;
     }
 
     public void update(BowlingScore bw) {

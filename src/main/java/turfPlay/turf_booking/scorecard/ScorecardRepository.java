@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import turfPlay.turf_booking.GeneratedKeyExtractor;
 
 import java.sql.*;
 import java.util.List;
@@ -73,7 +74,8 @@ public class ScorecardRepository {
             ps.setObject(9, sc.getTarget()); ps.setString(10, sc.getStatus() == null ? "IN_PROGRESS" : sc.getStatus());
             return ps;
         }, kh);
-        return kh.getKey().longValue();
+        Long id = GeneratedKeyExtractor.extractId(kh);
+        return id != null ? id : 0L;
     }
 
     public void update(Scorecard sc) {

@@ -77,10 +77,7 @@ public class BookingRepository {
             return ps;
         }, keyHolder);
         
-        if (keyHolder.getKey() != null) {
-            return keyHolder.getKey().longValue();
-        }
-        return null;
+        return GeneratedKeyExtractor.extractId(keyHolder);
     }
 
     public Optional<Booking> findById(Long id) {
