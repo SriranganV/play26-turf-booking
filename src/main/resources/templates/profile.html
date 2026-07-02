@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle})}"></head>
+<body style="background: #f8fafc;">
+    <nav th:replace="~{fragments/layout :: nav}"></nav>
+
+    <style>
+        .profile-container {
+            max-width: 1000px;
+            margin: 40px auto 80px;
+            padding: 0 20px;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #0F6E56 0%, #085041 100%);
+            border-radius: 24px;
+            padding: 40px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            box-shadow: 0 20px 40px rgba(15, 110, 86, 0.2);
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-header::after {
+            content: '';
+            position: absolute;
+            right: -50px;
+            top: -50px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            background: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: 800;
+            color: #0F6E56;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .user-info h1 {
+            font-size: 32px;
+            font-weight: 900;
+            margin: 0 0 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .user-info p {
+            font-size: 16px;
+            color: #9fe1cb;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .profile-header { flex-direction: column; text-align: center; }
+        }
+
+        .stat-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .stat-icon.total { background: #eff6ff; color: #3b82f6; }
+        .stat-icon.upcoming { background: #fef3c7; color: #d97706; }
+        .stat-icon.past { background: #f0fdf4; color: #16a34a; }
+
+        .stat-details h3 {
+            font-size: 28px;
+            font-weight: 900;
+            color: #0f172a;
+            margin: 0 0 4px;
+        }
+
+        .stat-details p {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .recent-bookings {
+            background: #fff;
+            border-radius: 24px;
+            padding: 32px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+
+        .recent-bookings h2 {
+            font-size: 24px;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0 0 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .booking-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .booking-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+
+        .booking-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .booking-info h4 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0 0 6px;
+        }
+
+        .booking-info p {
+            color: #64748b;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .booking-status {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-CONFIRMED { background: #dcfce7; color: #16a34a; }
+        .status-PENDING_FUNDS { background: #fef3c7; color: #d97706; }
+        .status-CANCELLED { background: #fee2e2; color: #ef4444; }
+        .status-COMPLETED { background: #f1f5f9; color: #64748b; }
+    </style>
+
+    <div class="profile-container">
+        
+        <div class="profile-header">
+            <div class="avatar" th:text="${#strings.substring(user.fullName, 0, 1)}">J</div>
+            <div class="user-info">
+                <h1 th:text="${user.fullName}">John Doe</h1>
+                <p>
+                    ✉️ <span th:text="${user.email}">john@example.com</span>
+                </p>
+                <p style="margin-top: 4px; font-size: 13px; opacity: 0.8;">
+                    Member since <span th:text="${#temporals.format(user.createdAt, 'MMM yyyy')}">Jan 2026</span>
+                </p>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon total">🏆</div>
+                <div class="stat-details">
+                    <h3 th:text="${totalBookings}">12</h3>
+                    <p>Total Games</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon upcoming">⏰</div>
+                <div class="stat-details">
+                    <h3 th:text="${upcomingCount}">2</h3>
+                    <p>Upcoming</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon past">✅</div>
+                <div class="stat-details">
+                    <h3 th:text="${pastCount}">10</h3>
+                    <p>Completed</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="recent-bookings">
+            <h2>📅 Recent Bookings</h2>
+            
+            <div th:if="${bookings.isEmpty()}" style="text-align: center; padding: 40px; color: #64748b;">
+                You haven't made any bookings yet. Time to hit the turf!
+            </div>
+
+            <ul class="booking-list" th:if="${!bookings.isEmpty()}">
+                <li class="booking-item" th:each="booking : ${bookings}">
+                    <div class="booking-info">
+                        <h4 th:text="${booking.turfName}">Green Arena</h4>
+                        <p>
+                            📍 <span th:text="${booking.turfLocation}">City Center</span> | 
+                            📅 <span th:text="${booking.slotDate}">2026-07-28</span> | 
+                            🕒 <span th:text="${booking.startTime}">18:00</span>
+                        </p>
+                        <p th:if="${booking.paymentType == 'SPLIT'}" style="margin-top:4px; font-weight:600; color:#0F6E56;">
+                            💸 Split Payment (₹<span th:text="${booking.amountPaid}">0</span>/₹<span th:text="${booking.totalPrice}">1000</span>)
+                        </p>
+                    </div>
+                    <div>
+                        <span th:class="'booking-status status-' + ${booking.bookingStatus}" 
+                              th:text="${booking.bookingStatus}">CONFIRMED</span>
+                    </div>
+                </li>
+            </ul>
+            
+            <div style="text-align: center; margin-top: 24px;" th:if="${bookings.size() > 5}">
+                <a th:href="@{/bookings/my}" style="color: #0F6E56; font-weight: 700; text-decoration: none;">View All History →</a>
+            </div>
+        </div>
+
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

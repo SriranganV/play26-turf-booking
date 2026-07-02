@@ -142,13 +142,31 @@
             width: 20px;
             height: 20px;
             border-radius: 50%;
-            border: 6px solid #0F6E56;
+            border: 2px solid #cbd5e1;
             background: #fff;
+            position: relative;
         }
+
+        .payment-method input[type="radio"]:checked + label .radio {
+            border-color: #0F6E56;
+            border-width: 6px;
+        }
+
+        .payment-method input[type="radio"] {
+            display: none;
+        }
+
 
         .payment-method span {
             font-weight: 600;
             color: #1e293b;
+        }
+        
+        .payment-method-desc {
+            margin-top: 12px;
+            font-size: 13px;
+            color: #64748b;
+            padding-left: 36px;
         }
 
         .summary-card {
@@ -264,13 +282,29 @@
             <!-- Payment Method Card -->
             <div class="checkout-card">
                 <h2>Payment Method</h2>
-                <div class="payment-method">
-                    <div class="radio"></div>
-                    <span>Pay at Venue</span>
-                </div>
-                <p style="margin-top:12px;font-size:13px;color:#64748b;">
-                    Your slot will be reserved immediately. You can pay via Cash or UPI when you arrive at the turf.
-                </p>
+                <form id="checkoutForm" th:action="@{/bookings/create/{slotId}(slotId=${slot.id})}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    
+                    <!-- Option 1: Pay Full Amount -->
+                    <input type="radio" id="payFull" name="paymentType" value="FULL" checked>
+                    <label for="payFull" class="payment-method" style="margin-bottom: 8px;">
+                        <div class="radio"></div>
+                        <span>Pay Full Amount at Venue</span>
+                    </label>
+                    <div class="payment-method-desc" style="margin-bottom: 20px;">
+                        Your slot will be reserved immediately. You can pay via Cash or UPI when you arrive at the turf.
+                    </div>
+                    
+                    <!-- Option 2: Split with Team -->
+                    <input type="radio" id="paySplit" name="paymentType" value="SPLIT">
+                    <label for="paySplit" class="payment-method">
+                        <div class="radio"></div>
+                        <span>Split with Team 💸</span>
+                    </label>
+                    <div class="payment-method-desc">
+                        Get a unique WhatsApp link to share with your friends. They can chip in their share directly on the platform until the slot is fully funded.
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -297,12 +331,9 @@
                     <span>₹<span th:text="${turf.pricePerHour + 50}">1050</span></span>
                 </div>
 
-                <form th:action="@{/bookings/create/{slotId}(slotId=${slot.id})}" method="post">
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                    <button type="submit" class="btn-pay" onclick="this.innerHTML='Processing...'; this.style.opacity='0.8';">
-                        Confirm & Book
-                    </button>
-                </form>
+                <button type="button" class="btn-pay" onclick="document.getElementById('checkoutForm').submit(); this.innerHTML='Processing...'; this.style.opacity='0.8';">
+                    Confirm & Book
+                </button>
 
                 <div class="secure-badge">
                     🔒 Secure Booking Guaranteed

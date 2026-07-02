@@ -30,6 +30,15 @@ public class BookingRepository {
         if (bookedAt != null) {
             booking.setBookedAt(bookedAt.toLocalDateTime());
         }
+        
+        try {
+            booking.setTotalPrice(rs.getBigDecimal("total_price"));
+            booking.setAmountPaid(rs.getBigDecimal("amount_paid"));
+            booking.setSplitLinkUuid(rs.getString("split_link_uuid"));
+            booking.setPaymentType(rs.getString("payment_type"));
+        } catch (Exception e) {
+            // Ignore if columns don't exist in a specific query (though they should)
+        }
 
         booking.setUserName(rs.getString("full_name"));
         booking.setUserEmail(rs.getString("email"));
@@ -47,9 +56,13 @@ public class BookingRepository {
     }
 
     public Long createBooking(Long userId, Long slotId) {
+        return createBooking(userId, slotId, null, "FULL", null, "CONFIRMED");
+    }
+
+    public Long createBooking(Long userId, Long slotId, java.math.BigDecimal totalPrice, String paymentType, String uuid, String status) {
         String sql = """
-                INSERT INTO bookings (user_id, turf_slot_id, booking_status)
-                VALUES (?, ?, 'CONFIRMED')
+                INSERT INTO bookings (user_id, turf_slot_id, booking_status, total_price, payment_type, split_link_uuid)
+                VALUES (?, ?, ?, ?, ?, ?)
                 """;
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -57,6 +70,10 @@ public class BookingRepository {
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setLong(1, userId);
             ps.setLong(2, slotId);
+            ps.setString(3, status);
+            ps.setBigDecimal(4, totalPrice != null ? totalPrice : java.math.BigDecimal.ZERO);
+            ps.setString(5, paymentType != null ? paymentType : "FULL");
+            ps.setString(6, uuid);
             return ps;
         }, keyHolder);
         
@@ -69,6 +86,7 @@ public class BookingRepository {
     public Optional<Booking> findById(Long id) {
         String sql = """
                 SELECT b.id, b.user_id, b.turf_slot_id, b.booking_status, b.booked_at,
+                       b.total_price, b.amount_paid, b.split_link_uuid, b.payment_type,
                        u.full_name, u.email,
                        t.name AS turf_name, t.location,
                        ts.slot_date, ts.start_time, ts.end_time
@@ -81,10 +99,28 @@ public class BookingRepository {
         List<Booking> results = jdbcTemplate.query(sql, bookingRowMapper, id);
         return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
     }
+    
+    public Optional<Booking> findBySplitLinkUuid(String uuid) {
+        String sql = """
+                SELECT b.id, b.user_id, b.turf_slot_id, b.booking_status, b.booked_at,
+                       b.total_price, b.amount_paid, b.split_link_uuid, b.payment_type,
+                       u.full_name, u.email,
+                       t.name AS turf_name, t.location,
+                       ts.slot_date, ts.start_time, ts.end_time
+                FROM bookings b
+                JOIN users u ON b.user_id = u.id
+                JOIN turf_slots ts ON b.turf_slot_id = ts.id
+                JOIN turfs t ON ts.turf_id = t.id
+                WHERE b.split_link_uuid = ?
+                """;
+        List<Booking> results = jdbcTemplate.query(sql, bookingRowMapper, uuid);
+        return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
+    }
 
     public List<Booking> findByUserId(Long userId) {
         String sql = """
                 SELECT b.id, b.user_id, b.turf_slot_id, b.booking_status, b.booked_at,
+                       b.total_price, b.amount_paid, b.split_link_uuid, b.payment_type,
                        u.full_name, u.email,
                        t.name AS turf_name, t.location,
                        ts.slot_date, ts.start_time, ts.end_time
@@ -102,6 +138,7 @@ public class BookingRepository {
     public List<Booking> findAll() {
         String sql = """
                 SELECT b.id, b.user_id, b.turf_slot_id, b.booking_status, b.booked_at,
+                       b.total_price, b.amount_paid, b.split_link_uuid, b.payment_type,
                        u.full_name, u.email,
                        t.name AS turf_name, t.location,
                        ts.slot_date, ts.start_time, ts.end_time
@@ -119,6 +156,17 @@ public class BookingRepository {
         String sql = "UPDATE bookings SET booking_status = 'CANCELLED' WHERE id = ?";
         jdbcTemplate.update(sql, bookingId);
     }
+    
+    public void updateBookingStatus(Long bookingId, String status) {
+        String sql = "UPDATE bookings SET booking_status = ? WHERE id = ?";
+        jdbcTemplate.update(sql, status, bookingId);
+    }
+    
+    public void incrementAmountPaid(Long bookingId, java.math.BigDecimal amount) {
+        String sql = "UPDATE bookings SET amount_paid = amount_paid + ? WHERE id = ?";
+        jdbcTemplate.update(sql, amount, bookingId);
+    }
+
     public Long findSlotIdByBookingId(Long bookingId) {
         String sql = "SELECT turf_slot_id FROM bookings WHERE id = ?";
         return jdbcTemplate.queryForObject(sql, Long.class, bookingId);

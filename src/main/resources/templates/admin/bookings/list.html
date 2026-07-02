@@ -10,6 +10,14 @@
             <h1 class="fw-bold mb-1 text-heading"><i class="bi bi-journal-bookmark text-play26 me-2"></i> All Bookings</h1>
             <p class="mb-0 text-muted">View and manage all turf bookings.</p>
         </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-primary fw-bold" onclick="exportOverallBookingsPDF()">
+                <i class="bi bi-file-earmark-pdf-fill me-1"></i> Export All Bookings
+            </button>
+            <button class="btn btn-outline-primary fw-bold bg-white" onclick="exportTurfSummaryPDF()">
+                <i class="bi bi-building me-1"></i> Export Turf Summary
+            </button>
+        </div>
     </div>
 
     <div class="solid-card p-0 hover-lift table-responsive">
@@ -68,5 +76,133 @@
 </main>
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<!-- HTML2PDF Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+    function exportOverallBookingsPDF() {
+        // Clone the table container to manipulate it before generating PDF
+        const elementToExport = document.querySelector('.table-responsive').cloneNode(true);
+        
+        // Remove the Action column header and cells for a cleaner PDF
+        const thead = elementToExport.querySelector('thead tr');
+        if(thead && thead.lastElementChild) thead.removeChild(thead.lastElementChild);
+        
+        const rows = elementToExport.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            if(row.lastElementChild) row.removeChild(row.lastElementChild);
+        });
+
+        // Add a title to the exported HTML
+        const container = document.createElement('div');
+        container.style.padding = '20px';
+        container.innerHTML = `
+            <h2 style="color: #0F6E56; font-family: sans-serif; margin-bottom: 20px;">PLAY26 - Overall Bookings Report</h2>
+        `;
+        container.appendChild(elementToExport);
+
+        const opt = {
+            margin:       0.5,
+            filename:     'play26-all-bookings.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' }
+        };
+
+        html2pdf().set(opt).from(container).save();
+    }
+
+    function exportTurfSummaryPDF() {
+        const rows = document.querySelectorAll('.table-responsive tbody tr');
+        if (rows.length === 0 || rows[0].innerText.includes('No bookings yet')) {
+            alert("No bookings available to export.");
+            return;
+        }
+
+        // Group by Turf Name
+        const turfGroups = {};
+        
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length < 8) return;
+            
+            const turfName = cells[3].innerText.trim();
+            const bookingDetails = {
+                id: cells[0].innerText.trim(),
+                user: cells[1].innerText.trim(),
+                email: cells[2].innerText.trim(),
+                date: cells[5].innerText.trim(),
+                time: cells[6].innerText.trim(),
+                status: cells[7].innerText.trim()
+            };
+
+            if (!turfGroups[turfName]) {
+                turfGroups[turfName] = [];
+            }
+            turfGroups[turfName].push(bookingDetails);
+        });
+
+        // Generate HTML for the Turf Summary
+        let htmlContent = `
+            <div style="font-family: sans-serif; padding: 20px;">
+                <h2 style="color: #0F6E56; margin-bottom: 30px; text-align: center;">PLAY26 - Turf Booking Summaries</h2>
+        `;
+
+        for (const [turfName, bookings] of Object.entries(turfGroups)) {
+            htmlContent += `
+                <div style="margin-bottom: 40px; page-break-inside: avoid;">
+                    <h3 style="color: #333; border-bottom: 2px solid #0F6E56; padding-bottom: 5px;">${turfName} <span style="font-size: 14px; color: #666; float:right; padding-top: 5px;">Total Bookings: ${bookings.length}</span></h3>
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px;">
+                        <thead>
+                            <tr style="background-color: #f4f6f5;">
+                                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">ID</th>
+                                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">User</th>
+                                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Email</th>
+                                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Date</th>
+                                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Time</th>
+                                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            bookings.forEach(b => {
+                htmlContent += `
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #ddd;">${b.id}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">${b.user}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">${b.email}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">${b.date}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">${b.time}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">${b.status}</td>
+                    </tr>
+                `;
+            });
+            
+            htmlContent += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        htmlContent += `</div>`;
+
+        const container = document.createElement('div');
+        container.innerHTML = htmlContent;
+
+        const opt = {
+            margin:       0.5,
+            filename:     'play26-turf-summaries.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(container).save();
+    }
+</script>
+
 </body>
 </html>

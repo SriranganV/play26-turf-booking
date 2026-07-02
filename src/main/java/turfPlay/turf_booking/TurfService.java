@@ -9,21 +9,36 @@ import java.util.Optional;
 public class TurfService {
 
     private final TurfRepository turfRepository;
+    private final ReviewService reviewService;
 
-    public TurfService(TurfRepository turfRepository) {
+    public TurfService(TurfRepository turfRepository, ReviewService reviewService) {
         this.turfRepository = turfRepository;
+        this.reviewService = reviewService;
+    }
+
+    private void populateReviews(Turf turf) {
+        if (turf != null) {
+            turf.setAverageRating(reviewService.getAverageRating(turf.getId()));
+            turf.setReviewCount(reviewService.getReviewCount(turf.getId()));
+        }
     }
 
     public List<Turf> getAllTurfs() {
-        return turfRepository.findAll();
+        List<Turf> turfs = turfRepository.findAll();
+        turfs.forEach(this::populateReviews);
+        return turfs;
     }
 
     public List<Turf> getActiveTurfs() {
-        return turfRepository.findAllActive();
+        List<Turf> turfs = turfRepository.findAllActive();
+        turfs.forEach(this::populateReviews);
+        return turfs;
     }
 
     public Optional<Turf> getTurfById(Long id) {
-        return turfRepository.findById(id);
+        Optional<Turf> turf = turfRepository.findById(id);
+        turf.ifPresent(this::populateReviews);
+        return turf;
     }
 
     public void saveTurf(Turf turf) {

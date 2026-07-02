@@ -338,10 +338,13 @@
         <a href="/sports">Sports</a>
         <a href="/turfs">Turfs</a>
         <a href="/rules">Rules</a>
-        <a href="/blogs">News</a>
-        <a href="/leaderboard">Leaderboards</a>
+        <a href="/blogs">Sports Hub</a>
         <a href="/dashboard">Dashboard</a>
-        <a href="/bookings/my">My Bookings</a>
+        
+        <th:block sec:authorize="isAuthenticated()">
+            <a href="/profile">My Profile</a>
+            <a href="/bookings/my">My Bookings</a>
+        </th:block>
         
         <th:block sec:authorize="hasRole('ADMIN')">
             <a href="/admin/turfs">Admin Turfs</a>
@@ -384,8 +387,7 @@
                 <li><a href="/turfs">Browse Turfs</a></li>
                 <li><a href="/sports">Sports Leagues</a></li>
                 <li><a href="/rules">Facility Rules</a></li>
-                <li><a href="/blogs">Latest News</a></li>
-                <li><a href="/leaderboard">Leaderboards</a></li>
+                <li><a href="/blogs">Sports Hub</a></li>
             </ul>
         </div>
 
@@ -405,9 +407,9 @@
             <h3 style="color: #9FE1CB;">Our Facilities</h3>
             <div class="footer-gallery">
                 <img src="https://images.unsplash.com/photo-1575361204480-aadea25e6e68?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Turf Graphic 1">
-                <img src="https://images.unsplash.com/photo-1529900965600-71fc1c0a1316?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Turf Graphic 2">
-                <img src="https://images.unsplash.com/photo-1556056504-5c7696c4c28d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Turf Graphic 3">
-                <img src="https://images.unsplash.com/photo-1518605368461-1e129223789a?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Turf Graphic 4">
+                <img src="rm.png" alt="Turf Graphic 2">
+                <img src="ronomessi.jpg" alt="Turf Graphic 3">
+                <img src="ct.jpg" alt="Turf Graphic 4">
             </div>
         </div>
     </div>

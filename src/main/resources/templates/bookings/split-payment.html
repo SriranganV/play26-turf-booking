@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle})}"></head>
+<body style="background: #f8fafc;">
+    <nav th:replace="~{fragments/layout :: nav}"></nav>
+
+    <style>
+        .split-container {
+            max-width: 600px;
+            margin: 40px auto 100px;
+            padding: 0 20px;
+        }
+
+        .split-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .split-header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+        
+        .split-header p {
+            color: #64748b;
+            margin-top: 8px;
+            font-size: 15px;
+        }
+
+        .split-card {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e2e8f0;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .turf-summary {
+            display: flex;
+            gap: 20px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #f1f5f9;
+            margin-bottom: 24px;
+        }
+
+        .turf-thumb {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        .turf-info h3 {
+            font-size: 20px;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0 0 4px;
+        }
+
+        .turf-info .location {
+            color: #64748b;
+            font-size: 14px;
+        }
+        
+        .progress-section {
+            margin-bottom: 24px;
+        }
+        
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        
+        .progress-bar-container {
+            height: 12px;
+            background: #e2e8f0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: #10b981;
+            transition: width 0.5s ease;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #0F6E56;
+            box-shadow: 0 0 0 3px rgba(15, 110, 86, 0.1);
+        }
+
+        .btn-pay {
+            width: 100%;
+            background: #0F6E56;
+            color: #ffffff;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-pay:hover {
+            background: #085041;
+            transform: translateY(-2px);
+        }
+        
+        .contributor-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .contributor-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        
+        .contributor-item:last-child {
+            border-bottom: none;
+        }
+        
+        .contributor-name {
+            font-weight: 600;
+            color: #0f172a;
+        }
+        
+        .contributor-amount {
+            color: #10b981;
+            font-weight: 700;
+        }
+        
+        .completed-badge {
+            background: #dcfce7;
+            color: #16a34a;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 18px;
+            border: 2px dashed #16a34a;
+        }
+    </style>
+
+    <div class="split-container">
+        <div class="split-header">
+            <h1>Team Payment</h1>
+            <p><span th:text="${booking.userName}">Someone</span> invited you to chip in for this turf booking!</p>
+        </div>
+
+        <!-- Turf Summary Card -->
+        <div class="split-card">
+            <div class="turf-summary">
+                <img src="https://images.unsplash.com/photo-1575361204480-aadea25e6e68?auto=format&fit=crop&w=200&q=80" alt="Turf" class="turf-thumb">
+                <div class="turf-info">
+                    <h3 th:text="${booking.turfName}">Green Arena</h3>
+                    <div class="location">
+                        📍 <span th:text="${booking.turfLocation}">City</span> | 
+                        📅 <span th:text="${booking.slotDate}">Date</span> |
+                        🕒 <span th:text="${booking.startTime}">Time</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="progress-section">
+                <div class="progress-stats">
+                    <span>Collected: ₹<span th:text="${booking.amountPaid}">0</span></span>
+                    <span>Total: ₹<span th:text="${booking.totalPrice}">1000</span></span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" th:style="'width: ' + (${booking.amountPaid * 100 / booking.totalPrice}) + '%;'"></div>
+                </div>
+            </div>
+            
+            <div th:if="${booking.bookingStatus == 'CONFIRMED'}" class="completed-badge">
+                🎉 Fully Funded & Confirmed! 🎉
+            </div>
+            
+            <div th:if="${booking.bookingStatus == 'PENDING_FUNDS'}" style="margin-top: 30px;">
+                <h2 style="font-size: 16px; font-weight: 700; margin-bottom: 16px; color: #1e293b;">Add Your Contribution</h2>
+                <form th:action="@{/bookings/split/{uuid}/contribute(uuid=${booking.splitLinkUuid})}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    
+                    <div class="form-group">
+                        <label class="form-label">Your Name</label>
+                        <input type="text" name="contributorName" class="form-control" required placeholder="e.g. John">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Amount (₹)</label>
+                        <input type="number" name="amount" class="form-control" required min="1" th:max="${booking.totalPrice - booking.amountPaid}" th:value="${booking.totalPrice - booking.amountPaid}">
+                    </div>
+                    
+                    <button type="submit" class="btn-pay">Pay Now</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Contributors -->
+        <div class="split-card" th:if="${!contributions.isEmpty()}">
+            <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #1e293b;">Recent Contributors</h2>
+            <ul class="contributor-list">
+                <li class="contributor-item" th:each="c : ${contributions}">
+                    <span class="contributor-name" th:text="${c.contributorName}">John</span>
+                    <span class="contributor-amount">₹<span th:text="${c.amount}">150</span></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

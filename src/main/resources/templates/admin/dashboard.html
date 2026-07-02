@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${pageTitle})}">
+    <!-- Chart.js will be loaded via layout or explicitly here if needed -->
+</head>
+<body>
+
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<style>
+    /* Admin Dashboard Styles - PLAY26 Theme */
+    .admin-dashboard {
+        min-height: calc(100vh - 80px);
+        background: #f4f6f5;
+        padding: 3rem 1rem;
+    }
+
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .dashboard-header {
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .dashboard-header h1 {
+        font-size: 28px;
+        font-weight: 800;
+        color: #111;
+        margin: 0;
+    }
+
+    .dashboard-header p {
+        color: #6b7280;
+        margin: 4px 0 0 0;
+        font-size: 14px;
+    }
+
+    /* Stat Cards */
+    .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .stat-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 15px -3px rgba(15, 110, 86, 0.1);
+        border-color: #9FE1CB;
+    }
+
+    .stat-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        flex-shrink: 0;
+    }
+
+    .stat-icon.revenue { background: #dcfce7; color: #16a34a; }
+    .stat-icon.users { background: #dbeafe; color: #2563eb; }
+    .stat-icon.bookings { background: #fef3c7; color: #d97706; }
+    .stat-icon.turfs { background: #f3e8ff; color: #9333ea; }
+
+    .stat-content h3 {
+        font-size: 13px;
+        font-weight: 600;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin: 0 0 4px 0;
+    }
+
+    .stat-content p {
+        font-size: 28px;
+        font-weight: 800;
+        color: #111;
+        margin: 0;
+        line-height: 1;
+    }
+
+    /* Charts Section */
+    .charts-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1.5rem;
+    }
+    
+    @media (max-width: 900px) {
+        .charts-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .chart-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    .chart-header {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .chart-header h3 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #111;
+        margin: 0;
+    }
+    
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+    }
+</style>
+
+<main class="admin-dashboard">
+    <div class="dashboard-container">
+        
+        <div class="dashboard-header">
+            <div>
+                <h1>Business Overview</h1>
+                <p>Monitor your platform's performance and key metrics</p>
+            </div>
+            <div>
+                <a th:href="@{/admin/turfs}" class="btn btn-primary" style="background-color: #0F6E56; border-color: #0F6E56;">Manage Turfs</a>
+            </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="stat-icon revenue">&#8377;</div>
+                <div class="stat-content">
+                    <h3>Total Revenue</h3>
+                    <p th:text="${'â‚¹' + totalRevenue}">â‚¹45,000</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon bookings">&#128197;</div>
+                <div class="stat-content">
+                    <h3>Total Bookings</h3>
+                    <p th:text="${totalBookings}">342</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon users">&#128101;</div>
+                <div class="stat-content">
+                    <h3>Active Users</h3>
+                    <p th:text="${activeUsers}">154</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon turfs">&#9917;</div>
+                <div class="stat-content">
+                    <h3>System Status</h3>
+                    <p style="color: #16a34a; font-size: 20px;">Healthy</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="charts-grid">
+            <!-- Line Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Revenue (Last 7 Days)</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Pie Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Popular Sports</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="sportsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<!-- Load Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Setup Chart.js defaults for better aesthetics
+        Chart.defaults.font.family = "'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+        Chart.defaults.color = '#6b7280';
+        
+        // 1. Revenue Line Chart (Mock Data)
+        const ctxRev = document.getElementById('revenueChart').getContext('2d');
+        
+        // Gradient for the line chart fill
+        let gradient = ctxRev.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, 'rgba(15, 110, 86, 0.4)');
+        gradient.addColorStop(1, 'rgba(15, 110, 86, 0.0)');
+        
+        new Chart(ctxRev, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Revenue (â‚¹)',
+                    data: [4200, 3800, 5100, 4800, 7200, 9500, 10400],
+                    borderColor: '#0F6E56',
+                    backgroundColor: gradient,
+                    borderWidth: 3,
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#0F6E56',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    fill: true,
+                    tension: 0.4 // smooth curves
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#111',
+                        padding: 12,
+                        titleFont: { size: 13 },
+                        bodyFont: { size: 14, weight: 'bold' },
+                        displayColors: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#f3f4f6', drawBorder: false },
+                        ticks: { padding: 10 }
+                    },
+                    x: {
+                        grid: { display: false, drawBorder: false },
+                        ticks: { padding: 10 }
+                    }
+                }
+            }
+        });
+
+        // 2. Popular Sports Pie Chart (Mock Data)
+        const ctxSports = document.getElementById('sportsChart').getContext('2d');
+        new Chart(ctxSports, {
+            type: 'doughnut',
+            data: {
+                labels: ['Cricket', 'Football', 'Badminton', 'Tennis'],
+                datasets: [{
+                    data: [55, 25, 15, 5],
+                    backgroundColor: [
+                        '#0F6E56', // Cricket - Primary Green
+                        '#3b82f6', // Football - Blue
+                        '#8b5cf6', // Badminton - Purple
+                        '#f59e0b'  // Tennis - Amber
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { padding: 20, usePointStyle: true, pointStyle: 'circle' }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

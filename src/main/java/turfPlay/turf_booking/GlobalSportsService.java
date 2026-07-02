@@ -244,6 +244,54 @@ public class GlobalSportsService {
         }
     }
 
+    /**
+     * Fetches live cricket scores (mock data for now, would integrate with an API like CricAPI).
+     */
+    public List<GlobalLiveScoreDTO> fetchLiveCricketScores() {
+        List<GlobalLiveScoreDTO> scores = new ArrayList<>();
+        
+        GlobalLiveScoreDTO m1 = new GlobalLiveScoreDTO("c1", "T20 World Cup", "India", "Australia", 
+                "IND: 185/4 (20.0) | AUS: 172/8 (19.2)", "LIVE", "CRICKET");
+        m1.setTeamALogo("https://upload.wikimedia.org/wikipedia/en/thumb/4/41/Flag_of_India.svg/255px-Flag_of_India.svg.png");
+        m1.setTeamBLogo("https://upload.wikimedia.org/wikipedia/en/thumb/b/b9/Flag_of_Australia.svg/255px-Flag_of_Australia.svg.png");
+        
+        GlobalLiveScoreDTO m2 = new GlobalLiveScoreDTO("c2", "IPL 2026", "Chennai Super Kings", "Mumbai Indians", 
+                "CSK: 210/5 (20.0) | MI: 205/9 (20.0)", "COMPLETED", "CRICKET");
+        
+        GlobalLiveScoreDTO m3 = new GlobalLiveScoreDTO("c3", "County Championship", "Surrey", "Essex", 
+                "SUR: 345 & 120/2 | ESS: 410", "STUMPS - DAY 3", "CRICKET");
+
+        scores.add(m1);
+        scores.add(m2);
+        scores.add(m3);
+        
+        return scores;
+    }
+
+    /**
+     * Fetches live football scores (mock data for now, would integrate with an API like football-data).
+     */
+    public List<GlobalLiveScoreDTO> fetchLiveFootballScores() {
+        List<GlobalLiveScoreDTO> scores = new ArrayList<>();
+        
+        GlobalLiveScoreDTO m1 = new GlobalLiveScoreDTO("f1", "Premier League", "Arsenal", "Manchester United", 
+                "2 - 1 (65')", "LIVE", "FOOTBALL");
+        m1.setTeamALogo("https://upload.wikimedia.org/wikipedia/en/thumb/5/53/Arsenal_FC.svg/1200px-Arsenal_FC.svg.png");
+        m1.setTeamBLogo("https://upload.wikimedia.org/wikipedia/en/thumb/7/7a/Manchester_United_FC_crest.svg/1200px-Manchester_United_FC_crest.svg.png");
+        
+        GlobalLiveScoreDTO m2 = new GlobalLiveScoreDTO("f2", "Champions League", "Real Madrid", "Bayern Munich", 
+                "0 - 0", "HALF TIME", "FOOTBALL");
+                
+        GlobalLiveScoreDTO m3 = new GlobalLiveScoreDTO("f3", "La Liga", "Barcelona", "Atletico Madrid", 
+                "3 - 1", "COMPLETED", "FOOTBALL");
+
+        scores.add(m1);
+        scores.add(m2);
+        scores.add(m3);
+        
+        return scores;
+    }
+
     // --- MOCK DATA FALLBACKS ---
 
     private List<GlobalNewsDTO> getMockNews() {

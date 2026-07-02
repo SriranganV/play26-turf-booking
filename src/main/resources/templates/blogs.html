@@ -23,6 +23,16 @@
             </button>
         </li>
         <li class="nav-item" role="presentation">
+            <button class="nav-link px-4 fw-bold rounded-pill" id="livescores-tab" data-bs-toggle="pill" data-bs-target="#livescores" type="button" role="tab" style="transition: all 0.2s;" onclick="fetchLiveScores()">
+                <i class="bi bi-broadcast text-danger me-1"></i> Live Scores
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link px-4 fw-bold rounded-pill" id="standings-tab" data-bs-toggle="pill" data-bs-target="#standings" type="button" role="tab" style="transition: all 0.2s;">
+                <i class="bi bi-bar-chart-fill me-1"></i> Standings
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
             <button class="nav-link px-4 fw-bold rounded-pill" id="tournaments-tab" data-bs-toggle="pill" data-bs-target="#tournaments" type="button" role="tab" style="transition: all 0.2s;">
                 <i class="bi bi-trophy me-1"></i> Tournaments
             </button>
@@ -96,6 +106,132 @@
         </div>
 
 
+        <!-- ==================== TAB 3: LIVE SCORES ==================== -->
+        <div class="tab-pane fade" id="livescores" role="tabpanel">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                <h3 class="text-heading fw-bold mb-0">Live Match Center</h3>
+                <div>
+                    <select class="form-select fw-bold border-2" id="liveSportSelect" onchange="fetchLiveScores()" style="width: 200px;">
+                        <option value="cricket">Cricket</option>
+                        <option value="football">Football</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Loader -->
+            <div id="liveScoresLoader" class="text-center py-5 d-none">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="text-muted mt-3 fw-bold">Fetching Live Scores via REST API...</p>
+            </div>
+
+            <!-- Scores Grid -->
+            <div class="row g-4" id="liveScoresGrid">
+                <!-- Javascript will populate this -->
+            </div>
+        </div>
+
+        <!-- ==================== TAB 4: STANDINGS ==================== -->
+        <div class="tab-pane fade" id="standings" role="tabpanel">
+            <div class="solid-card p-5 shadow">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                    <h3 class="text-heading fw-bold mb-0">Points Table</h3>
+                    <div>
+                        <select class="form-select fw-bold border-2" id="leagueSelect" onchange="showTable(this.value)" style="width: 280px;">
+                            <option value="PL">Premier League</option>
+                            <option value="WC">FIFA World Cup</option>
+                            <option value="CL">UEFA Champions League</option>
+                            <option value="BL1">Bundesliga</option>
+                            <option value="FL1">Ligue 1</option>
+                            <option value="SA">Serie A</option>
+                            <option value="IPL">Indian Premier League</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- FOOTBALL TABLES FRAGMENT -->
+                <th:block th:each="league : ${ {'PL':'premierLeague', 'WC':'worldCup', 'CL':'championsLeague', 'BL1':'bundesliga', 'FL1':'ligue1', 'SA':'serieA'} }">
+                    <div class="table-responsive solid-card p-0 football-table hover-lift" th:id="'table-' + ${league.key}" th:classappend="${league.key != 'PL'} ? 'd-none' : ''">
+                        <table class="table table-custom mb-0 align-middle">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">#</th>
+                                    <th>Club</th>
+                                    <th class="text-center" title="Played">MP</th>
+                                    <th class="text-center" title="Won">W</th>
+                                    <th class="text-center" title="Drawn">D</th>
+                                    <th class="text-center" title="Lost">L</th>
+                                    <th class="text-center d-none d-md-table-cell" title="Goals For">GF</th>
+                                    <th class="text-center d-none d-md-table-cell" title="Goals Against">GA</th>
+                                    <th class="text-center" title="Goal Difference">GD</th>
+                                    <th class="text-center text-primary fs-6">Pts</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Use dynamic evaluation to get the correct model attribute based on the map value -->
+                                <tr th:each="team : ${__${league.value}__}" style="cursor: pointer;">
+                                    <td class="text-center fw-bold" th:text="${team.rank}">1</td>
+                                    <td class="fw-bold text-heading">
+                                        <img th:src="${team.teamLogoUrl}" alt="logo" style="width: 24px; height: 24px; object-fit: contain; margin-right: 10px;" th:if="${team.teamLogoUrl != null and !team.teamLogoUrl.isEmpty() and team.teamLogoUrl != 'null'}">
+                                        <span th:text="${team.teamName}">Team</span>
+                                    </td>
+                                    <td class="text-center" th:text="${team.matchesPlayed}">38</td>
+                                    <td class="text-center text-success" th:text="${team.won}">30</td>
+                                    <td class="text-center text-secondary" th:text="${team.drawn}">5</td>
+                                    <td class="text-center text-danger" th:text="${team.lost}">3</td>
+                                    <td class="text-center d-none d-md-table-cell" th:text="${team.goalsFor}">80</td>
+                                    <td class="text-center d-none d-md-table-cell" th:text="${team.goalsAgainst}">30</td>
+                                    <td class="text-center fw-semibold" th:text="${team.goalDifference}">+50</td>
+                                    <td class="text-center fw-bold fs-5 text-primary" th:text="${team.points}">95</td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(__${league.value}__)}">
+                                    <td colspan="10" class="text-center py-5 text-muted">
+                                        <i class="bi bi-cone-striped fs-1 d-block mb-3"></i>
+                                        Standings not available at the moment.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </th:block>
+
+                <!-- Cricket Table -->
+                <div class="table-responsive solid-card p-0 d-none hover-lift" id="table-IPL">
+                    <table class="table table-custom mb-0 align-middle">
+                        <thead>
+                            <tr>
+                                <th class="text-center">#</th>
+                                <th>Franchise</th>
+                                <th class="text-center" title="Matches">M</th>
+                                <th class="text-center" title="Won">W</th>
+                                <th class="text-center" title="Lost">L</th>
+                                <th class="text-center" title="Net Run Rate">NRR</th>
+                                <th class="text-center text-primary fs-6">Pts</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="team : ${iplStandings}" style="cursor: pointer;">
+                                <td class="text-center fw-bold" th:text="${team.rank}">1</td>
+                                <td class="fw-bold text-heading" th:text="${team.teamName}">Team</td>
+                                <td class="text-center" th:text="${team.matchesPlayed}">14</td>
+                                <td class="text-center text-success" th:text="${team.won}">10</td>
+                                <td class="text-center text-danger" th:text="${team.lost}">4</td>
+                                <td class="text-center fw-semibold" th:classappend="${team.netRunRate > 0 ? 'text-success' : 'text-danger'}" th:text="${team.netRunRate > 0 ? '+' + team.netRunRate : team.netRunRate}">+0.500</td>
+                                <td class="text-center fw-bold fs-5 text-primary" th:text="${team.points}">20</td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(iplStandings)}">
+                                <td colspan="7" class="text-center py-5 text-muted">
+                                    <i class="bi bi-cone-striped fs-1 d-block mb-3"></i>
+                                    Standings not available at the moment.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -104,7 +240,7 @@
 <script th:src="@{/js/play26.js}"></script>
 
 
-<!-- Custom styling for the pill tabs to match dark theme -->
+<!-- Custom styling for the pill tabs -->
 <style>
     #sportsHubTabs .nav-link {
         color: var(--play26-text-muted);
@@ -117,7 +253,152 @@
         background: var(--play26-primary);
         color: #fff;
     }
+    
+    .live-scorecard {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        border: 1px solid var(--border);
+        transition: transform 0.2s;
+    }
+    .live-scorecard:hover {
+        transform: translateY(-4px);
+    }
+    .score-header {
+        background: #f8fafc;
+        padding: 12px 20px;
+        border-radius: 16px 16px 0 0;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .score-body {
+        padding: 24px 20px;
+        text-align: center;
+    }
+    .team-logos {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 20px;
+    }
+    .team-logo {
+        width: 64px;
+        height: 64px;
+        object-fit: contain;
+    }
+    .vs-badge {
+        font-size: 14px;
+        font-weight: 800;
+        color: var(--muted);
+        background: #f1f5f9;
+        padding: 6px 12px;
+        border-radius: 20px;
+    }
 </style>
+
+<script>
+    // Show table for standings
+    function showTable(league) {
+        document.querySelectorAll('[id^="table-"]').forEach(el => el.classList.add('d-none'));
+        const selectedTable = document.getElementById('table-' + league);
+        if(selectedTable) {
+            selectedTable.classList.remove('d-none');
+        }
+    }
+
+    // Fetch Live Scores via REST API
+    let hasFetchedScores = false;
+
+    async function fetchLiveScores() {
+        // Prevent unnecessary re-fetching if already loaded, unless manual change
+        const sport = document.getElementById('liveSportSelect').value;
+        
+        const loader = document.getElementById('liveScoresLoader');
+        const grid = document.getElementById('liveScoresGrid');
+        
+        loader.classList.remove('d-none');
+        grid.innerHTML = '';
+
+        try {
+            const response = await fetch(`/api/scores/${sport}`);
+            if (!response.ok) throw new Error('API request failed');
+            
+            const scores = await response.json();
+            
+            // Simulate network delay to show off the loader
+            setTimeout(() => {
+                loader.classList.add('d-none');
+                renderScores(scores);
+            }, 600);
+            
+        } catch (error) {
+            console.error('Error fetching live scores:', error);
+            loader.classList.add('d-none');
+            grid.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <i class="bi bi-exclamation-triangle text-danger fs-1"></i>
+                    <h5 class="mt-3 fw-bold">Failed to load live scores</h5>
+                    <p class="text-muted">Please try again later.</p>
+                </div>
+            `;
+        }
+    }
+
+    function renderScores(scores) {
+        const grid = document.getElementById('liveScoresGrid');
+        
+        if (scores.length === 0) {
+            grid.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <p class="text-muted fw-bold">No live matches available at the moment.</p>
+                </div>
+            `;
+            return;
+        }
+
+        let html = '';
+        scores.forEach(score => {
+            const statusColor = score.matchStatus === 'LIVE' ? 'text-danger' : 'text-primary';
+            const statusIcon = score.matchStatus === 'LIVE' ? '<i class="bi bi-record-circle me-1"></i>' : '';
+            
+            // Generate dummy initials if logo is missing
+            const logoA = score.teamALogo ? `<img src="${score.teamALogo}" class="team-logo">` : `<div class="team-logo bg-light rounded-circle d-flex align-items-center justify-content-center fw-bold fs-4">${score.teamA.charAt(0)}</div>`;
+            const logoB = score.teamBLogo ? `<img src="${score.teamBLogo}" class="team-logo">` : `<div class="team-logo bg-light rounded-circle d-flex align-items-center justify-content-center fw-bold fs-4">${score.teamB.charAt(0)}</div>`;
+
+            html += `
+                <div class="col-md-6 col-lg-4">
+                    <div class="live-scorecard">
+                        <div class="score-header">
+                            <span>${score.tournamentName}</span>
+                            <span class="${statusColor} fw-bold">${statusIcon}${score.matchStatus}</span>
+                        </div>
+                        <div class="score-body">
+                            <div class="team-logos">
+                                ${logoA}
+                                <div class="vs-badge">VS</div>
+                                ${logoB}
+                            </div>
+                            <h5 class="fw-bold text-heading mb-3">${score.teamA} vs ${score.teamB}</h5>
+                            <div class="bg-light rounded-3 p-3 border">
+                                <h4 class="fw-bold mb-0 text-primary" style="letter-spacing: -0.5px;">${score.scoreSummary}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        grid.innerHTML = html;
+    }
+</script>
 
 </body>
 </html>

@@ -4,6 +4,7 @@ package turfPlay.turf_booking;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.math.BigDecimal;
 
 public class Booking {
 
@@ -12,6 +13,11 @@ public class Booking {
     private Long turfSlotId;
     private String bookingStatus;
     private LocalDateTime bookedAt;
+    
+    private BigDecimal totalPrice;
+    private BigDecimal amountPaid;
+    private String splitLinkUuid;
+    private String paymentType;
 
     private String userName;
     private String userEmail;
@@ -118,5 +124,37 @@ public class Booking {
 
     public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
+    }
+
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public BigDecimal getAmountPaid() {
+        return amountPaid;
+    }
+
+    public void setAmountPaid(BigDecimal amountPaid) {
+        this.amountPaid = amountPaid;
+    }
+
+    public String getSplitLinkUuid() {
+        return splitLinkUuid;
+    }
+
+    public void setSplitLinkUuid(String splitLinkUuid) {
+        this.splitLinkUuid = splitLinkUuid;
+    }
+
+    public String getPaymentType() {
+        return paymentType;
+    }
+
+    public void setPaymentType(String paymentType) {
+        this.paymentType = paymentType;
     }
 }

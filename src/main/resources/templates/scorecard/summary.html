@@ -23,6 +23,7 @@
         <a th:href="@{/scorecard/match/{id}/start(id=${match.id})}" class="btn btn-play26" th:if="${scorecards == null or scorecards.isEmpty()}"><i class="bi bi-play-fill me-1"></i>Start Innings 1</a>
         <a th:href="@{/scorecard/live/{id}(id=${match.id})}" class="btn btn-outline-play26"><i class="bi bi-broadcast me-1"></i>Live View</a>
         <a th:href="@{/scorecard/match/{id}/result(id=${match.id})}" class="btn btn-outline-play26"><i class="bi bi-trophy me-1"></i>Result</a>
+        <button class="btn btn-danger" onclick="exportScorecardPDF()"><i class="bi bi-file-earmark-pdf-fill me-1"></i>Export to PDF</button>
     </div>
 
     <!-- Each Innings -->
@@ -94,5 +95,62 @@
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- HTML2PDF Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script th:src="@{/js/play26.js}"></script>
+<script>
+    function exportScorecardPDF() {
+        const matchTitle = document.querySelector('.play26-hero h1').innerText;
+        const matchDetails = document.querySelector('.play26-hero p').innerText;
+        
+        // Clone the scorecards container
+        const containerHtml = document.querySelector('.container.pb-5').cloneNode(true);
+        
+        // Remove buttons and quick actions from the clone to keep PDF clean
+        const buttons = containerHtml.querySelectorAll('.btn, .d-flex.gap-2.mb-4.flex-wrap');
+        buttons.forEach(btn => btn.remove());
+        
+        // Remove 'Add Batting/Bowling' rows
+        const actionRows = containerHtml.querySelectorAll('.d-flex.gap-2.mt-2, .mt-2 > a.btn-glass');
+        actionRows.forEach(row => {
+            if(row.parentElement && row.parentElement.classList.contains('mt-2')) row.parentElement.remove();
+            else row.remove();
+        });
+
+        // Ensure text color is black for printing
+        const glassCards = containerHtml.querySelectorAll('.glass-card');
+        glassCards.forEach(card => {
+            card.style.background = '#fff';
+            card.style.border = '1px solid #ddd';
+            card.style.color = '#333';
+        });
+
+        const tables = containerHtml.querySelectorAll('.table');
+        tables.forEach(table => {
+            table.style.color = '#333';
+        });
+
+        const exportDiv = document.createElement('div');
+        exportDiv.style.padding = '20px';
+        exportDiv.style.background = '#fff';
+        exportDiv.innerHTML = `
+            <div style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #6C63FF; padding-bottom: 15px;">
+                <h2 style="color: #6C63FF; margin-bottom: 5px;">PLAY26 Official Scorecard</h2>
+                <h3 style="color: #333; margin-bottom: 5px;">${matchTitle}</h3>
+                <p style="color: #666; font-size: 14px;">${matchDetails}</p>
+            </div>
+        `;
+        exportDiv.appendChild(containerHtml);
+
+        const opt = {
+            margin:       0.5,
+            filename:     'play26-scorecard.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, backgroundColor: '#ffffff' },
+            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(exportDiv).save();
+    }
+</script>
 </body></html>

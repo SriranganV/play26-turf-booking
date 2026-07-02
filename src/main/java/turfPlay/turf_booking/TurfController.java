@@ -7,18 +7,27 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.security.Principal;
 
 @Controller
 public class TurfController {
 
     private final TurfService turfService;
     private final TurfSlotService turfSlotService;
+    private final ReviewService reviewService;
+    private final UserRepository userRepository;
 
     @Autowired
-    public TurfController(TurfService turfService, TurfSlotService turfSlotService) {
+    public TurfController(TurfService turfService, TurfSlotService turfSlotService,
+                          ReviewService reviewService, UserRepository userRepository) {
         this.turfService = turfService;
         this.turfSlotService = turfSlotService;
+        this.reviewService = reviewService;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/turfs")
@@ -44,7 +53,27 @@ public class TurfController {
 
         model.addAttribute("slots", slots);
         model.addAttribute("turf", turf);
+        model.addAttribute("reviews", reviewService.getReviewsForTurf(id));
 
         return "turf-details";
+    }
+
+    @PostMapping("/turfs/review/{id}")
+    public String addReview(@PathVariable Long id,
+                            @RequestParam int rating,
+                            @RequestParam String comment,
+                            Principal principal,
+                            RedirectAttributes redirectAttributes) {
+        try {
+            AppUser user = userRepository.findByEmail(principal.getName())
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+            
+            reviewService.addReview(user.getId(), id, rating, comment);
+            redirectAttributes.addFlashAttribute("successMessage", "✅ Thank you! Your review has been submitted.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "⚠️ Could not submit review: " + e.getMessage());
+        }
+        
+        return "redirect:/turfs/" + id;
     }
 }

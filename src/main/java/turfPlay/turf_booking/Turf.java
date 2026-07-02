@@ -14,6 +14,10 @@ public class Turf {
     private String supportedSports;
     private boolean active;
     private LocalDateTime createdAt;
+    
+    // Transient fields for reviews
+    private Double averageRating;
+    private Integer reviewCount;
 
     public Turf() {
     }
@@ -80,5 +84,21 @@ public class Turf {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Double getAverageRating() {
+        return averageRating != null ? averageRating : 0.0;
+    }
+
+    public void setAverageRating(Double averageRating) {
+        this.averageRating = averageRating;
+    }
+
+    public Integer getReviewCount() {
+        return reviewCount != null ? reviewCount : 0;
+    }
+
+    public void setReviewCount(Integer reviewCount) {
+        this.reviewCount = reviewCount;
     }
 }

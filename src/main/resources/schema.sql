@@ -42,10 +42,25 @@ CREATE TABLE IF NOT EXISTS bookings (
     user_id BIGINT NOT NULL,
     turf_slot_id BIGINT NOT NULL,
     booking_status VARCHAR(20) DEFAULT 'CONFIRMED',
+    total_price DECIMAL(10,2) DEFAULT 0,
+    amount_paid DECIMAL(10,2) DEFAULT 0,
+    split_link_uuid VARCHAR(100) UNIQUE,
+    payment_type VARCHAR(20) DEFAULT 'FULL',
     booked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (turf_slot_id) REFERENCES turf_slots(id),
-    INDEX idx_bookings_user (user_id)
+    INDEX idx_bookings_user (user_id),
+    INDEX idx_bookings_split (split_link_uuid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS split_contributions (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    booking_id BIGINT NOT NULL,
+    contributor_name VARCHAR(100) NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE,
+    INDEX idx_contributions_booking (booking_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS sports_rules (
@@ -241,4 +256,16 @@ CREATE TABLE IF NOT EXISTS extras (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (scorecard_id) REFERENCES scorecards(id) ON DELETE CASCADE,
     UNIQUE INDEX idx_extras_scorecard (scorecard_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS reviews (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    turf_id BIGINT NOT NULL,
+    rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    comment TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (turf_id) REFERENCES turfs(id) ON DELETE CASCADE,
+    INDEX idx_reviews_turf (turf_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

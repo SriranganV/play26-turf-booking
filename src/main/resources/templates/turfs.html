@@ -263,8 +263,18 @@
                 <div class="turf-body">
                     <h2 class="turf-name" th:text="${turf.name}">Green Arena</h2>
                     
-                    <div class="turf-location">
-                        &#128205; <span th:text="${turf.location}">City Center</span>
+                    <div class="turf-location d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            📍 <span th:text="${turf.location}">City Center</span>
+                        </div>
+                        <a th:href="@{'https://www.google.com/maps/search/?api=1&query=' + ${turf.location}}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-3 fw-bold" style="font-size: 12px; border-width: 2px;">
+                            <i class="bi bi-geo-alt-fill me-1"></i> View on Map
+                        </a>
+                    </div>
+
+                    <div style="font-size: 13px; color: #f59e0b; margin-bottom: 12px; display: flex; align-items: center; gap: 4px; font-weight: 600;">
+                        &#9733; <span th:text="${#numbers.formatDecimal(turf.averageRating, 1, 1)}">4.5</span>
+                        <span style="color: #6b7280; font-weight: 400; font-size: 12px;">(<span th:text="${turf.reviewCount}">10</span> reviews)</span>
                     </div>
                     
                     <p class="turf-desc" th:text="${turf.description}">
