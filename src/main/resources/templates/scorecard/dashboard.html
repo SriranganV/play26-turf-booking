@@ -15,6 +15,12 @@
     </nav>
 <h1><i class="bi bi-clipboard-data-fill me-2"></i>Scorecard Hub</h1><p>Cricket scoring &amp; live match management</p></div></div>
 <div class="container pb-5">
+
+    <div class="d-flex gap-2 mb-4">
+        <button onclick="history.back()" class="btn btn-outline-light btn-sm"><i class="bi bi-arrow-left"></i> Back</button>
+        <a th:href="@{/dashboard}" class="btn btn-outline-primary btn-sm"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    </div>
+
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a th:href="@{/dashboard}"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a></li>
@@ -55,11 +61,11 @@
     <!-- Quick Actions -->
     <h3 class="section-title"><i class="bi bi-lightning me-2"></i>Quick Actions</h3>
     <div class="row g-3">
-        <div class="col-12 mb-2"><a th:href="@{/scorecard/quick-match}" class="btn btn-play26 w-100 py-3 fs-5 fw-bold" style="background: linear-gradient(135deg, var(--play26-accent) 0%, var(--play26-primary) 100%);"><i class="bi bi-lightning-charge-fill me-2"></i>Start Quick Local Match</a></div>
-        <div class="col-6 col-md-3"><a th:href="@{/tournaments/new}" class="quick-action"><i class="bi bi-trophy"></i>New Tournament</a></div>
-        <div class="col-6 col-md-3"><a th:href="@{/matches/new}" class="quick-action"><i class="bi bi-controller"></i>New Match</a></div>
-        <div class="col-6 col-md-3"><a th:href="@{/teams/new}" class="quick-action"><i class="bi bi-people"></i>New Team</a></div>
-        <div class="col-6 col-md-3"><a th:href="@{/players/new}" class="quick-action"><i class="bi bi-person-plus"></i>New Player</a></div>
+        <div class="col-12 mb-2"><a th:href="@{/scorecard/quick-match}" class="btn btn-play26 w-100 py-3 fs-5 fw-bold" style="background: linear-gradient(135deg, var(--play26-accent) 0%, var(--play26-primary) 100%); border: none;"><i class="bi bi-lightning-charge-fill me-2"></i>Start Quick Local Match</a></div>
+        <div class="col-6 col-md-3"><a th:href="@{/tournaments/new}" class="quick-action text-white" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); border: none; color: #16213E !important;"><i class="bi bi-trophy" style="color: #16213E;"></i><span style="color: #16213E; font-weight: 600;">New Tournament</span></a></div>
+        <div class="col-6 col-md-3"><a th:href="@{/matches/new}" class="quick-action text-white" style="background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%); border: none;"><i class="bi bi-controller" style="color: #16213E;"></i><span style="color: #16213E; font-weight: 600;">New Match</span></a></div>
+        <div class="col-6 col-md-3"><a th:href="@{/teams/new}" class="quick-action text-white" style="background: linear-gradient(to right, #fa709a 0%, #fee140 100%); border: none;"><i class="bi bi-people"></i><span style="font-weight: 600;">New Team</span></a></div>
+        <div class="col-6 col-md-3"><a th:href="@{/players/new}" class="quick-action text-white" style="background: linear-gradient(to top, #c471f5 0%, #fa71cd 100%); border: none;"><i class="bi bi-person-plus"></i><span style="font-weight: 600;">New Player</span></a></div>
     </div>
 </div>
 <footer th:replace="~{fragments/layout :: footer}"></footer>

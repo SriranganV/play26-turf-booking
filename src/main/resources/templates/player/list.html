@@ -7,6 +7,12 @@
 <body>
 <div class="play26-hero"><div class="container"><h1><i class="bi bi-person-badge-fill me-2"></i>Players</h1><p>Manage cricket players</p></div></div>
 <div class="container pb-5">
+
+    <div class="d-flex gap-2 mb-4">
+        <button onclick="history.back()" class="btn btn-outline-light btn-sm"><i class="bi bi-arrow-left"></i> Back</button>
+        <a th:href="@{/dashboard}" class="btn btn-outline-primary btn-sm"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    </div>
+
     <div class="toast-container">
         <div th:if="${successMessage}" class="toast play26-toast success" role="alert"><div class="toast-body"><i class="bi bi-check-circle-fill text-success me-2"></i><span th:text="${successMessage}"></span></div></div>
         <div th:if="${errorMessage}" class="toast play26-toast error" role="alert"><div class="toast-body"><i class="bi bi-x-circle-fill text-danger me-2"></i><span th:text="${errorMessage}"></span></div></div>

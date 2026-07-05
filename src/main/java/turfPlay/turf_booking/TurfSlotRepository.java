@@ -37,47 +37,39 @@ public class TurfSlotRepository {
     }
 
     public List<TurfSlot> findAll() {
-        String sql = """
-                SELECT ts.id, ts.turf_id, t.name AS turf_name, ts.slot_date,
-                       ts.start_time, ts.end_time, ts.status, ts.created_at
-                FROM turf_slots ts
-                JOIN turfs t ON ts.turf_id = t.id
-                ORDER BY ts.slot_date DESC, ts.start_time ASC
-                """;
+        String sql = "                SELECT ts.id, ts.turf_id, t.name AS turf_name, ts.slot_date, " +
+"                       ts.start_time, ts.end_time, ts.status, ts.created_at " +
+"                FROM turf_slots ts " +
+"                JOIN turfs t ON ts.turf_id = t.id " +
+"                ORDER BY ts.slot_date DESC, ts.start_time ASC ";
 
         return jdbcTemplate.query(sql, slotRowMapper);
     }
 
     public List<TurfSlot> findByTurfId(Long turfId) {
-        String sql = """
-                SELECT ts.id, ts.turf_id, t.name AS turf_name, ts.slot_date,
-                       ts.start_time, ts.end_time, ts.status, ts.created_at
-                FROM turf_slots ts
-                JOIN turfs t ON ts.turf_id = t.id
-                WHERE ts.turf_id = ?
-                ORDER BY ts.slot_date ASC, ts.start_time ASC
-                """;
+        String sql = "                SELECT ts.id, ts.turf_id, t.name AS turf_name, ts.slot_date, " +
+"                       ts.start_time, ts.end_time, ts.status, ts.created_at " +
+"                FROM turf_slots ts " +
+"                JOIN turfs t ON ts.turf_id = t.id " +
+"                WHERE ts.turf_id = ? " +
+"                ORDER BY ts.slot_date ASC, ts.start_time ASC ";
 
         return jdbcTemplate.query(sql, slotRowMapper, turfId);
     }
 
     public Optional<TurfSlot> findById(Long id) {
-        String sql = """
-                SELECT ts.id, ts.turf_id, t.name AS turf_name, ts.slot_date,
-                       ts.start_time, ts.end_time, ts.status, ts.created_at
-                FROM turf_slots ts
-                JOIN turfs t ON ts.turf_id = t.id
-                WHERE ts.id = ?
-                """;
+        String sql = "                SELECT ts.id, ts.turf_id, t.name AS turf_name, ts.slot_date, " +
+"                       ts.start_time, ts.end_time, ts.status, ts.created_at " +
+"                FROM turf_slots ts " +
+"                JOIN turfs t ON ts.turf_id = t.id " +
+"                WHERE ts.id = ? ";
 
         return jdbcTemplate.query(sql, slotRowMapper, id).stream().findFirst();
     }
 
     public void save(TurfSlot slot) {
-        String sql = """
-                INSERT INTO turf_slots (turf_id, slot_date, start_time, end_time, status)
-                VALUES (?, ?, ?, ?, ?)
-                """;
+        String sql = "                INSERT INTO turf_slots (turf_id, slot_date, start_time, end_time, status) " +
+"                VALUES (?, ?, ?, ?, ?) ";
 
         jdbcTemplate.update(
                 sql,
@@ -99,16 +91,14 @@ public class TurfSlotRepository {
         jdbcTemplate.update(sql, id);
     }
     public List<TurfSlot> findAvailableByTurfId(Long turfId) {
-        String sql = """
-                SELECT ts.id, ts.turf_id, t.name AS turf_name, ts.slot_date,
-                       ts.start_time, ts.end_time, ts.status, ts.created_at
-                FROM turf_slots ts
-                JOIN turfs t ON ts.turf_id = t.id
-                WHERE ts.turf_id = ?
-                  AND ts.status = 'AVAILABLE'
-                  AND ts.slot_date >= CURRENT_DATE
-                ORDER BY ts.slot_date ASC, ts.start_time ASC
-                """;
+        String sql = "                SELECT ts.id, ts.turf_id, t.name AS turf_name, ts.slot_date, " +
+"                       ts.start_time, ts.end_time, ts.status, ts.created_at " +
+"                FROM turf_slots ts " +
+"                JOIN turfs t ON ts.turf_id = t.id " +
+"                WHERE ts.turf_id = ? " +
+"                  AND ts.status = 'AVAILABLE' " +
+"                  AND ts.slot_date >= CURRENT_DATE " +
+"                ORDER BY ts.slot_date ASC, ts.start_time ASC ";
 
         return jdbcTemplate.query(sql, slotRowMapper, turfId);
     }

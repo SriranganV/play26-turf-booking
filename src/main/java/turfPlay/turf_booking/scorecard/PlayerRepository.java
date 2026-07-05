@@ -41,12 +41,10 @@ public class PlayerRepository {
 
     public PlayerRepository(JdbcTemplate jdbc) { this.jdbc = jdbc; }
 
-    private static final String SEL = """
-        SELECT p.*, trn.tournament_name, t.team_name
-        FROM players p
-        LEFT JOIN tournaments trn ON p.tournament_id=trn.id
-        LEFT JOIN teams t ON p.team_id=t.id
-        """;
+    private static final String SEL = "SELECT p.*, trn.tournament_name, t.team_name " +
+        "FROM players p " +
+        "LEFT JOIN tournaments trn ON p.tournament_id=trn.id " +
+        "LEFT JOIN teams t ON p.team_id=t.id ";
 
     public List<Player> findAll() { return jdbc.query(SEL + "ORDER BY p.player_name", rm); }
     public List<Player> findByTeam(Long tid) { return jdbc.query(SEL + "WHERE p.team_id=? ORDER BY p.jersey_number", rm, tid); }

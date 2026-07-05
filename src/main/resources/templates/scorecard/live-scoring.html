@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Live Scoring | PLAY26</title>
+    <!-- CSRF Tokens -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+    <style>
+        .score-keypad .btn {
+            height: 60px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        .btn-run { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+        .btn-boundary { background: linear-gradient(135deg, var(--play26-accent) 0%, #28a745 100%); color: #000; border: none; }
+        .btn-wicket { background: linear-gradient(135deg, var(--play26-secondary) 0%, #dc3545 100%); color: #fff; border: none; }
+        .btn-extra { background: rgba(108,99,255,0.3); color: #fff; border: 1px solid var(--play26-primary); }
+    </style>
+</head>
+<body class="bg-dark text-white">
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<div class="container-fluid py-3 pb-5">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a th:href="@{/scorecard/match/{id}(id=${match.id})}" class="btn btn-outline-light btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+        <h5 class="mb-0 text-center"><span th:text="${match.teamAName}">A</span> vs <span th:text="${match.teamBName}">B</span></h5>
+        <span class="badge badge-live pulse">LIVE</span>
+    </div>
+
+    <!-- Live Scoreboard -->
+    <div class="glass-card text-center mb-3 py-4" style="background: linear-gradient(135deg, #16213E 0%, #1A1A2E 100%); border-top: 4px solid var(--play26-primary);">
+        <h6 class="text-muted text-uppercase tracking-wider">Innings <span th:text="${innings}">1</span></h6>
+        <div class="display-1 fw-bold text-white mb-2">
+            <span th:text="${scorecard.totalRuns}">0</span>-<span th:text="${scorecard.totalWickets}">0</span>
+        </div>
+        <div class="fs-4 text-accent">
+            Overs: <span th:text="${scorecard.totalOvers}">0.0</span> / <span th:text="${match.overs}">20</span>
+        </div>
+    </div>
+
+    <!-- Active Players Selection -->
+    <div class="row g-2 mb-4">
+        <div class="col-6">
+            <div class="glass-card p-3 h-100">
+                <label class="form-label text-accent fw-bold"><i class="bi bi-bat me-1"></i>Striker</label>
+                <select class="form-select bg-dark text-white" id="strikerId">
+                    <option value="">Select Striker...</option>
+                    <option th:each="b : ${battingScores}" th:if="${!b.isOut}" th:value="${b.id}" th:text="${b.playerName} + ' (' + ${b.runs} + '*)'"></option>
+                </select>
+                <div class="mt-2 text-end">
+                    <a th:href="@{/scorecard/match/{id}/batting/{in}(id=${match.id},in=${innings})}" class="text-info text-decoration-none small">+ Add Batter</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="glass-card p-3 h-100">
+                <label class="form-label text-warning fw-bold"><i class="bi bi-circle me-1"></i>Bowler</label>
+                <select class="form-select bg-dark text-white" id="bowlerId">
+                    <option value="">Select Bowler...</option>
+                    <option th:each="b : ${bowlingScores}" th:value="${b.id}" th:text="${b.playerName} + ' (' + ${b.overs} + '-' + ${b.runs} + '-' + ${b.wickets} + ')'"></option>
+                </select>
+                <div class="mt-2 text-end">
+                    <a th:href="@{/scorecard/match/{id}/bowling/{in}(id=${match.id},in=${innings})}" class="text-info text-decoration-none small">+ Add Bowler</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Undo / Redo Row -->
+    <div class="row g-2 mb-3">
+        <div class="col-6">
+            <button id="undoBtn" class="btn btn-outline-warning w-100 py-2" onclick="undoLastBall()" style="display:none;">
+                <i class="bi bi-arrow-counterclockwise"></i> Undo
+            </button>
+        </div>
+        <div class="col-6">
+            <button id="redoBtn" class="btn btn-outline-info w-100 py-2" onclick="redoLastBall()" style="display:none;">
+                <i class="bi bi-arrow-clockwise"></i> Redo
+            </button>
+        </div>
+    </div>
+
+    <!-- Keypad -->
+    <div class="score-keypad">
+        <!-- Runs Row -->
+        <div class="row g-2 mb-2">
+            <div class="col-4"><button class="btn btn-run w-100" onclick="recordBall(0, false, false, false, false, false, null)">0</button></div>
+            <div class="col-4"><button class="btn btn-run w-100" onclick="recordBall(1, false, false, false, false, false, null)">1</button></div>
+            <div class="col-4"><button class="btn btn-run w-100" onclick="recordBall(2, false, false, false, false, false, null)">2</button></div>
+        </div>
+        <div class="row g-2 mb-2">
+            <div class="col-4"><button class="btn btn-run w-100" onclick="recordBall(3, false, false, false, false, false, null)">3</button></div>
+            <div class="col-4"><button class="btn btn-boundary w-100" onclick="recordBall(4, false, false, false, false, false, null)">4</button></div>
+            <div class="col-4"><button class="btn btn-boundary w-100" onclick="recordBall(6, false, false, false, false, false, null)">6</button></div>
+        </div>
+        
+        <hr class="border-secondary my-3">
+        
+        <!-- Extras & Wickets Row -->
+        <div class="row g-2 mb-2">
+            <div class="col-3"><button class="btn btn-extra w-100" onclick="recordBall(0, true, false, false, false, false, null)">WD</button></div>
+            <div class="col-3"><button class="btn btn-extra w-100" onclick="recordBall(0, false, true, false, false, false, null)">NB</button></div>
+            <div class="col-3"><button class="btn btn-extra w-100" onclick="recordBall(1, false, false, true, false, false, null)">1B</button></div>
+            <div class="col-3"><button class="btn btn-extra w-100" onclick="recordBall(1, false, false, false, true, false, null)">1LB</button></div>
+        </div>
+        
+        <div class="row g-2 mt-4">
+            <div class="col-12"><button class="btn btn-wicket w-100 py-3 text-uppercase" onclick="handleWicket()"><i class="bi bi-x-circle me-2"></i>Wicket</button></div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; align-items:center; justify-content:center; flex-direction:column;">
+    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+    <div class="mt-3 text-white fw-bold">Updating...</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+    const scorecardId = /*[[${scorecard.id}]]*/ null;
+    let undoStack = JSON.parse(localStorage.getItem('play26_undo_' + scorecardId)) || [];
+    let redoStack = JSON.parse(localStorage.getItem('play26_redo_' + scorecardId)) || [];
+    
+    // Save selection state locally so it persists on reload
+    document.addEventListener("DOMContentLoaded", function() {
+        const savedStriker = localStorage.getItem('play26_striker_' + scorecardId);
+        const savedBowler = localStorage.getItem('play26_bowler_' + scorecardId);
+        if(savedStriker) document.getElementById('strikerId').value = savedStriker;
+        if(savedBowler) document.getElementById('bowlerId').value = savedBowler;
+        
+        if(undoStack.length > 0) document.getElementById('undoBtn').style.display = 'block';
+        if(redoStack.length > 0) document.getElementById('redoBtn').style.display = 'block';
+        
+        document.getElementById('strikerId').addEventListener('change', (e) => localStorage.setItem('play26_striker_' + scorecardId, e.target.value));
+        document.getElementById('bowlerId').addEventListener('change', (e) => localStorage.setItem('play26_bowler_' + scorecardId, e.target.value));
+    });
+
+    function showLoading() { document.getElementById('loadingOverlay').style.display = 'flex'; }
+    
+    function undoLastBall() {
+        if (undoStack.length === 0) return;
+        const payload = undoStack.pop();
+        
+        showLoading();
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        fetch('/scorecard/live/undo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.status === 'success') {
+                redoStack.push(payload);
+                localStorage.setItem('play26_undo_' + scorecardId, JSON.stringify(undoStack));
+                localStorage.setItem('play26_redo_' + scorecardId, JSON.stringify(redoStack));
+                window.location.reload();
+            } else {
+                alert("Error undoing: " + data.error);
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }
+        });
+    }
+
+    function redoLastBall() {
+        if (redoStack.length === 0) return;
+        const payload = redoStack.pop();
+        
+        showLoading();
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        fetch('/scorecard/live/ball', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.status === 'success') {
+                undoStack.push(payload);
+                localStorage.setItem('play26_undo_' + scorecardId, JSON.stringify(undoStack));
+                localStorage.setItem('play26_redo_' + scorecardId, JSON.stringify(redoStack));
+                window.location.reload();
+            } else {
+                alert("Error redoing: " + data.error);
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }
+        });
+    }
+    
+    function handleWicket() {
+        if(!validateSelections()) return;
+        if(confirm("Are you sure you want to record a Wicket for the Striker?")) {
+            recordBall(0, false, false, false, false, true, "BOWLED");
+        }
+    }
+
+    function validateSelections() {
+        if (!document.getElementById('strikerId').value) {
+            alert("Please select a Striker first!"); return false;
+        }
+        if (!document.getElementById('bowlerId').value) {
+            alert("Please select a Bowler first!"); return false;
+        }
+        return true;
+    }
+
+    function recordBall(runs, isWide, isNoBall, isBye, isLegBye, isWicket, dismissalType) {
+        if (!validateSelections()) return;
+        
+        showLoading();
+        
+        const strikerIdVal = document.getElementById('strikerId').value;
+        const bowlerIdVal = document.getElementById('bowlerId').value;
+        
+        const payload = {
+            scorecardId: scorecardId,
+            strikerId: strikerIdVal ? parseInt(strikerIdVal) : null,
+            bowlerId: bowlerIdVal ? parseInt(bowlerIdVal) : null,
+            runs: runs,
+            wide: isWide,
+            noBall: isNoBall,
+            bye: isBye,
+            legBye: isLegBye,
+            wicket: isWicket,
+            dismissalType: dismissalType
+        };
+
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        fetch('/scorecard/live/ball', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.status === 'success') {
+                undoStack.push(payload);
+                redoStack = [];
+                localStorage.setItem('play26_undo_' + scorecardId, JSON.stringify(undoStack));
+                localStorage.setItem('play26_redo_' + scorecardId, JSON.stringify(redoStack));
+                window.location.reload();
+            } else {
+                alert("Error updating score: " + data.error);
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }
+        })
+        .catch(err => {
+            alert("Network error!");
+            document.getElementById('loadingOverlay').style.display = 'none';
+        });
+    }
+</script>
+</body>
+</html>

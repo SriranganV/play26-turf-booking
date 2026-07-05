@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+
 import turfPlay.turf_booking.GeneratedKeyExtractor;
 
 import java.sql.*;
@@ -16,18 +17,16 @@ public class BattingScoreRepository {
 
     private final JdbcTemplate jdbc;
 
-    private static final String SELECT_FULL = """
-        SELECT bs.id, bs.scorecard_id, bs.player_id, bs.runs, bs.balls,
-               bs.fours, bs.sixes, bs.strike_rate, bs.is_out, bs.dismissal_type,
-               bs.bowler_id, bs.fielder_id, bs.batting_position, bs.created_at,
-               p.player_name,
-               b.player_name AS bowler_name,
-               f.player_name AS fielder_name
-        FROM batting_scores bs
-        LEFT JOIN players p ON bs.player_id = p.id
-        LEFT JOIN players b ON bs.bowler_id = b.id
-        LEFT JOIN players f ON bs.fielder_id = f.id
-        """;
+    private static final String SELECT_FULL = "SELECT bs.id, bs.scorecard_id, bs.player_id, bs.runs, bs.balls, " +
+               "bs.fours, bs.sixes, bs.strike_rate, bs.is_out, bs.dismissal_type, " +
+               "bs.bowler_id, bs.fielder_id, bs.batting_position, bs.created_at, " +
+               "p.player_name, " +
+               "b.player_name AS bowler_name, " +
+               "f.player_name AS fielder_name " +
+        "FROM batting_scores bs " +
+        "LEFT JOIN players p ON bs.player_id = p.id " +
+        "LEFT JOIN players b ON bs.bowler_id = b.id " +
+        "LEFT JOIN players f ON bs.fielder_id = f.id ";
 
     private final RowMapper<BattingScore> rm = (rs, n) -> {
         BattingScore bs = new BattingScore();
@@ -67,12 +66,18 @@ public class BattingScoreRepository {
             PreparedStatement ps = con.prepareStatement(
                 "INSERT INTO batting_scores(scorecard_id,player_id,runs,balls,fours,sixes,strike_rate,is_out,dismissal_type,bowler_id,fielder_id,batting_position) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
                 Statement.RETURN_GENERATED_KEYS);
-            ps.setLong(1, bs.getScorecardId()); ps.setObject(2, bs.getPlayerId());
-            ps.setObject(3, bs.getRuns()); ps.setObject(4, bs.getBalls());
-            ps.setObject(5, bs.getFours()); ps.setObject(6, bs.getSixes());
-            ps.setObject(7, bs.getStrikeRate()); ps.setBoolean(8, bs.isIsOut());
-            ps.setString(9, bs.getDismissalType()); ps.setObject(10, bs.getBowlerId());
-            ps.setObject(11, bs.getFielderId()); ps.setObject(12, bs.getBattingPosition());
+            if (bs.getScorecardId() != null) ps.setLong(1, bs.getScorecardId()); else ps.setNull(1, Types.BIGINT);
+            if (bs.getPlayerId() != null) ps.setLong(2, bs.getPlayerId()); else ps.setNull(2, Types.BIGINT);
+            if (bs.getRuns() != null) ps.setInt(3, bs.getRuns()); else ps.setNull(3, Types.INTEGER);
+            if (bs.getBalls() != null) ps.setInt(4, bs.getBalls()); else ps.setNull(4, Types.INTEGER);
+            if (bs.getFours() != null) ps.setInt(5, bs.getFours()); else ps.setNull(5, Types.INTEGER);
+            if (bs.getSixes() != null) ps.setInt(6, bs.getSixes()); else ps.setNull(6, Types.INTEGER);
+            if (bs.getStrikeRate() != null) ps.setDouble(7, bs.getStrikeRate()); else ps.setNull(7, Types.DOUBLE);
+            ps.setBoolean(8, bs.isIsOut());
+            ps.setString(9, bs.getDismissalType());
+            if (bs.getBowlerId() != null) ps.setLong(10, bs.getBowlerId()); else ps.setNull(10, Types.BIGINT);
+            if (bs.getFielderId() != null) ps.setLong(11, bs.getFielderId()); else ps.setNull(11, Types.BIGINT);
+            if (bs.getBattingPosition() != null) ps.setInt(12, bs.getBattingPosition()); else ps.setNull(12, Types.INTEGER);
             return ps;
         }, kh);
         Long id = GeneratedKeyExtractor.extractId(kh);

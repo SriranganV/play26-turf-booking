@@ -82,6 +82,15 @@ public class PageController {
         return "blogs";
     }
 
+    @GetMapping("/leaderboard")
+    public String leaderboard(Model model) {
+        model.addAttribute("pageTitle", "Global Leaderboards");
+        model.addAttribute("iplStandings", globalSportsService.fetchIplStandings());
+        // Also fetch a top football league for variety
+        model.addAttribute("premierLeague", globalSportsService.fetchFootballStandings("PL"));
+        return "leaderboard";
+    }
+
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
         model.addAttribute("pageTitle", "Dashboard");

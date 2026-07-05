@@ -24,7 +24,7 @@
     <!-- Quick Actions -->
     <div class="d-flex gap-2 mb-4 flex-wrap">
         <a th:href="@{/scorecard/match/{id}/start(id=${match.id})}" class="btn btn-play26" th:if="${scorecards == null or scorecards.isEmpty()}"><i class="bi bi-play-fill me-1"></i>Start Innings 1</a>
-        <a th:href="@{/scorecard/live/{id}(id=${match.id})}" class="btn btn-outline-play26"><i class="bi bi-broadcast me-1"></i>Live View</a>
+        <a th:href="@{/scorecard/live/{id}/innings/1(id=${match.id})}" class="btn btn-outline-play26"><i class="bi bi-broadcast me-1"></i>Live Scoring UI</a>
         <a th:href="@{/scorecard/match/{id}/result(id=${match.id})}" class="btn btn-outline-play26"><i class="bi bi-trophy me-1"></i>Result</a>
         <button class="btn btn-danger" onclick="exportScorecardPDF()"><i class="bi bi-file-earmark-pdf-fill me-1"></i>Export to PDF</button>
     </div>
@@ -64,7 +64,8 @@
             </div>
             <div class="total-row p-2 rounded mt-2">Total: <strong><span th:text="${sc.totalRuns} ?: 0">0</span>/<span th:text="${sc.totalWickets} ?: 0">0</span></strong> (<span th:text="${sc.totalOvers} ?: '0.0'">0.0</span> Ov)</div>
             <div class="d-flex gap-2 mt-2">
-                <a th:href="@{/scorecard/match/{mid}/batting/{inn}(mid=${match.id},inn=${sc.innings})}" class="btn btn-glass btn-sm"><i class="bi bi-plus me-1"></i>Add Batting</a>
+                <a th:href="@{/scorecard/live/{mid}/innings/{inn}(mid=${match.id},inn=${sc.innings})}" class="btn btn-play26 btn-sm"><i class="bi bi-lightning-charge-fill me-1"></i>Live Scoring (Ball-by-Ball)</a>
+                <a th:href="@{/scorecard/match/{mid}/batting/{inn}(mid=${match.id},inn=${sc.innings})}" class="btn btn-glass btn-sm"><i class="bi bi-plus me-1"></i>Manual Batting Entry</a>
                 <a th:href="@{/scorecard/match/{mid}/extras/{inn}(mid=${match.id},inn=${sc.innings})}" class="btn btn-glass btn-sm"><i class="bi bi-plus me-1"></i>Add Extras</a>
             </div>
         </div>

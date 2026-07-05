@@ -101,7 +101,7 @@ public class ScorecardController {
         }
         match.setTossDecision(dto.getTossDecision());
         match.setStatus("LIVE");
-        match.setMatchStage("QUICK_MATCH");
+        match.setMatchStage("LEAGUE");
         
         long matchId = matchService.save(match);
         ra.addFlashAttribute("successMessage", "Quick Match created successfully!");
@@ -157,7 +157,9 @@ public class ScorecardController {
         model.addAttribute("match", match);
         model.addAttribute("scorecard", scorecard);
         model.addAttribute("battingScores", battingScores);
-        model.addAttribute("battingScore", new BattingScore());
+        BattingScore newScore = new BattingScore();
+        newScore.setScorecardId(scorecard.getId());
+        model.addAttribute("battingScore", newScore);
         model.addAttribute("players", battingPlayers);
         model.addAttribute("bowlers", bowlingPlayers);
         model.addAttribute("innings", innings);
@@ -167,6 +169,15 @@ public class ScorecardController {
     @PostMapping("/match/{matchId}/batting/save")
     public String saveBatting(@PathVariable Long matchId, @ModelAttribute BattingScore battingScore,
                               @RequestParam int innings, @RequestParam(required = false) String newPlayerName, RedirectAttributes ra) {
+        if (battingScore.getScorecardId() == null) {
+            Match match = matchService.getById(matchId).orElse(null);
+            if (match != null) {
+                Long battingTeamId = (innings == 1) ? match.getTeamAId() : match.getTeamBId();
+                Long bowlingTeamId = (innings == 1) ? match.getTeamBId() : match.getTeamAId();
+                Scorecard scorecard = scorecardService.getOrCreateScorecard(matchId, innings, battingTeamId, bowlingTeamId);
+                battingScore.setScorecardId(scorecard.getId());
+            }
+        }
         if (newPlayerName != null && !newPlayerName.trim().isEmpty()) {
             Match match = matchService.getById(matchId).orElse(null);
             if (match != null) {
@@ -213,7 +224,9 @@ public class ScorecardController {
         model.addAttribute("match", match);
         model.addAttribute("scorecard", scorecard);
         model.addAttribute("bowlingScores", bowlingScores);
-        model.addAttribute("bowlingScore", new BowlingScore());
+        BowlingScore newScore = new BowlingScore();
+        newScore.setScorecardId(scorecard.getId());
+        model.addAttribute("bowlingScore", newScore);
         model.addAttribute("players", bowlingPlayers);
         model.addAttribute("innings", innings);
         return "scorecard/bowling";
@@ -222,6 +235,15 @@ public class ScorecardController {
     @PostMapping("/match/{matchId}/bowling/save")
     public String saveBowling(@PathVariable Long matchId, @ModelAttribute BowlingScore bowlingScore,
                               @RequestParam int innings, @RequestParam(required = false) String newPlayerName, RedirectAttributes ra) {
+        if (bowlingScore.getScorecardId() == null) {
+            Match match = matchService.getById(matchId).orElse(null);
+            if (match != null) {
+                Long battingTeamId = (innings == 1) ? match.getTeamAId() : match.getTeamBId();
+                Long bowlingTeamId = (innings == 1) ? match.getTeamBId() : match.getTeamAId();
+                Scorecard scorecard = scorecardService.getOrCreateScorecard(matchId, innings, battingTeamId, bowlingTeamId);
+                bowlingScore.setScorecardId(scorecard.getId());
+            }
+        }
         if (newPlayerName != null && !newPlayerName.trim().isEmpty()) {
             Match match = matchService.getById(matchId).orElse(null);
             if (match != null) {
@@ -277,6 +299,15 @@ public class ScorecardController {
     @PostMapping("/match/{matchId}/extras/save")
     public String saveExtras(@PathVariable Long matchId, @ModelAttribute Extras extras,
                              @RequestParam int innings, RedirectAttributes ra) {
+        if (extras.getScorecardId() == null) {
+            Match match = matchService.getById(matchId).orElse(null);
+            if (match != null) {
+                Long battingTeamId = (innings == 1) ? match.getTeamAId() : match.getTeamBId();
+                Long bowlingTeamId = (innings == 1) ? match.getTeamBId() : match.getTeamAId();
+                Scorecard scorecard = scorecardService.getOrCreateScorecard(matchId, innings, battingTeamId, bowlingTeamId);
+                extras.setScorecardId(scorecard.getId());
+            }
+        }
         if (extras.getId() != null && extras.getId() > 0) {
             extrasService.update(extras);
         } else {

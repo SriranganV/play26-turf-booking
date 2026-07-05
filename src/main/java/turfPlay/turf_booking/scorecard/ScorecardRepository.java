@@ -16,16 +16,14 @@ public class ScorecardRepository {
 
     private final JdbcTemplate jdbc;
 
-    private static final String SELECT_FULL = """
-        SELECT sc.id, sc.match_id, sc.innings, sc.batting_team_id, sc.bowling_team_id,
-               sc.total_runs, sc.total_wickets, sc.total_overs, sc.extras,
-               sc.target, sc.status, sc.created_at, sc.updated_at,
-               bt.team_name AS batting_team_name,
-               bwt.team_name AS bowling_team_name
-        FROM scorecards sc
-        LEFT JOIN teams bt ON sc.batting_team_id = bt.id
-        LEFT JOIN teams bwt ON sc.bowling_team_id = bwt.id
-        """;
+    private static final String SELECT_FULL = "SELECT sc.id, sc.match_id, sc.innings, sc.batting_team_id, sc.bowling_team_id, " +
+               "sc.total_runs, sc.total_wickets, sc.total_overs, sc.extras, " +
+               "sc.target, sc.status, sc.created_at, sc.updated_at, " +
+               "bt.team_name AS batting_team_name, " +
+               "bwt.team_name AS bowling_team_name " +
+        "FROM scorecards sc " +
+        "LEFT JOIN teams bt ON sc.batting_team_id = bt.id " +
+        "LEFT JOIN teams bwt ON sc.bowling_team_id = bwt.id ";
 
     private final RowMapper<Scorecard> rm = (rs, n) -> {
         Scorecard sc = new Scorecard();

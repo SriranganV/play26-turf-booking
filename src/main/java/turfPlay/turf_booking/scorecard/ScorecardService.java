@@ -9,13 +9,15 @@ public class ScorecardService {
 
     private final ScorecardRepository scorecardRepo;
     private final BattingScoreRepository battingRepo;
+    private final BowlingScoreRepository bowlingRepo;
     private final ExtrasRepository extrasRepo;
     private final MatchRepository matchRepo;
 
     public ScorecardService(ScorecardRepository scorecardRepo, BattingScoreRepository battingRepo,
-                            ExtrasRepository extrasRepo, MatchRepository matchRepo) {
+                            BowlingScoreRepository bowlingRepo, ExtrasRepository extrasRepo, MatchRepository matchRepo) {
         this.scorecardRepo = scorecardRepo;
         this.battingRepo = battingRepo;
+        this.bowlingRepo = bowlingRepo;
         this.extrasRepo = extrasRepo;
         this.matchRepo = matchRepo;
     }
@@ -77,12 +79,27 @@ public class ScorecardService {
         if (sc == null) return;
 
         Integer battingRuns = battingRepo.sumRunsByScorecardId(scorecardId);
+        if (battingRuns == null) battingRuns = 0;
         Integer wickets = battingRepo.countWicketsByScorecardId(scorecardId);
+        if (wickets == null) wickets = 0;
+        
         Optional<Extras> extrasOpt = extrasRepo.findByScorecardId(scorecardId);
         int extrasTotal = extrasOpt.map(Extras::getTotal).orElse(0);
 
+        // Calculate total overs from bowling scores
+        List<BowlingScore> bowlingScores = bowlingRepo.findByScorecardId(scorecardId);
+        int totalLegalBalls = 0;
+        for (BowlingScore bw : bowlingScores) {
+            double ov = bw.getOvers() != null ? bw.getOvers() : 0.0;
+            int fullOvers = (int) ov;
+            int partialBalls = (int) Math.round((ov - fullOvers) * 10);
+            totalLegalBalls += (fullOvers * 6) + partialBalls;
+        }
+        double totalOvers = (totalLegalBalls / 6) + ((totalLegalBalls % 6) / 10.0);
+
         sc.setTotalRuns(battingRuns + extrasTotal);
         sc.setTotalWickets(wickets);
+        sc.setTotalOvers(totalOvers);
         sc.setExtras(extrasTotal);
         scorecardRepo.update(sc);
     }

@@ -36,41 +36,33 @@ public class TurfRepository {
     }
 
     public List<Turf> findAll() {
-        String sql = """
-                SELECT id, name, location, description, price_per_hour, supported_sports, active, created_at
-                FROM turfs
-                ORDER BY created_at DESC
-                """;
+        String sql = "SELECT id, name, location, description, price_per_hour, supported_sports, active, created_at " +
+                "FROM turfs " +
+                "ORDER BY created_at DESC ";
 
         return jdbcTemplate.query(sql, turfRowMapper);
     }
 
     public List<Turf> findAllActive() {
-        String sql = """
-                SELECT id, name, location, description, price_per_hour, supported_sports, active, created_at
-                FROM turfs
-                WHERE active = TRUE
-                ORDER BY created_at DESC
-                """;
+        String sql = "SELECT id, name, location, description, price_per_hour, supported_sports, active, created_at " +
+                "FROM turfs " +
+                "WHERE active = TRUE " +
+                "ORDER BY created_at DESC ";
 
         return jdbcTemplate.query(sql, turfRowMapper);
     }
 
     public Optional<Turf> findById(Long id) {
-        String sql = """
-                SELECT id, name, location, description, price_per_hour, supported_sports, active, created_at
-                FROM turfs
-                WHERE id = ?
-                """;
+        String sql = "SELECT id, name, location, description, price_per_hour, supported_sports, active, created_at " +
+                "FROM turfs " +
+                "WHERE id = ? ";
 
         return jdbcTemplate.query(sql, turfRowMapper, id).stream().findFirst();
     }
 
     public void save(Turf turf) {
-        String sql = """
-                INSERT INTO turfs (name, location, description, price_per_hour, supported_sports, active)
-                VALUES (?, ?, ?, ?, ?, ?)
-                """;
+        String sql = "INSERT INTO turfs (name, location, description, price_per_hour, supported_sports, active) " +
+                "VALUES (?, ?, ?, ?, ?, ?) ";
 
         jdbcTemplate.update(
                 sql,
@@ -84,11 +76,9 @@ public class TurfRepository {
     }
 
     public void update(Turf turf) {
-        String sql = """
-                UPDATE turfs
-                SET name = ?, location = ?, description = ?, price_per_hour = ?, supported_sports = ?, active = ?
-                WHERE id = ?
-                """;
+        String sql = "UPDATE turfs " +
+                "SET name = ?, location = ?, description = ?, price_per_hour = ?, supported_sports = ?, active = ? " +
+                "WHERE id = ? ";
 
         jdbcTemplate.update(
                 sql,

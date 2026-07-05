@@ -16,14 +16,12 @@ public class BowlingScoreRepository {
 
     private final JdbcTemplate jdbc;
 
-    private static final String SELECT_FULL = """
-        SELECT bw.id, bw.scorecard_id, bw.player_id, bw.overs, bw.maidens,
-               bw.runs, bw.wickets, bw.economy, bw.dots, bw.wides, bw.no_balls,
-               bw.created_at,
-               p.player_name
-        FROM bowling_scores bw
-        LEFT JOIN players p ON bw.player_id = p.id
-        """;
+    private static final String SELECT_FULL = "SELECT bw.id, bw.scorecard_id, bw.player_id, bw.overs, bw.maidens, " +
+               "bw.runs, bw.wickets, bw.economy, bw.dots, bw.wides, bw.no_balls, " +
+               "bw.created_at, " +
+               "p.player_name " +
+        "FROM bowling_scores bw " +
+        "LEFT JOIN players p ON bw.player_id = p.id ";
 
     private final RowMapper<BowlingScore> rm = (rs, n) -> {
         BowlingScore bw = new BowlingScore();
@@ -59,11 +57,16 @@ public class BowlingScoreRepository {
             PreparedStatement ps = con.prepareStatement(
                 "INSERT INTO bowling_scores(scorecard_id,player_id,overs,maidens,runs,wickets,economy,dots,wides,no_balls) VALUES(?,?,?,?,?,?,?,?,?,?)",
                 Statement.RETURN_GENERATED_KEYS);
-            ps.setLong(1, bw.getScorecardId()); ps.setObject(2, bw.getPlayerId());
-            ps.setObject(3, bw.getOvers()); ps.setObject(4, bw.getMaidens());
-            ps.setObject(5, bw.getRuns()); ps.setObject(6, bw.getWickets());
-            ps.setObject(7, bw.getEconomy()); ps.setObject(8, bw.getDots());
-            ps.setObject(9, bw.getWides()); ps.setObject(10, bw.getNoBalls());
+            if (bw.getScorecardId() != null) ps.setLong(1, bw.getScorecardId()); else ps.setNull(1, Types.BIGINT);
+            if (bw.getPlayerId() != null) ps.setLong(2, bw.getPlayerId()); else ps.setNull(2, Types.BIGINT);
+            if (bw.getOvers() != null) ps.setDouble(3, bw.getOvers()); else ps.setNull(3, Types.DOUBLE);
+            if (bw.getMaidens() != null) ps.setInt(4, bw.getMaidens()); else ps.setNull(4, Types.INTEGER);
+            if (bw.getRuns() != null) ps.setInt(5, bw.getRuns()); else ps.setNull(5, Types.INTEGER);
+            if (bw.getWickets() != null) ps.setInt(6, bw.getWickets()); else ps.setNull(6, Types.INTEGER);
+            if (bw.getEconomy() != null) ps.setDouble(7, bw.getEconomy()); else ps.setNull(7, Types.DOUBLE);
+            if (bw.getDots() != null) ps.setInt(8, bw.getDots()); else ps.setNull(8, Types.INTEGER);
+            if (bw.getWides() != null) ps.setInt(9, bw.getWides()); else ps.setNull(9, Types.INTEGER);
+            if (bw.getNoBalls() != null) ps.setInt(10, bw.getNoBalls()); else ps.setNull(10, Types.INTEGER);
             return ps;
         }, kh);
         Long id = GeneratedKeyExtractor.extractId(kh);

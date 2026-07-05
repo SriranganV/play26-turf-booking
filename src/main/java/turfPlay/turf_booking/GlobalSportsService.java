@@ -14,6 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.security.cert.X509Certificate;
+import java.security.SecureRandom;
 
 @Service
 public class GlobalSportsService {
@@ -47,9 +53,44 @@ public class GlobalSportsService {
     private final Map<String, Long> standingsCacheTime = new ConcurrentHashMap<>();
     private static final long CACHE_DURATION_MS = 15 * 60 * 1000; // 15 minutes
 
+    private List<GlobalLiveScoreDTO> liveScoresCache = null;
+    private long liveScoresCacheTime = 0L;
+    private static final long LIVE_CACHE_DURATION_MS = 60 * 1000; // 1 minute
+
     public GlobalSportsService() {
-        this.restTemplate = new RestTemplate();
+        this.restTemplate = createInsecureRestTemplate();
         this.objectMapper = new ObjectMapper();
+    }
+
+    private RestTemplate createInsecureRestTemplate() {
+        try {
+            TrustManager[] trustAllCerts = new TrustManager[]{
+                new X509TrustManager() {
+                    public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; }
+                    public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+                    public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+                }
+            };
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, trustAllCerts, new SecureRandom());
+
+            org.springframework.http.client.SimpleClientHttpRequestFactory factory = 
+                new org.springframework.http.client.SimpleClientHttpRequestFactory() {
+                    @Override
+                    protected java.net.HttpURLConnection openConnection(java.net.URL url, java.net.Proxy proxy) throws java.io.IOException {
+                        java.net.HttpURLConnection connection = super.openConnection(url, proxy);
+                        if (connection instanceof HttpsURLConnection) {
+                            ((HttpsURLConnection) connection).setSSLSocketFactory(sslContext.getSocketFactory());
+                            ((HttpsURLConnection) connection).setHostnameVerifier((hostname, session) -> true);
+                        }
+                        return connection;
+                    }
+                };
+            return new RestTemplate(factory);
+        } catch (Exception e) {
+            System.err.println("Failed to create insecure RestTemplate: " + e.getMessage());
+            return new RestTemplate();
+        }
     }
 
     /**
@@ -245,27 +286,87 @@ public class GlobalSportsService {
     }
 
     /**
-     * Fetches live cricket scores (mock data for now, would integrate with an API like CricAPI).
+     * Fetches live cricket scores from CricAPI.
      */
     public List<GlobalLiveScoreDTO> fetchLiveCricketScores() {
-        List<GlobalLiveScoreDTO> scores = new ArrayList<>();
-        
-        GlobalLiveScoreDTO m1 = new GlobalLiveScoreDTO("c1", "T20 World Cup", "India", "Australia", 
-                "IND: 185/4 (20.0) | AUS: 172/8 (19.2)", "LIVE", "CRICKET");
-        m1.setTeamALogo("https://upload.wikimedia.org/wikipedia/en/thumb/4/41/Flag_of_India.svg/255px-Flag_of_India.svg.png");
-        m1.setTeamBLogo("https://upload.wikimedia.org/wikipedia/en/thumb/b/b9/Flag_of_Australia.svg/255px-Flag_of_Australia.svg.png");
-        
-        GlobalLiveScoreDTO m2 = new GlobalLiveScoreDTO("c2", "IPL 2026", "Chennai Super Kings", "Mumbai Indians", 
-                "CSK: 210/5 (20.0) | MI: 205/9 (20.0)", "COMPLETED", "CRICKET");
-        
-        GlobalLiveScoreDTO m3 = new GlobalLiveScoreDTO("c3", "County Championship", "Surrey", "Essex", 
-                "SUR: 345 & 120/2 | ESS: 410", "STUMPS - DAY 3", "CRICKET");
+        if (liveScoresCache != null && (System.currentTimeMillis() - liveScoresCacheTime < LIVE_CACHE_DURATION_MS)) {
+            return liveScoresCache;
+        }
 
-        scores.add(m1);
-        scores.add(m2);
-        scores.add(m3);
-        
-        return scores;
+        if (cricketApiKey == null || cricketApiKey.equals("YOUR_CRICAPI_KEY_HERE")) {
+            System.out.println("CricAPI Key missing. Returning mock data for live scores.");
+            return getMockLiveCricketScores();
+        }
+
+        List<GlobalLiveScoreDTO> scores = new ArrayList<>();
+        try {
+            // Fetch current matches
+            String url = "https://api.cricapi.com/v1/currentMatches?apikey=" + cricketApiKey + "&offset=0";
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            JsonNode root = objectMapper.readTree(response.getBody());
+            
+            if ("success".equals(root.path("status").asText())) {
+                JsonNode dataArray = root.path("data");
+                if (dataArray.isArray()) {
+                    for (JsonNode match : dataArray) {
+                        GlobalLiveScoreDTO dto = new GlobalLiveScoreDTO();
+                        dto.setMatchId(match.path("id").asText());
+                        dto.setTournamentName(match.path("name").asText());
+                        dto.setMatchStatus(match.path("status").asText());
+                        dto.setSportType("CRICKET");
+
+                        JsonNode teamInfo = match.path("teamInfo");
+                        if (teamInfo.isArray() && teamInfo.size() >= 2) {
+                            dto.setTeamA(teamInfo.get(0).path("name").asText());
+                            dto.setTeamB(teamInfo.get(1).path("name").asText());
+                            dto.setTeamALogo(teamInfo.get(0).path("img").asText());
+                            dto.setTeamBLogo(teamInfo.get(1).path("img").asText());
+                        } else {
+                            JsonNode teams = match.path("teams");
+                            if (teams.isArray() && teams.size() >= 2) {
+                                dto.setTeamA(teams.get(0).asText());
+                                dto.setTeamB(teams.get(1).asText());
+                            }
+                        }
+
+                        JsonNode scoreNode = match.path("score");
+                        StringBuilder summary = new StringBuilder();
+                        if (scoreNode.isArray()) {
+                            for (JsonNode inn : scoreNode) {
+                                if (summary.length() > 0) summary.append(" | ");
+                                summary.append(inn.path("inning").asText().replace(" Inning", ""))
+                                       .append(" ")
+                                       .append(inn.path("r").asInt())
+                                       .append("/")
+                                       .append(inn.path("w").asInt())
+                                       .append(" (")
+                                       .append(inn.path("o").asDouble())
+                                       .append(")");
+                            }
+                        }
+                        
+                        if (summary.length() == 0) {
+                            summary.append("Match yet to begin");
+                        }
+                        
+                        dto.setScoreSummary(summary.toString());
+                        scores.add(dto);
+                    }
+                }
+            }
+            
+            if (scores.isEmpty()) {
+                return getMockLiveCricketScores();
+            }
+
+            liveScoresCache = scores;
+            liveScoresCacheTime = System.currentTimeMillis();
+            return scores;
+        } catch (Exception e) {
+            System.err.println("Error fetching live cricket scores: " + e.getMessage());
+            if (liveScoresCache != null) return liveScoresCache;
+            return getMockLiveCricketScores();
+        }
     }
 
     /**
@@ -293,6 +394,20 @@ public class GlobalSportsService {
     }
 
     // --- MOCK DATA FALLBACKS ---
+
+    private List<GlobalLiveScoreDTO> getMockLiveCricketScores() {
+        List<GlobalLiveScoreDTO> scores = new ArrayList<>();
+        GlobalLiveScoreDTO m1 = new GlobalLiveScoreDTO("c1", "IPL 2026", "Chennai Super Kings", "Mumbai Indians", 
+                "CSK: 210/5 (20.0) | MI: 205/9 (20.0)", "COMPLETED", "CRICKET");
+        m1.setTeamALogo("https://upload.wikimedia.org/wikipedia/en/thumb/4/41/Flag_of_India.svg/255px-Flag_of_India.svg.png");
+        m1.setTeamBLogo("https://upload.wikimedia.org/wikipedia/en/thumb/b/b9/Flag_of_Australia.svg/255px-Flag_of_Australia.svg.png");
+        
+        GlobalLiveScoreDTO m2 = new GlobalLiveScoreDTO("c2", "T20 World Cup", "India", "Australia", 
+                "IND: 185/4 (20.0) | AUS: 172/8 (19.2)", "LIVE", "CRICKET");
+        scores.add(m1);
+        scores.add(m2);
+        return scores;
+    }
 
     private List<GlobalNewsDTO> getMockNews() {
         List<GlobalNewsDTO> news = new ArrayList<>();

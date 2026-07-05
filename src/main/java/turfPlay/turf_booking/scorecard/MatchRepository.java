@@ -17,28 +17,26 @@ public class MatchRepository {
     private final JdbcTemplate jdbc;
 
     // Full JOIN query resolves team names, tournament name, turf name from FKs
-    private static final String SELECT_FULL = """
-        SELECT m.id, m.tournament_id, m.match_number,
-               m.team_a_id, m.team_b_id, m.turf_id,
-               m.match_date, m.match_time, m.venue, m.overs,
-               m.toss_winner, m.toss_decision, m.winner, m.man_of_match,
-               m.match_stage, m.result, m.status, m.created_at,
-               trn.tournament_name,
-               ta.team_name AS team_a_name,
-               tb.team_name AS team_b_name,
-               tf.name AS turf_name,
-               tw.team_name AS toss_winner_name,
-               wt.team_name AS winner_name,
-               wp.player_name AS mom_name
-        FROM matches m
-        LEFT JOIN tournaments trn ON m.tournament_id = trn.id
-        LEFT JOIN teams ta  ON m.team_a_id = ta.id
-        LEFT JOIN teams tb  ON m.team_b_id = tb.id
-        LEFT JOIN turfs tf  ON m.turf_id = tf.id
-        LEFT JOIN teams tw  ON m.toss_winner = tw.id
-        LEFT JOIN teams wt  ON m.winner = wt.id
-        LEFT JOIN players wp ON m.man_of_match = wp.id
-        """;
+    private static final String SELECT_FULL = "SELECT m.id, m.tournament_id, m.match_number, " +
+               "m.team_a_id, m.team_b_id, m.turf_id, " +
+               "m.match_date, m.match_time, m.venue, m.overs, " +
+               "m.toss_winner, m.toss_decision, m.winner, m.man_of_match, " +
+               "m.match_stage, m.result, m.status, m.created_at, " +
+               "trn.tournament_name, " +
+               "ta.team_name AS team_a_name, " +
+               "tb.team_name AS team_b_name, " +
+               "tf.name AS turf_name, " +
+               "tw.team_name AS toss_winner_name, " +
+               "wt.team_name AS winner_name, " +
+               "wp.player_name AS mom_name " +
+        "FROM matches m " +
+        "LEFT JOIN tournaments trn ON m.tournament_id = trn.id " +
+        "LEFT JOIN teams ta  ON m.team_a_id = ta.id " +
+        "LEFT JOIN teams tb  ON m.team_b_id = tb.id " +
+        "LEFT JOIN turfs tf  ON m.turf_id = tf.id " +
+        "LEFT JOIN teams tw  ON m.toss_winner = tw.id " +
+        "LEFT JOIN teams wt  ON m.winner = wt.id " +
+        "LEFT JOIN players wp ON m.man_of_match = wp.id ";
 
     private final RowMapper<Match> rm = (rs, n) -> {
         Match m = new Match();

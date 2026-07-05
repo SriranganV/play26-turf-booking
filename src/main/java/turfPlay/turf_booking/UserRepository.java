@@ -33,11 +33,9 @@ public class UserRepository {
     }
 
     public Optional<AppUser> findByEmail(String email) {
-        String sql = """
-                SELECT id, full_name, email, password, role, enabled, created_at
-                FROM users
-                WHERE email = ?
-                """;
+        String sql = "                SELECT id, full_name, email, password, role, enabled, created_at " +
+"                FROM users " +
+"                WHERE email = ? ";
         return jdbcTemplate.query(sql, userRowMapper, normalizeEmail(email)).stream().findFirst();
     }
 
@@ -48,10 +46,8 @@ public class UserRepository {
     }
 
     public void save(AppUser user) {
-        String sql = """
-                INSERT INTO users (full_name, email, password, role, enabled)
-                VALUES (?, ?, ?, ?, ?)
-                """;
+        String sql = "                INSERT INTO users (full_name, email, password, role, enabled) " +
+"                VALUES (?, ?, ?, ?, ?) ";
         jdbcTemplate.update(
                 sql,
                 user.getFullName(),

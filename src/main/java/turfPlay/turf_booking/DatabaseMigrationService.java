@@ -40,17 +40,13 @@ public class DatabaseMigrationService {
         } catch (Exception e) {
             logger.info("Bookings table missing split payment columns. Running ALTER TABLE...");
             try {
-                jdbcTemplate.execute("""
-                    ALTER TABLE bookings 
-                    ADD COLUMN total_price DECIMAL(10,2) DEFAULT 0,
-                    ADD COLUMN amount_paid DECIMAL(10,2) DEFAULT 0,
-                    ADD COLUMN split_link_uuid VARCHAR(100) UNIQUE,
-                    ADD COLUMN payment_type VARCHAR(20) DEFAULT 'FULL';
-                """);
+                jdbcTemplate.execute("                    ALTER TABLE bookings  " +
+"                    ADD COLUMN total_price DECIMAL(10,2) DEFAULT 0, " +
+"                    ADD COLUMN amount_paid DECIMAL(10,2) DEFAULT 0, " +
+"                    ADD COLUMN split_link_uuid VARCHAR(100) UNIQUE, " +
+"                    ADD COLUMN payment_type VARCHAR(20) DEFAULT 'FULL'; ");
                 
-                jdbcTemplate.execute("""
-                    CREATE INDEX idx_bookings_split ON bookings(split_link_uuid);
-                """);
+                jdbcTemplate.execute("                    CREATE INDEX idx_bookings_split ON bookings(split_link_uuid); ");
                 logger.info("Database migration successful!");
             } catch (Exception ex) {
                 logger.severe("Database migration failed: " + ex.getMessage());

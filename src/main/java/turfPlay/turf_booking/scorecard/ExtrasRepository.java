@@ -46,10 +46,13 @@ public class ExtrasRepository {
             PreparedStatement ps = con.prepareStatement(
                 "INSERT INTO extras(scorecard_id,wides,no_balls,byes,leg_byes,penalty,total) VALUES(?,?,?,?,?,?,?)",
                 Statement.RETURN_GENERATED_KEYS);
-            ps.setLong(1, e.getScorecardId()); ps.setObject(2, e.getWides());
-            ps.setObject(3, e.getNoBalls()); ps.setObject(4, e.getByes());
-            ps.setObject(5, e.getLegByes()); ps.setObject(6, e.getPenalty());
-            ps.setObject(7, e.getTotal());
+            if (e.getScorecardId() != null) ps.setLong(1, e.getScorecardId()); else ps.setNull(1, Types.BIGINT);
+            if (e.getWides() != null) ps.setInt(2, e.getWides()); else ps.setNull(2, Types.INTEGER);
+            if (e.getNoBalls() != null) ps.setInt(3, e.getNoBalls()); else ps.setNull(3, Types.INTEGER);
+            if (e.getByes() != null) ps.setInt(4, e.getByes()); else ps.setNull(4, Types.INTEGER);
+            if (e.getLegByes() != null) ps.setInt(5, e.getLegByes()); else ps.setNull(5, Types.INTEGER);
+            if (e.getPenalty() != null) ps.setInt(6, e.getPenalty()); else ps.setNull(6, Types.INTEGER);
+            if (e.getTotal() != null) ps.setInt(7, e.getTotal()); else ps.setNull(7, Types.INTEGER);
             return ps;
         }, kh);
         Long id = GeneratedKeyExtractor.extractId(kh);

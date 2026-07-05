@@ -6,6 +6,12 @@
 <body>
 
 <nav th:replace="~{fragments/layout :: nav}"></nav>
+<div class="container mt-3">
+    <div class="d-flex gap-2 mb-4">
+        <button onclick="history.back()" class="btn btn-outline-light btn-sm"><i class="bi bi-arrow-left"></i> Back</button>
+        <a th:href="@{/dashboard}" class="btn btn-outline-primary btn-sm"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    </div>
+</div>
     <style>
         /* ── Rules Page Styles (TurfPlay Theme) ── */
         .rules-shell {

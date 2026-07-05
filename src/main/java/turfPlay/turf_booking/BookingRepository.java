@@ -60,10 +60,8 @@ public class BookingRepository {
     }
 
     public Long createBooking(Long userId, Long slotId, java.math.BigDecimal totalPrice, String paymentType, String uuid, String status) {
-        String sql = """
-                INSERT INTO bookings (user_id, turf_slot_id, booking_status, total_price, payment_type, split_link_uuid)
-                VALUES (?, ?, ?, ?, ?, ?)
-                """;
+        String sql = "                INSERT INTO bookings (user_id, turf_slot_id, booking_status, total_price, payment_type, split_link_uuid) " +
+"                VALUES (?, ?, ?, ?, ?, ?) ";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
@@ -81,70 +79,62 @@ public class BookingRepository {
     }
 
     public Optional<Booking> findById(Long id) {
-        String sql = """
-                SELECT b.id, b.user_id, b.turf_slot_id, b.booking_status, b.booked_at,
-                       b.total_price, b.amount_paid, b.split_link_uuid, b.payment_type,
-                       u.full_name, u.email,
-                       t.name AS turf_name, t.location,
-                       ts.slot_date, ts.start_time, ts.end_time
-                FROM bookings b
-                JOIN users u ON b.user_id = u.id
-                JOIN turf_slots ts ON b.turf_slot_id = ts.id
-                JOIN turfs t ON ts.turf_id = t.id
-                WHERE b.id = ?
-                """;
+        String sql = "                SELECT b.id, b.user_id, b.turf_slot_id, b.booking_status, b.booked_at, " +
+"                       b.total_price, b.amount_paid, b.split_link_uuid, b.payment_type, " +
+"                       u.full_name, u.email, " +
+"                       t.name AS turf_name, t.location, " +
+"                       ts.slot_date, ts.start_time, ts.end_time " +
+"                FROM bookings b " +
+"                JOIN users u ON b.user_id = u.id " +
+"                JOIN turf_slots ts ON b.turf_slot_id = ts.id " +
+"                JOIN turfs t ON ts.turf_id = t.id " +
+"                WHERE b.id = ? ";
         List<Booking> results = jdbcTemplate.query(sql, bookingRowMapper, id);
         return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
     }
     
     public Optional<Booking> findBySplitLinkUuid(String uuid) {
-        String sql = """
-                SELECT b.id, b.user_id, b.turf_slot_id, b.booking_status, b.booked_at,
-                       b.total_price, b.amount_paid, b.split_link_uuid, b.payment_type,
-                       u.full_name, u.email,
-                       t.name AS turf_name, t.location,
-                       ts.slot_date, ts.start_time, ts.end_time
-                FROM bookings b
-                JOIN users u ON b.user_id = u.id
-                JOIN turf_slots ts ON b.turf_slot_id = ts.id
-                JOIN turfs t ON ts.turf_id = t.id
-                WHERE b.split_link_uuid = ?
-                """;
+        String sql = "                SELECT b.id, b.user_id, b.turf_slot_id, b.booking_status, b.booked_at, " +
+"                       b.total_price, b.amount_paid, b.split_link_uuid, b.payment_type, " +
+"                       u.full_name, u.email, " +
+"                       t.name AS turf_name, t.location, " +
+"                       ts.slot_date, ts.start_time, ts.end_time " +
+"                FROM bookings b " +
+"                JOIN users u ON b.user_id = u.id " +
+"                JOIN turf_slots ts ON b.turf_slot_id = ts.id " +
+"                JOIN turfs t ON ts.turf_id = t.id " +
+"                WHERE b.split_link_uuid = ? ";
         List<Booking> results = jdbcTemplate.query(sql, bookingRowMapper, uuid);
         return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
     }
 
     public List<Booking> findByUserId(Long userId) {
-        String sql = """
-                SELECT b.id, b.user_id, b.turf_slot_id, b.booking_status, b.booked_at,
-                       b.total_price, b.amount_paid, b.split_link_uuid, b.payment_type,
-                       u.full_name, u.email,
-                       t.name AS turf_name, t.location,
-                       ts.slot_date, ts.start_time, ts.end_time
-                FROM bookings b
-                JOIN users u ON b.user_id = u.id
-                JOIN turf_slots ts ON b.turf_slot_id = ts.id
-                JOIN turfs t ON ts.turf_id = t.id
-                WHERE b.user_id = ?
-                ORDER BY ts.slot_date DESC, ts.start_time DESC
-                """;
+        String sql = "                SELECT b.id, b.user_id, b.turf_slot_id, b.booking_status, b.booked_at, " +
+"                       b.total_price, b.amount_paid, b.split_link_uuid, b.payment_type, " +
+"                       u.full_name, u.email, " +
+"                       t.name AS turf_name, t.location, " +
+"                       ts.slot_date, ts.start_time, ts.end_time " +
+"                FROM bookings b " +
+"                JOIN users u ON b.user_id = u.id " +
+"                JOIN turf_slots ts ON b.turf_slot_id = ts.id " +
+"                JOIN turfs t ON ts.turf_id = t.id " +
+"                WHERE b.user_id = ? " +
+"                ORDER BY ts.slot_date DESC, ts.start_time DESC ";
 
         return jdbcTemplate.query(sql, bookingRowMapper, userId);
     }
 
     public List<Booking> findAll() {
-        String sql = """
-                SELECT b.id, b.user_id, b.turf_slot_id, b.booking_status, b.booked_at,
-                       b.total_price, b.amount_paid, b.split_link_uuid, b.payment_type,
-                       u.full_name, u.email,
-                       t.name AS turf_name, t.location,
-                       ts.slot_date, ts.start_time, ts.end_time
-                FROM bookings b
-                JOIN users u ON b.user_id = u.id
-                JOIN turf_slots ts ON b.turf_slot_id = ts.id
-                JOIN turfs t ON ts.turf_id = t.id
-                ORDER BY b.booked_at DESC
-                """;
+        String sql = "                SELECT b.id, b.user_id, b.turf_slot_id, b.booking_status, b.booked_at, " +
+"                       b.total_price, b.amount_paid, b.split_link_uuid, b.payment_type, " +
+"                       u.full_name, u.email, " +
+"                       t.name AS turf_name, t.location, " +
+"                       ts.slot_date, ts.start_time, ts.end_time " +
+"                FROM bookings b " +
+"                JOIN users u ON b.user_id = u.id " +
+"                JOIN turf_slots ts ON b.turf_slot_id = ts.id " +
+"                JOIN turfs t ON ts.turf_id = t.id " +
+"                ORDER BY b.booked_at DESC ";
 
         return jdbcTemplate.query(sql, bookingRowMapper);
     }
