@@ -18,7 +18,12 @@
                     <input type="hidden" th:field="*{scorecardId}"><input type="hidden" name="innings" th:value="${innings}">
                     <div class="row g-3">
                         <div class="col-md-8"><label class="form-label">Batter *</label>
-                            <select class="form-select" th:field="*{playerId}" required><option value="">Select Batter</option><option th:each="p : ${players}" th:value="${p.id}" th:text="${p.playerName}"></option></select></div>
+                            <div class="d-flex gap-2">
+                                <select class="form-select" th:field="*{playerId}"><option value="">Select Existing Batter</option><option th:each="p : ${players}" th:value="${p.id}" th:text="${p.playerName}"></option></select>
+                                <input type="text" class="form-control" name="newPlayerName" placeholder="Or type new name...">
+                            </div>
+                            <small class="text-muted mt-1 d-block" style="font-size:0.75rem;">Select from list OR type a name to auto-create player</small>
+                        </div>
                         <div class="col-md-4"><label class="form-label">Position</label><input type="number" class="form-control" th:field="*{battingPosition}" min="1"></div>
                         <div class="col-3"><label class="form-label">Runs</label><input type="number" class="form-control" th:field="*{runs}" id="runs" min="0"></div>
                         <div class="col-3"><label class="form-label">Balls</label><input type="number" class="form-control" th:field="*{balls}" id="balls" min="0"></div>

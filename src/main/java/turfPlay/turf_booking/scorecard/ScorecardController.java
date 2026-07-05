@@ -60,6 +60,54 @@ public class ScorecardController {
         return "scorecard/dashboard";
     }
 
+    // ── Quick Match ────────────────────────────────────────────────
+    @GetMapping("/quick-match")
+    public String quickMatchForm(Model model) {
+        model.addAttribute("pageTitle", "Start Quick Match");
+        model.addAttribute("quickMatch", new QuickMatchDTO());
+        return "scorecard/quick-match";
+    }
+
+    @PostMapping("/quick-match/save")
+    public String saveQuickMatch(@ModelAttribute QuickMatchDTO dto, RedirectAttributes ra) {
+        Team teamA = new Team();
+        teamA.setTeamName(dto.getTeamAName());
+        teamA.setShortName(dto.getTeamAName().substring(0, Math.min(3, dto.getTeamAName().length())).toUpperCase());
+        teamA.setStatus("ACTIVE");
+        long teamAId = teamService.save(teamA);
+
+        Team teamB = new Team();
+        teamB.setTeamName(dto.getTeamBName());
+        teamB.setShortName(dto.getTeamBName().substring(0, Math.min(3, dto.getTeamBName().length())).toUpperCase());
+        teamB.setStatus("ACTIVE");
+        long teamBId = teamService.save(teamB);
+
+        Match match = new Match();
+        match.setTeamAId(teamAId);
+        match.setTeamAName(dto.getTeamAName());
+        match.setTeamBId(teamBId);
+        match.setTeamBName(dto.getTeamBName());
+        match.setOvers(dto.getOvers());
+        match.setVenue(dto.getVenue());
+        match.setMatchDate(dto.getMatchDate());
+        match.setMatchTime(dto.getMatchTime());
+        
+        if ("TEAM_A".equals(dto.getTossWinner())) {
+            match.setTossWinnerId(teamAId);
+            match.setTossWinnerName(dto.getTeamAName());
+        } else if ("TEAM_B".equals(dto.getTossWinner())) {
+            match.setTossWinnerId(teamBId);
+            match.setTossWinnerName(dto.getTeamBName());
+        }
+        match.setTossDecision(dto.getTossDecision());
+        match.setStatus("LIVE");
+        match.setMatchStage("QUICK_MATCH");
+        
+        long matchId = matchService.save(match);
+        ra.addFlashAttribute("successMessage", "Quick Match created successfully!");
+        return "redirect:/scorecard/match/" + matchId;
+    }
+
     // ── Match Summary (full scorecard view) ────────────────────────
     @GetMapping("/match/{matchId}")
     public String matchSummary(@PathVariable Long matchId, Model model, RedirectAttributes ra) {
@@ -84,6 +132,11 @@ public class ScorecardController {
         model.addAttribute("bowlingScores", bowlingMap);
         model.addAttribute("extrasMap", extrasMap);
         return "scorecard/summary";
+    }
+
+    @GetMapping("/match/{matchId}/start")
+    public String startMatchScorecard(@PathVariable Long matchId) {
+        return "redirect:/scorecard/match/" + matchId + "/batting/1";
     }
 
     // ── Batting Entry ──────────────────────────────────────────────
@@ -113,7 +166,21 @@ public class ScorecardController {
 
     @PostMapping("/match/{matchId}/batting/save")
     public String saveBatting(@PathVariable Long matchId, @ModelAttribute BattingScore battingScore,
-                              @RequestParam int innings, RedirectAttributes ra) {
+                              @RequestParam int innings, @RequestParam(required = false) String newPlayerName, RedirectAttributes ra) {
+        if (newPlayerName != null && !newPlayerName.trim().isEmpty()) {
+            Match match = matchService.getById(matchId).orElse(null);
+            if (match != null) {
+                Long battingTeamId = (innings == 1) ? match.getTeamAId() : match.getTeamBId();
+                Player p = new Player();
+                p.setTeamId(battingTeamId);
+                p.setPlayerName(newPlayerName.trim());
+                p.setTournamentId(match.getTournamentId());
+                p.setStatus("ACTIVE");
+                long pid = playerService.save(p);
+                battingScore.setPlayerId(pid);
+                battingScore.setPlayerName(newPlayerName.trim());
+            }
+        }
         battingService.save(battingScore);
         scorecardService.recalculateTotals(battingScore.getScorecardId());
         ra.addFlashAttribute("successMessage", "Batting score saved!");
@@ -154,7 +221,21 @@ public class ScorecardController {
 
     @PostMapping("/match/{matchId}/bowling/save")
     public String saveBowling(@PathVariable Long matchId, @ModelAttribute BowlingScore bowlingScore,
-                              @RequestParam int innings, RedirectAttributes ra) {
+                              @RequestParam int innings, @RequestParam(required = false) String newPlayerName, RedirectAttributes ra) {
+        if (newPlayerName != null && !newPlayerName.trim().isEmpty()) {
+            Match match = matchService.getById(matchId).orElse(null);
+            if (match != null) {
+                Long bowlingTeamId = (innings == 1) ? match.getTeamBId() : match.getTeamAId();
+                Player p = new Player();
+                p.setTeamId(bowlingTeamId);
+                p.setPlayerName(newPlayerName.trim());
+                p.setTournamentId(match.getTournamentId());
+                p.setStatus("ACTIVE");
+                long pid = playerService.save(p);
+                bowlingScore.setPlayerId(pid);
+                bowlingScore.setPlayerName(newPlayerName.trim());
+            }
+        }
         bowlingService.save(bowlingScore);
         ra.addFlashAttribute("successMessage", "Bowling score saved!");
         return "redirect:/scorecard/match/" + matchId + "/bowling/" + innings;
