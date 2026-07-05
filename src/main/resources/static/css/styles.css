@@ -132,21 +132,30 @@ a:hover { color: var(--play26-primary-dark); }
 .form-label { color: var(--play26-heading); font-weight: 600; font-size: .9rem; margin-bottom: 0.5rem; }
 .form-check-input:checked { background-color: var(--play26-primary); border-color: var(--play26-primary); }
 
+/* ── Global Placeholders ──────────────────────────────── */
+::placeholder {
+    color: rgba(75, 85, 99, 0.6) !important;
+    opacity: 1 !important;
+}
+input[type="date"]::-webkit-datetime-edit-text,
+input[type="date"]::-webkit-datetime-edit-month-field,
+input[type="date"]::-webkit-datetime-edit-day-field,
+input[type="date"]::-webkit-datetime-edit-year-field,
+input[type="time"]::-webkit-datetime-edit-text,
+input[type="time"]::-webkit-datetime-edit-hour-field,
+input[type="time"]::-webkit-datetime-edit-minute-field {
+    color: var(--play26-text) !important;
+}
+input[type="date"]:invalid::-webkit-datetime-edit,
+input[type="time"]:invalid::-webkit-datetime-edit {
+    color: rgba(75, 85, 99, 0.6) !important;
+}
+
 /* ── Buttons ──────────────────────────────────────────── */
-.btn-play26 {
-    background: var(--play26-primary);
-    color: #fff; border: none; font-weight: 600;
-    padding: .6rem 1.5rem; border-radius: .5rem;
-    transition: all .2s ease;
-    box-shadow: 0 4px 6px rgba(15, 110, 86, 0.2);
-}
-.btn-play26:hover { transform: translateY(-2px); box-shadow: 0 8px 15px rgba(15, 110, 86, 0.3); color: #fff; background: var(--play26-primary-dark); }
-.btn-outline-play26 {
-    border: 2px solid var(--play26-primary); color: var(--play26-primary);
-    background: transparent; font-weight: 600;
-    padding: .5rem 1.5rem; border-radius: .5rem;
-    transition: all .2s;
-}
+.btn { border-radius: 0.75rem; padding: 0.625rem 1.25rem; font-weight: 600; transition: all .2s; }
+.btn-play26 { background: var(--play26-primary); color: #fff; box-shadow: 0 4px 6px var(--play26-shadow); }
+.btn-play26:hover { background: var(--play26-primary-dark); transform: translateY(-2px); box-shadow: 0 6px 12px rgba(15, 110, 86, 0.2); }
+.btn-outline-play26 { border: 1.5px solid var(--play26-primary); color: var(--play26-primary); }
 .btn-outline-play26:hover { background: var(--play26-primary); color: #fff; }
 
 /* ── Toast ────────────────────────────────────────────── */

@@ -31,32 +31,98 @@
         <a th:href="@{/matches}" class="btn btn-outline-play26"><i class="bi bi-arrow-left me-1"></i>Back to Matches</a>
         <a th:href="@{/scorecard/match/{id}(id=${match.id})}" class="btn btn-play26"><i class="bi bi-clipboard-data me-1"></i>Full Scorecard</a>
     </div>
-    
-    <div th:if="${match.manOfMatchName != null}" class="glass-card text-center mb-4 mx-auto" style="max-width:500px;border-color:var(--play26-primary)">
-        <h6 class="text-play26 mb-2">Player of the Match</h6>
-        <div class="fs-3 fw-bold text-white"><i class="bi bi-star-fill text-warning me-2"></i><span th:text="${match.manOfMatchName}">Player Name</span></div>
+
+    <!-- Match Details -->
+    <div class="solid-card mb-4 text-center">
+        <div class="row g-3">
+            <div class="col-6 col-md-3">
+                <div class="text-muted small text-uppercase">Venue</div>
+                <div class="fw-bold text-heading" th:text="${match.venue}">Venue</div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="text-muted small text-uppercase">Date & Time</div>
+                <div class="fw-bold text-heading"><span th:text="${match.matchDate}">Date</span> <span th:text="${match.matchTime}">Time</span></div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="text-muted small text-uppercase">Toss</div>
+                <div class="fw-bold text-heading" th:text="${match.tossWinnerName + ' chose ' + match.tossDecision}">Toss Info</div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="text-muted small text-uppercase">Stage</div>
+                <div class="fw-bold text-heading" th:text="${match.matchStage}">Stage</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Performers (Analysis) -->
+    <h4 class="text-heading fw-bold mb-3 mt-5"><i class="bi bi-star-fill text-warning me-2"></i>Match Stars</h4>
+    <div class="row g-3 mb-4">
+        <div class="col-md-4" th:if="${match.manOfMatchName != null}">
+            <div class="solid-card text-center h-100" style="border-color: var(--play26-primary);">
+                <div class="text-muted small text-uppercase mb-2">Player of the Match</div>
+                <div class="fs-4 fw-bold text-primary"><i class="bi bi-award-fill me-2"></i><span th:text="${match.manOfMatchName}">Name</span></div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="solid-card text-center h-100">
+                <div class="text-muted small text-uppercase mb-2">Highest Scorer</div>
+                <div class="fs-4 fw-bold text-heading"><span th:text="${topScorerName}">Name</span></div>
+                <div class="fw-bold text-accent fs-5"><span th:text="${topScorerRuns}">0</span> Runs</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="solid-card text-center h-100">
+                <div class="text-muted small text-uppercase mb-2">Best Bowler</div>
+                <div class="fs-4 fw-bold text-heading"><span th:text="${topBowlerName}">Name</span></div>
+                <div class="fw-bold text-accent fs-5"><span th:text="${topBowlerWickets}">0</span> / <span th:text="${topBowlerRuns}">0</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Basic Analysis -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-12">
+            <div class="solid-card">
+                <h5 class="text-heading border-bottom pb-2 mb-3"><i class="bi bi-bar-chart-fill me-2 text-play26"></i>Match Statistics</h5>
+                <div class="row text-center g-3">
+                    <div class="col-4">
+                        <div class="fs-2 fw-bold text-heading" th:text="${scorecards.size() > 0 ? (scorecards[0].totalRuns + (scorecards.size() > 1 ? scorecards[1].totalRuns : 0)) : 0}">0</div>
+                        <div class="text-muted small text-uppercase">Total Runs Scored</div>
+                    </div>
+                    <div class="col-4">
+                        <div class="fs-2 fw-bold text-heading" th:text="${totalWicketsFall}">0</div>
+                        <div class="text-muted small text-uppercase">Total Wickets Fallen</div>
+                    </div>
+                    <div class="col-4">
+                        <div class="fs-2 fw-bold text-heading" th:text="${totalBoundaries}">0</div>
+                        <div class="text-muted small text-uppercase">Total Boundaries (4s+6s)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Mini Scorecard Summary -->
+    <h4 class="text-heading fw-bold mb-3 mt-5"><i class="bi bi-card-list text-play26 me-2"></i>Innings Summary</h4>
     <div class="row g-4">
         <div class="col-md-6" th:each="sc : ${scorecards}">
-            <div class="glass-card h-100">
-                <h5 class="text-center mb-3"><span th:text="${sc.battingTeamName}">Team</span> Innings</h5>
-                <div class="text-center fs-2 fw-bold text-white mb-2">
+            <div class="solid-card h-100">
+                <h5 class="text-center mb-3 text-heading"><span th:text="${sc.battingTeamName}">Team</span> Innings</h5>
+                <div class="text-center fs-2 fw-bold text-heading mb-2">
                     <span th:text="${sc.totalRuns} ?: 0">0</span>/<span th:text="${sc.totalWickets} ?: 0">0</span>
                 </div>
                 <div class="text-center text-muted mb-4">Overs: <span th:text="${sc.totalOvers} ?: '0.0'">0.0</span></div>
                 
                 <!-- Top 3 Batters -->
-                <h6 class="small text-muted mb-2 border-bottom border-secondary pb-1">Top Batters</h6>
-                <div th:each="bs, iterStat : ${battingScores[sc.id]}" th:if="${iterStat.index < 3}" class="d-flex justify-content-between text-white mb-1">
+                <h6 class="small text-muted mb-2 border-bottom pb-1">Top Batters</h6>
+                <div th:each="bs, iterStat : ${battingScores[sc.id]}" th:if="${iterStat.index < 3}" class="d-flex justify-content-between text-heading mb-1">
                     <span th:text="${bs.playerName}">Player</span>
                     <strong><span th:text="${bs.runs}">0</span> (<span th:text="${bs.balls}">0</span>)</strong>
                 </div>
                 
                 <!-- Top 3 Bowlers -->
-                <h6 class="small text-muted mt-3 mb-2 border-bottom border-secondary pb-1">Top Bowlers</h6>
-                <div th:each="bw, iterStat : ${bowlingScores[sc.id]}" th:if="${iterStat.index < 3}" class="d-flex justify-content-between text-white mb-1">
+                <h6 class="small text-muted mt-3 mb-2 border-bottom pb-1">Top Bowlers</h6>
+                <div th:each="bw, iterStat : ${bowlingScores[sc.id]}" th:if="${iterStat.index < 3}" class="d-flex justify-content-between text-heading mb-1">
                     <span th:text="${bw.playerName}">Player</span>
                     <strong><span th:text="${bw.wickets}">0</span>/<span th:text="${bw.runs}">0</span> (<span th:text="${bw.overs}">0</span>)</strong>
                 </div>

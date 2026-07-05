@@ -44,8 +44,18 @@
         <div class="display-1 fw-bold text-white mb-2">
             <span th:text="${scorecard.totalRuns}">0</span>-<span th:text="${scorecard.totalWickets}">0</span>
         </div>
-        <div class="fs-4 text-accent">
+        <div class="fs-4 text-accent mb-2">
             Overs: <span th:text="${scorecard.totalOvers}">0.0</span> / <span th:text="${match.overs}">20</span>
+        </div>
+        
+        <div th:if="${innings == 1}" class="fs-6 text-light mt-2" style="background: rgba(255,255,255,0.05); padding: 8px 16px; border-radius: 8px; display: inline-block; border: 1px solid rgba(255,255,255,0.1);">
+            CRR: <span class="fw-bold text-accent" th:text="${runRate}">0.00</span>
+        </div>
+        
+        <div th:if="${innings == 2 && scorecard.target != null}" class="fs-6 text-light mt-2" style="background: rgba(255,255,255,0.05); padding: 8px 16px; border-radius: 8px; display: inline-block; border: 1px solid rgba(255,255,255,0.1);">
+            Target: <span class="fw-bold text-accent" th:text="${scorecard.target}"></span> <span class="mx-2 text-muted">|</span>
+            Need <span class="fw-bold text-warning" th:text="${runsNeeded}"></span> runs from 
+            <span class="fw-bold text-warning" th:text="${ballsRemaining}"></span> balls
         </div>
     </div>
 

@@ -343,6 +343,46 @@ public class ScorecardController {
         model.addAttribute("bowlingScores", bowlingMap);
         model.addAttribute("extrasMap", extrasMap);
         model.addAttribute("resultText", scorecardService.calculateResult(matchId));
+
+        // Basic Analysis
+        int totalBoundaries = 0;
+        int totalWicketsFall = 0;
+        int maxRuns = -1;
+        String topScorer = "N/A";
+        int maxWickets = -1;
+        String topBowler = "N/A";
+        int bowlerConceded = 0;
+
+        for (Scorecard sc : scorecards) {
+            List<BattingScore> bsList = battingMap.get(sc.getId());
+            if (bsList != null) {
+                for (BattingScore bs : bsList) {
+                    totalBoundaries += (bs.getFours() != null ? bs.getFours() : 0) + (bs.getSixes() != null ? bs.getSixes() : 0);
+                    int r = bs.getRuns() != null ? bs.getRuns() : 0;
+                    if (r > maxRuns) { maxRuns = r; topScorer = bs.getPlayerName(); }
+                }
+            }
+            List<BowlingScore> bwList = bowlingMap.get(sc.getId());
+            if (bwList != null) {
+                for (BowlingScore bw : bwList) {
+                    int w = bw.getWickets() != null ? bw.getWickets() : 0;
+                    int r = bw.getRuns() != null ? bw.getRuns() : 0;
+                    if (w > maxWickets || (w == maxWickets && r < bowlerConceded)) { 
+                        maxWickets = w; topBowler = bw.getPlayerName(); bowlerConceded = r; 
+                    }
+                }
+            }
+            totalWicketsFall += (sc.getTotalWickets() != null ? sc.getTotalWickets() : 0);
+        }
+
+        model.addAttribute("totalBoundaries", totalBoundaries);
+        model.addAttribute("totalWicketsFall", totalWicketsFall);
+        model.addAttribute("topScorerName", topScorer);
+        model.addAttribute("topScorerRuns", maxRuns >= 0 ? maxRuns : 0);
+        model.addAttribute("topBowlerName", topBowler);
+        model.addAttribute("topBowlerWickets", maxWickets >= 0 ? maxWickets : 0);
+        model.addAttribute("topBowlerRuns", bowlerConceded);
+
         return "scorecard/result";
     }
 

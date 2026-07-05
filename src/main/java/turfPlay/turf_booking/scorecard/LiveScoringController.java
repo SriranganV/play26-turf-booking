@@ -42,6 +42,32 @@ public class LiveScoringController {
         model.addAttribute("scorecard", scorecard);
         model.addAttribute("innings", innings);
         
+        // Calculate Run Rate
+        if (scorecard.getTotalOvers() != null && scorecard.getTotalOvers() > 0) {
+            double overs = scorecard.getTotalOvers();
+            int fullOvers = (int) overs;
+            int balls = (int) Math.round((overs - fullOvers) * 10);
+            double totalOversCalc = fullOvers + (balls / 6.0);
+            double runRate = scorecard.getTotalRuns() / totalOversCalc;
+            model.addAttribute("runRate", String.format("%.2f", runRate));
+        } else {
+            model.addAttribute("runRate", "0.00");
+        }
+
+        // Calculate Target Info for 2nd Innings
+        if (innings == 2 && scorecard.getTarget() != null) {
+            int runsNeeded = scorecard.getTarget() - (scorecard.getTotalRuns() != null ? scorecard.getTotalRuns() : 0);
+            double overs = scorecard.getTotalOvers() != null ? scorecard.getTotalOvers() : 0.0;
+            int fullOvers = (int) overs;
+            int balls = (int) Math.round((overs - fullOvers) * 10);
+            int ballsBowled = (fullOvers * 6) + balls;
+            int totalMatchBalls = (match.getOvers() != null ? match.getOvers() : 20) * 6;
+            int ballsRemaining = totalMatchBalls - ballsBowled;
+            
+            model.addAttribute("runsNeeded", Math.max(0, runsNeeded));
+            model.addAttribute("ballsRemaining", Math.max(0, ballsRemaining));
+        }
+        
         // Load all batting and bowling scores for the dropdowns
         model.addAttribute("battingScores", battingService.getByScorecardId(scorecard.getId()));
         model.addAttribute("bowlingScores", bowlingService.getByScorecardId(scorecard.getId()));

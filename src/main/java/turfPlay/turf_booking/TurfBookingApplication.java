@@ -17,7 +17,8 @@ public class TurfBookingApplication {
 	public CommandLineRunner run(JdbcTemplate jdbcTemplate) {
 		return args -> {
 			try {
-				jdbcTemplate.execute("ALTER TABLE bookings ADD COLUMN booking_id VARCHAR(50) UNIQUE");
+				jdbcTemplate.execute("ALTER TABLE bookings ADD COLUMN booking_id VARCHAR(50)");
+				jdbcTemplate.execute("ALTER TABLE bookings ADD UNIQUE(booking_id)");
 				System.out.println("✅ Database schema updated: Added booking_id to bookings table.");
 			} catch (Exception e) {
 				// Column likely already exists
