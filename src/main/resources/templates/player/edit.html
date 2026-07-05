@@ -12,8 +12,8 @@
         <form th:action="@{/players/update}" th:object="${player}" method="post" data-loading>
             <input type="hidden" th:field="*{id}">
             <div class="row g-3">
-                <div class="col-md-6"><label class="form-label">Player Name *</label><input type="text" class="form-control" th:field="*{playerName}" required></div>
-                <div class="col-md-3"><label class="form-label">Jersey #</label><input type="number" class="form-control" th:field="*{jerseyNumber}" min="0"></div>
+                <div class="col-md-9"><label class="form-label text-light">Full Name *</label><input type="text" class="form-control" th:field="*{playerName}" placeholder="e.g. Virat Kohli" required></div>
+                <div class="col-md-3"><label class="form-label text-light">Jersey #</label><input type="number" class="form-control" th:field="*{jerseyNumber}" placeholder="18" min="0"></div>
                 <div class="col-md-3"><label class="form-label">Role</label>
                     <select class="form-select" th:field="*{role}"><option value="">Select</option><option value="BATSMAN">Batsman</option><option value="BOWLER">Bowler</option><option value="ALL_ROUNDER">All Rounder</option><option value="WICKET_KEEPER">Wicket Keeper</option></select></div>
                 <div class="col-md-6"><label class="form-label">Tournament</label>

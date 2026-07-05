@@ -19,7 +19,7 @@ public class MatchRepository {
     // Full JOIN query resolves team names, tournament name, turf name from FKs
     private static final String SELECT_FULL = "SELECT m.id, m.tournament_id, m.match_number, " +
                "m.team_a_id, m.team_b_id, m.turf_id, " +
-               "m.match_date, m.match_time, m.venue, m.overs, " +
+               "m.match_date, m.match_time, m.venue, m.overs, m.total_players, " +
                "m.toss_winner, m.toss_decision, m.winner, m.man_of_match, " +
                "m.match_stage, m.result, m.status, m.created_at, " +
                "trn.tournament_name, " +
@@ -54,6 +54,7 @@ public class MatchRepository {
         Time mt = rs.getTime("match_time"); if (mt != null) m.setMatchTime(mt.toLocalTime());
         m.setVenue(rs.getString("venue"));
         m.setOvers(rs.getObject("overs", Integer.class));
+        m.setTotalPlayers(rs.getObject("total_players", Integer.class));
         m.setTossWinnerId(rs.getObject("toss_winner", Long.class));
         m.setTossWinnerName(rs.getString("toss_winner_name"));
         m.setTossDecision(rs.getString("toss_decision"));
@@ -91,7 +92,7 @@ public class MatchRepository {
         KeyHolder kh = new GeneratedKeyHolder();
         jdbc.update(con -> {
             PreparedStatement ps = con.prepareStatement(
-                "INSERT INTO matches(tournament_id,match_number,team_a_id,team_b_id,turf_id,match_date,match_time,venue,overs,toss_winner,toss_decision,winner,man_of_match,match_stage,result,status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                "INSERT INTO matches(tournament_id,match_number,team_a_id,team_b_id,turf_id,match_date,match_time,venue,overs,total_players,toss_winner,toss_decision,winner,man_of_match,match_stage,result,status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 Statement.RETURN_GENERATED_KEYS);
             
             if (m.getTournamentId() != null) ps.setLong(1, m.getTournamentId()); else ps.setNull(1, Types.BIGINT);
@@ -105,15 +106,16 @@ public class MatchRepository {
             
             ps.setString(8, m.getVenue());
             if (m.getOvers() != null) ps.setInt(9, m.getOvers()); else ps.setNull(9, Types.INTEGER);
+            if (m.getTotalPlayers() != null) ps.setInt(10, m.getTotalPlayers()); else ps.setNull(10, Types.INTEGER);
             
-            if (m.getTossWinnerId() != null) ps.setLong(10, m.getTossWinnerId()); else ps.setNull(10, Types.BIGINT);
-            ps.setString(11, m.getTossDecision());
-            if (m.getWinnerId() != null) ps.setLong(12, m.getWinnerId()); else ps.setNull(12, Types.BIGINT);
-            if (m.getManOfMatchId() != null) ps.setLong(13, m.getManOfMatchId()); else ps.setNull(13, Types.BIGINT);
+            if (m.getTossWinnerId() != null) ps.setLong(11, m.getTossWinnerId()); else ps.setNull(11, Types.BIGINT);
+            ps.setString(12, m.getTossDecision());
+            if (m.getWinnerId() != null) ps.setLong(13, m.getWinnerId()); else ps.setNull(13, Types.BIGINT);
+            if (m.getManOfMatchId() != null) ps.setLong(14, m.getManOfMatchId()); else ps.setNull(14, Types.BIGINT);
             
-            ps.setString(14, m.getMatchStage());
-            ps.setString(15, m.getResult());
-            ps.setString(16, m.getStatus() == null ? "UPCOMING" : m.getStatus());
+            ps.setString(15, m.getMatchStage());
+            ps.setString(16, m.getResult());
+            ps.setString(17, m.getStatus() == null ? "UPCOMING" : m.getStatus());
             
             return ps;
         }, kh);
@@ -122,9 +124,9 @@ public class MatchRepository {
     }
 
     public void update(Match m) {
-        jdbc.update("UPDATE matches SET tournament_id=?,match_number=?,team_a_id=?,team_b_id=?,turf_id=?,match_date=?,match_time=?,venue=?,overs=?,toss_winner=?,toss_decision=?,winner=?,man_of_match=?,match_stage=?,result=?,status=? WHERE id=?",
+        jdbc.update("UPDATE matches SET tournament_id=?,match_number=?,team_a_id=?,team_b_id=?,turf_id=?,match_date=?,match_time=?,venue=?,overs=?,total_players=?,toss_winner=?,toss_decision=?,winner=?,man_of_match=?,match_stage=?,result=?,status=? WHERE id=?",
             m.getTournamentId(), m.getMatchNumber(), m.getTeamAId(), m.getTeamBId(), m.getTurfId(),
-            m.getMatchDate(), m.getMatchTime(), m.getVenue(), m.getOvers(),
+            m.getMatchDate(), m.getMatchTime(), m.getVenue(), m.getOvers(), m.getTotalPlayers(),
             m.getTossWinnerId(), m.getTossDecision(), m.getWinnerId(), m.getManOfMatchId(),
             m.getMatchStage(), m.getResult(), m.getStatus(), m.getId());
     }

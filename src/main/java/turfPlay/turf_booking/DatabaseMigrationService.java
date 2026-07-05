@@ -53,6 +53,14 @@ public class DatabaseMigrationService {
             }
         }
         
+        try {
+            logger.info("Matches table missing total_players column. Running ALTER TABLE...");
+            jdbcTemplate.execute("ALTER TABLE matches ADD COLUMN total_players INT DEFAULT 11;");
+            logger.info("Database migration successful!");
+        } catch (Exception ex) {
+            // Column might already exist
+        }
+        
         seedDatabase();
     }
 

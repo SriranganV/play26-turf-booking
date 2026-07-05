@@ -69,7 +69,11 @@
             -webkit-backdrop-filter: blur(16px);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
             border-top: 4px solid #0F6E56; /* Accent Graphic Line */
-            transition: all 0.3s ease;
+            transition: transform 0.3s ease-in-out, background 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .site-nav.nav-hidden {
+            transform: translateY(-100%);
         }
 
         /* Logo Picture & Hover Subtitle inside Nav */
@@ -125,8 +129,11 @@
         .nav-links {
             display: flex;
             align-items: center;
-            flex-wrap: wrap;
             gap: 15px;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 5px;
         }
 
         /* Animated Underline Transition for Nav Links */
@@ -422,6 +429,7 @@
     <!-- GLOBAL SCROLL ANIMATION ENGINE -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            // Scroll Reveal
             const observerOptions = {
                 root: null,
                 rootMargin: '0px',
@@ -439,6 +447,23 @@
 
             const revealElements = document.querySelectorAll('.reveal');
             revealElements.forEach(el => observer.observe(el));
+            
+            // Auto-hiding Navbar on Scroll
+            let lastScrollY = window.scrollY;
+            const navbar = document.querySelector('.site-nav');
+            if (navbar) {
+                window.addEventListener('scroll', () => {
+                    const currentScrollY = window.scrollY;
+                    if (currentScrollY > lastScrollY && currentScrollY > 100) {
+                        // Scrolling down and past threshold
+                        navbar.classList.add('nav-hidden');
+                    } else {
+                        // Scrolling up
+                        navbar.classList.remove('nav-hidden');
+                    }
+                    lastScrollY = currentScrollY;
+                });
+            }
         });
     </script>
 </footer>

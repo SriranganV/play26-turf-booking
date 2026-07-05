@@ -15,18 +15,18 @@
         <form th:action="@{/teams/update}" th:object="${team}" method="post" data-loading>
             <input type="hidden" th:field="*{id}">
             <div class="row g-3">
-                <div class="col-md-6"><label class="form-label">Team Name *</label><input type="text" class="form-control" th:field="*{teamName}" required></div>
-                <div class="col-md-3"><label class="form-label">Short Name</label><input type="text" class="form-control" th:field="*{shortName}" maxlength="10"></div>
-                <div class="col-md-3"><label class="form-label">Team Code</label><input type="text" class="form-control" th:field="*{teamCode}" maxlength="10"></div>
+                <div class="col-md-6"><label class="form-label text-light">Team Name *</label><input type="text" class="form-control" th:field="*{teamName}" placeholder="e.g. Mumbai Indians" required></div>
+                <div class="col-md-3"><label class="form-label text-light">Short Name</label><input type="text" class="form-control" th:field="*{shortName}" placeholder="e.g. MI" maxlength="10"></div>
+                <div class="col-md-3"><label class="form-label text-light">Team Code</label><input type="text" class="form-control" th:field="*{teamCode}" placeholder="e.g. T-001" maxlength="10"></div>
                 <div class="col-md-6"><label class="form-label">Tournament</label>
                     <select class="form-select" th:field="*{tournamentId}"><option value="">Select</option>
                         <option th:each="t : ${tournaments}" th:value="${t.id}" th:text="${t.tournamentName}"></option></select></div>
-                <div class="col-md-6"><label class="form-label">City</label><input type="text" class="form-control" th:field="*{city}"></div>
-                <div class="col-md-6"><label class="form-label">Coach</label><input type="text" class="form-control" th:field="*{coachName}"></div>
-                <div class="col-md-6"><label class="form-label">Home Ground</label><input type="text" class="form-control" th:field="*{homeGround}"></div>
-                <div class="col-md-6"><label class="form-label">Logo URL</label><input type="url" class="form-control" th:field="*{logo}" data-preview="logoPreview"></div>
+                <div class="col-md-6"><label class="form-label text-light">City</label><input type="text" class="form-control" th:field="*{city}" placeholder="e.g. Mumbai"></div>
+                <div class="col-md-6"><label class="form-label text-light">Coach</label><input type="text" class="form-control" th:field="*{coachName}" placeholder="e.g. John Doe"></div>
+                <div class="col-md-6"><label class="form-label text-light">Home Ground</label><input type="text" class="form-control" th:field="*{homeGround}" placeholder="e.g. Wankhede Stadium"></div>
+                <div class="col-md-6"><label class="form-label text-light">Logo URL</label><input type="url" class="form-control" th:field="*{logo}" placeholder="https://..." data-preview="logoPreview"></div>
                 <div class="col-md-6"><img id="logoPreview" th:src="${team.logo}" alt="Logo" class="rounded" style="max-height:80px" th:style="${team.logo == null} ? 'display:none' : ''"></div>
-                <div class="col-12"><label class="form-label">Description</label><textarea class="form-control" th:field="*{description}" rows="3"></textarea></div>
+                <div class="col-12"><label class="form-label text-light">Description</label><textarea class="form-control" th:field="*{description}" rows="3" placeholder="Enter team description here..."></textarea></div>
                 <div class="col-md-4"><label class="form-label">Status</label>
                     <select class="form-select" th:field="*{status}"><option value="ACTIVE">Active</option><option value="INACTIVE">Inactive</option></select></div>
                 <div class="col-12 d-flex gap-2 mt-3">

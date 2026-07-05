@@ -138,7 +138,25 @@ public class LiveScoringController {
             // Recalculate totals
             scorecardService.recalculateTotals(event.getScorecardId());
 
-            return ResponseEntity.ok().body("{\"status\":\"success\"}");
+            boolean inningsComplete = false;
+            Scorecard sc = scorecardService.getById(event.getScorecardId()).orElse(null);
+            if (sc != null) {
+                Match m = matchService.getById(sc.getMatchId()).orElse(null);
+                if (m != null) {
+                    int totalPlayers = (m.getTotalPlayers() != null) ? m.getTotalPlayers() : 11;
+                    int maxWickets = Math.max(1, totalPlayers - 1);
+                    double matchOvers = (m.getOvers() != null) ? m.getOvers().doubleValue() : 20.0;
+                    
+                    if (sc.getTotalWickets() != null && sc.getTotalWickets() >= maxWickets) {
+                        inningsComplete = true;
+                    }
+                    if (sc.getTotalOvers() != null && sc.getTotalOvers() >= matchOvers) {
+                        inningsComplete = true;
+                    }
+                }
+            }
+
+            return ResponseEntity.ok().body("{\"status\":\"success\", \"inningsComplete\":" + inningsComplete + "}");
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body("{\"error\":\"" + e.getMessage() + "\"}");
@@ -228,5 +246,80 @@ public class LiveScoringController {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body("{\"error\":\"" + e.getMessage() + "\"}");
         }
+    }
+    
+    @PostMapping("/add-batting")
+    @ResponseBody
+    public ResponseEntity<?> addBattingAJAX(@RequestBody java.util.Map<String, String> payload) {
+        try {
+            Long matchId = Long.parseLong(payload.get("matchId"));
+            int innings = Integer.parseInt(payload.get("innings"));
+            String playerName = payload.get("playerName");
+            
+            Match match = matchService.getById(matchId).orElseThrow(() -> new RuntimeException("Match not found"));
+            Long battingTeamId = (innings == 1) ? match.getTeamAId() : match.getTeamBId();
+            Long bowlingTeamId = (innings == 1) ? match.getTeamBId() : match.getTeamAId();
+            Scorecard scorecard = scorecardService.getOrCreateScorecard(matchId, innings, battingTeamId, bowlingTeamId);
+            
+            Player p = new Player();
+            p.setTournamentId(match.getTournamentId());
+            p.setTeamId(battingTeamId);
+            p.setPlayerName(playerName);
+            p.setRole("BATSMAN");
+            p.setStatus("ACTIVE");
+            long pid = playerService.save(p);
+            
+            BattingScore b = new BattingScore();
+            b.setScorecardId(scorecard.getId());
+            b.setPlayerId(pid);
+            b.setPlayerName(playerName);
+            b.setRuns(0); b.setBalls(0); b.setFours(0); b.setSixes(0); b.setIsOut(false);
+            long bid = battingService.save(b);
+            
+            return ResponseEntity.ok().body("{\"status\":\"success\", \"id\":" + bid + "}");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("{\"error\":\"" + e.getMessage() + "\"}");
+        }
+    }
+
+    @PostMapping("/add-bowling")
+    @ResponseBody
+    public ResponseEntity<?> addBowlingAJAX(@RequestBody java.util.Map<String, String> payload) {
+        try {
+            Long matchId = Long.parseLong(payload.get("matchId"));
+            int innings = Integer.parseInt(payload.get("innings"));
+            String playerName = payload.get("playerName");
+            
+            Match match = matchService.getById(matchId).orElseThrow(() -> new RuntimeException("Match not found"));
+            Long battingTeamId = (innings == 1) ? match.getTeamAId() : match.getTeamBId();
+            Long bowlingTeamId = (innings == 1) ? match.getTeamBId() : match.getTeamAId();
+            Scorecard scorecard = scorecardService.getOrCreateScorecard(matchId, innings, battingTeamId, bowlingTeamId);
+            
+            Player p = new Player();
+            p.setTournamentId(match.getTournamentId());
+            p.setTeamId(bowlingTeamId);
+            p.setPlayerName(playerName);
+            p.setRole("BOWLER");
+            p.setStatus("ACTIVE");
+            long pid = playerService.save(p);
+            
+            BowlingScore b = new BowlingScore();
+            b.setScorecardId(scorecard.getId());
+            b.setPlayerId(pid);
+            b.setPlayerName(playerName);
+            b.setOvers(0.0); b.setMaidens(0); b.setRuns(0); b.setWickets(0);
+            b.setDots(0); b.setWides(0); b.setNoBalls(0);
+            long bid = bowlingService.save(b);
+            
+            return ResponseEntity.ok().body("{\"status\":\"success\", \"id\":" + bid + "}");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("{\"error\":\"" + e.getMessage() + "\"}");
+        }
+    }
+
+    @PostMapping("/end-innings")
+    @ResponseBody
+    public ResponseEntity<?> endInnings() {
+        return ResponseEntity.ok().body("{\"status\":\"success\", \"inningsComplete\": true}");
     }
 }

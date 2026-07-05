@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS turf_slots (
 
 CREATE TABLE IF NOT EXISTS bookings (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    booking_id VARCHAR(50) UNIQUE,
     user_id BIGINT NOT NULL,
     turf_slot_id BIGINT NOT NULL,
     booking_status VARCHAR(20) DEFAULT 'CONFIRMED',
@@ -161,6 +162,7 @@ CREATE TABLE IF NOT EXISTS matches (
     match_time TIME,
     venue VARCHAR(255),
     overs INT,
+    total_players INT DEFAULT 11,
     toss_winner BIGINT,
     toss_decision VARCHAR(10),
     winner BIGINT,

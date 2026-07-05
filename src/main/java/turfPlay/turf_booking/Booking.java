@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 public class Booking {
 
     private Long id;
+    private String bookingId;
     private Long userId;
     private Long turfSlotId;
     private String bookingStatus;
@@ -36,6 +37,14 @@ public class Booking {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getBookingId() {
+        return bookingId;
+    }
+
+    public void setBookingId(String bookingId) {
+        this.bookingId = bookingId;
     }
 
     public Long getUserId() {

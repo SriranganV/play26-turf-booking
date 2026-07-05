@@ -88,6 +88,7 @@ public class ScorecardController {
         match.setTeamBId(teamBId);
         match.setTeamBName(dto.getTeamBName());
         match.setOvers(dto.getOvers());
+        match.setTotalPlayers(dto.getTotalPlayers() != null ? dto.getTotalPlayers() : 11);
         match.setVenue(dto.getVenue());
         match.setMatchDate(dto.getMatchDate());
         match.setMatchTime(dto.getMatchTime());

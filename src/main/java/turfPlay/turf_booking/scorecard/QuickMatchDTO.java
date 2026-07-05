@@ -7,6 +7,7 @@ public class QuickMatchDTO {
     private String teamAName;
     private String teamBName;
     private Integer overs;
+    private Integer totalPlayers;
     private String venue;
     private LocalDate matchDate;
     private LocalTime matchTime;
@@ -19,6 +20,8 @@ public class QuickMatchDTO {
     public void setTeamBName(String teamBName) { this.teamBName = teamBName; }
     public Integer getOvers() { return overs; }
     public void setOvers(Integer overs) { this.overs = overs; }
+    public Integer getTotalPlayers() { return totalPlayers; }
+    public void setTotalPlayers(Integer totalPlayers) { this.totalPlayers = totalPlayers; }
     public String getVenue() { return venue; }
     public void setVenue(String venue) { this.venue = venue; }
     public LocalDate getMatchDate() { return matchDate; }

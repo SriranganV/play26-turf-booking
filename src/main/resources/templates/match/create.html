@@ -17,26 +17,27 @@
     <div class="glass-card">
         <form th:action="@{/matches/save}" th:object="${match}" method="post" data-loading>
             <div class="row g-3">
-                <div class="col-md-6"><label class="form-label">Tournament</label>
-                    <select class="form-select" th:field="*{tournamentId}"><option value="">Select Tournament</option>
+                <div class="col-md-3"><label class="form-label">Match Number</label><input type="text" class="form-control" th:field="*{matchNumber}" placeholder="e.g. M1"></div>
+                <div class="col-md-9"><label class="form-label">Tournament</label>
+                    <select class="form-select" th:field="*{tournamentId}"><option value="">Friendly / No Tournament</option>
                         <option th:each="t : ${tournaments}" th:value="${t.id}" th:text="${t.tournamentName}"></option></select></div>
-                <div class="col-md-3"><label class="form-label">Match Number</label><input type="text" class="form-control" th:field="*{matchNumber}" placeholder="M1"></div>
-                <div class="col-md-3"><label class="form-label">Match Stage</label>
-                    <select class="form-select" th:field="*{matchStage}"><option value="LEAGUE">League</option><option value="QUARTER_FINAL">Quarter Final</option><option value="SEMI_FINAL">Semi Final</option><option value="FINAL">Final</option></select></div>
                 <div class="col-md-6"><label class="form-label">Team A *</label>
                     <select class="form-select" th:field="*{teamAId}" required><option value="">Select Team A</option>
                         <option th:each="t : ${teams}" th:value="${t.id}" th:text="${t.teamName}"></option></select></div>
                 <div class="col-md-6"><label class="form-label">Team B *</label>
                     <select class="form-select" th:field="*{teamBId}" required><option value="">Select Team B</option>
                         <option th:each="t : ${teams}" th:value="${t.id}" th:text="${t.teamName}"></option></select></div>
-                <div class="col-md-4"><label class="form-label">Turf</label>
+                <div class="col-12"><label class="form-label">Turf (Optional)</label>
                     <select class="form-select" th:field="*{turfId}"><option value="">Select Turf</option>
-                        <option th:each="t : ${turfs}" th:value="${t.id}" th:text="${t.name}"></option></select></div>
+                        <option th:each="t : ${turfs}" th:value="${t.id}" th:text="${t.name} + ' (' + ${t.location} + ')'"></option></select></div>
                 <div class="col-md-4"><label class="form-label">Match Date</label><input type="date" class="form-control" th:field="*{matchDate}"></div>
                 <div class="col-md-4"><label class="form-label">Match Time</label><input type="time" class="form-control" th:field="*{matchTime}"></div>
-                <div class="col-md-4"><label class="form-label">Venue</label><input type="text" class="form-control" th:field="*{venue}"></div>
-                <div class="col-md-4"><label class="form-label">Overs</label><input type="number" class="form-control" th:field="*{overs}" min="1"></div>
-                <div class="col-md-4"><label class="form-label">Status</label>
+                <div class="col-md-4"><label class="form-label">Match Stage</label>
+                    <select class="form-select" th:field="*{matchStage}"><option value="LEAGUE">League</option><option value="QUARTER_FINAL">Quarter Final</option><option value="SEMI_FINAL">Semi Final</option><option value="FINAL">Final</option></select></div>
+                <div class="col-md-3"><label class="form-label">Venue</label><input type="text" class="form-control" th:field="*{venue}" placeholder="e.g. Turf Ground A"></div>
+                <div class="col-md-3"><label class="form-label">Overs</label><input type="number" class="form-control" th:field="*{overs}" min="1"></div>
+                <div class="col-md-3"><label class="form-label">Total Players</label><input type="number" class="form-control" th:field="*{totalPlayers}" min="2" value="11" placeholder="11"></div>
+                <div class="col-md-3"><label class="form-label">Status</label>
                     <select class="form-select" th:field="*{status}"><option value="UPCOMING">Upcoming</option><option value="LIVE">Live</option><option value="COMPLETED">Completed</option><option value="CANCELLED">Cancelled</option></select></div>
                 <div class="col-12 d-flex gap-2 mt-3">
                     <button type="submit" class="btn btn-play26"><i class="bi bi-check-lg me-1"></i>Schedule Match</button>

@@ -271,7 +271,7 @@
 
             <div class="ticket-body">
                 <div class="booking-id-tag">
-                    <span>ID: PLAY26-<span th:text="${booking.id}">1024</span></span>
+                    <span>ID: <span th:text="${booking.bookingId != null ? booking.bookingId : 'PLAY26-' + booking.id}">BKG-12345</span></span>
                 </div>
 
                 <div class="ticket-grid">

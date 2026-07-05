@@ -58,8 +58,9 @@
                     <option value="">Select Striker...</option>
                     <option th:each="b : ${battingScores}" th:if="${!b.isOut}" th:value="${b.id}" th:text="${b.playerName} + ' (' + ${b.runs} + '*)'"></option>
                 </select>
+                </select>
                 <div class="mt-2 text-end">
-                    <a th:href="@{/scorecard/match/{id}/batting/{in}(id=${match.id},in=${innings})}" class="text-info text-decoration-none small">+ Add Batter</a>
+                    <button type="button" class="btn btn-link text-info text-decoration-none p-0 small" onclick="openAddPlayerModal('BATSMAN')">+ Add Batter</button>
                 </div>
             </div>
         </div>
@@ -70,8 +71,9 @@
                     <option value="">Select Bowler...</option>
                     <option th:each="b : ${bowlingScores}" th:value="${b.id}" th:text="${b.playerName} + ' (' + ${b.overs} + '-' + ${b.runs} + '-' + ${b.wickets} + ')'"></option>
                 </select>
+                </select>
                 <div class="mt-2 text-end">
-                    <a th:href="@{/scorecard/match/{id}/bowling/{in}(id=${match.id},in=${innings})}" class="text-info text-decoration-none small">+ Add Bowler</a>
+                    <button type="button" class="btn btn-link text-info text-decoration-none p-0 small" onclick="openAddPlayerModal('BOWLER')">+ Add Bowler</button>
                 </div>
             </div>
         </div>
@@ -117,6 +119,7 @@
         
         <div class="row g-2 mt-4">
             <div class="col-12"><button class="btn btn-wicket w-100 py-3 text-uppercase" onclick="handleWicket()"><i class="bi bi-x-circle me-2"></i>Wicket</button></div>
+            <div class="col-12 mt-3"><button class="btn btn-outline-danger w-100 py-2 text-uppercase" onclick="manualEndInnings()"><i class="bi bi-flag-fill me-2"></i>Complete Innings / Match</button></div>
         </div>
     </div>
 </div>
@@ -127,9 +130,34 @@
     <div class="mt-3 text-white fw-bold">Updating...</div>
 </div>
 
+<!-- Add Player Modal -->
+<div class="modal fade" id="addPlayerModal" tabindex="-1" aria-labelledby="addPlayerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white" style="border: 1px solid rgba(255,255,255,0.1);">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-accent" id="addPlayerModalLabel">Add New Player</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="newPlayerRole">
+                <div class="mb-3">
+                    <label class="form-label">Player Name *</label>
+                    <input type="text" class="form-control bg-dark text-white" id="newPlayerName" placeholder="Enter full name">
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-play26" onclick="submitNewPlayer()">Save Player</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script th:inline="javascript">
     const scorecardId = /*[[${scorecard.id}]]*/ null;
+    const matchId = /*[[${match.id}]]*/ null;
+    const innings = /*[[${innings}]]*/ null;
     let undoStack = JSON.parse(localStorage.getItem('play26_undo_' + scorecardId)) || [];
     let redoStack = JSON.parse(localStorage.getItem('play26_redo_' + scorecardId)) || [];
     
@@ -259,7 +287,16 @@
                 redoStack = [];
                 localStorage.setItem('play26_undo_' + scorecardId, JSON.stringify(undoStack));
                 localStorage.setItem('play26_redo_' + scorecardId, JSON.stringify(redoStack));
-                window.location.reload();
+                if (data.inningsComplete) {
+                    alert("Innings Completed!");
+                    if (innings == 1) {
+                        window.location.href = '/scorecard/live/' + matchId + '/innings/2';
+                    } else {
+                        window.location.href = '/scorecard/match/' + matchId + '/result';
+                    }
+                } else {
+                    window.location.reload();
+                }
             } else {
                 alert("Error updating score: " + data.error);
                 document.getElementById('loadingOverlay').style.display = 'none';
@@ -268,6 +305,76 @@
         .catch(err => {
             alert("Network error!");
             document.getElementById('loadingOverlay').style.display = 'none';
+        });
+    }
+
+    let playerModal;
+    document.addEventListener("DOMContentLoaded", function() {
+        playerModal = new bootstrap.Modal(document.getElementById('addPlayerModal'));
+    });
+
+    function openAddPlayerModal(role) {
+        document.getElementById('newPlayerRole').value = role;
+        document.getElementById('newPlayerName').value = '';
+        playerModal.show();
+    }
+
+    function submitNewPlayer() {
+        const role = document.getElementById('newPlayerRole').value;
+        const name = document.getElementById('newPlayerName').value.trim();
+        if (!name) { alert("Please enter player name."); return; }
+
+        showLoading();
+        const endpoint = role === 'BATSMAN' ? '/scorecard/live/add-batting' : '/scorecard/live/add-bowling';
+        const payload = { matchId: matchId.toString(), innings: innings.toString(), playerName: name };
+
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.status === 'success') {
+                if (role === 'BATSMAN') localStorage.setItem('play26_striker_' + scorecardId, data.id);
+                else localStorage.setItem('play26_bowler_' + scorecardId, data.id);
+                window.location.reload();
+            } else {
+                alert("Error adding player: " + data.error);
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }
+        }).catch(err => {
+            alert("Network error!"); document.getElementById('loadingOverlay').style.display = 'none';
+        });
+    }
+
+    function manualEndInnings() {
+        if (!confirm("Are you sure you want to end this innings/match?")) return;
+        showLoading();
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        fetch('/scorecard/live/end-innings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', [csrfHeader]: csrfToken },
+            body: JSON.stringify({})
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.status === 'success') {
+                alert("Innings Completed!");
+                if (innings == 1) {
+                    window.location.href = '/scorecard/live/' + matchId + '/innings/2';
+                } else {
+                    window.location.href = '/scorecard/match/' + matchId + '/result';
+                }
+            } else {
+                alert("Error: " + data.error);
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }
         });
     }
 </script>

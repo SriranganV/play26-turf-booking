@@ -317,6 +317,9 @@
                         <span class="meta-chip">
                             <span th:text="${b.slotDate}">2026-06-28</span>
                         </span>
+                        <span class="meta-chip" style="font-family: monospace; font-weight: 700; color: #0F6E56;" th:text="${b.bookingId != null ? b.bookingId : 'PLAY26-' + b.id}">
+                            BKG-12345
+                        </span>
                         <span class="badge badge-confirmed" th:if="${b.bookingStatus == 'CONFIRMED'}"> Confirmed</span>
                         <span class="badge badge-cancelled" th:if="${b.bookingStatus == 'CANCELLED'}">âŒ Cancelled</span>
                     </div>

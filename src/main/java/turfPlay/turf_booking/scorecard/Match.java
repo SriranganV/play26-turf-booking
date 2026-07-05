@@ -23,6 +23,7 @@ public class Match {
     private LocalTime matchTime;
     private String venue;
     private Integer overs;
+    private Integer totalPlayers;
     private Long tossWinnerId;
     private String tossWinnerName;  // joined
     private String tossDecision;    // BAT / BOWL
@@ -49,6 +50,7 @@ public class Match {
     public LocalTime getMatchTime() { return matchTime; } public void setMatchTime(LocalTime v) { this.matchTime = v; }
     public String getVenue() { return venue; } public void setVenue(String v) { this.venue = v; }
     public Integer getOvers() { return overs; } public void setOvers(Integer v) { this.overs = v; }
+    public Integer getTotalPlayers() { return totalPlayers; } public void setTotalPlayers(Integer v) { this.totalPlayers = v; }
     public Long getTossWinnerId() { return tossWinnerId; } public void setTossWinnerId(Long v) { this.tossWinnerId = v; }
     public String getTossWinnerName() { return tossWinnerName; } public void setTossWinnerName(String v) { this.tossWinnerName = v; }
     public String getTossDecision() { return tossDecision; } public void setTossDecision(String v) { this.tossDecision = v; }

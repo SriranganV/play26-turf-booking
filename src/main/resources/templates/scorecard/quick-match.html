@@ -42,15 +42,19 @@
                             <input type="text" class="form-control" th:field="*{teamBName}" required placeholder="e.g. Chennai Super Kings">
                         </div>
                         
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label class="form-label text-light">Overs *</label>
                             <input type="number" class="form-control" th:field="*{overs}" required min="1" placeholder="e.g. 20" value="20">
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <label class="form-label text-light">Players *</label>
+                            <input type="number" class="form-control" th:field="*{totalPlayers}" required min="2" placeholder="e.g. 11" value="11">
+                        </div>
+                        <div class="col-md-3">
                             <label class="form-label text-light">Match Date</label>
                             <input type="date" class="form-control" th:field="*{matchDate}" placeholder="Select Date">
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label class="form-label text-light">Match Time</label>
                             <input type="time" class="form-control" th:field="*{matchTime}" placeholder="Select Time">
                         </div>

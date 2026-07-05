@@ -11,8 +11,8 @@
     <div class="glass-card">
         <form th:action="@{/players/save}" th:object="${player}" method="post" data-loading>
             <div class="row g-3">
-                <div class="col-md-6"><label class="form-label">Player Name *</label><input type="text" class="form-control" th:field="*{playerName}" required></div>
-                <div class="col-md-3"><label class="form-label">Jersey #</label><input type="number" class="form-control" th:field="*{jerseyNumber}" min="0"></div>
+                <div class="col-md-9"><label class="form-label">Full Name *</label><input type="text" class="form-control" th:field="*{playerName}" placeholder="e.g. Virat Kohli" required></div>
+                <div class="col-md-3"><label class="form-label">Jersey #</label><input type="number" class="form-control" th:field="*{jerseyNumber}" placeholder="18" min="0"></div>
                 <div class="col-md-3"><label class="form-label">Role</label>
                     <select class="form-select" th:field="*{role}"><option value="">Select</option><option value="BATSMAN">Batsman</option><option value="BOWLER">Bowler</option><option value="ALL_ROUNDER">All Rounder</option><option value="WICKET_KEEPER">Wicket Keeper</option></select></div>
                 <div class="col-md-6"><label class="form-label">Tournament</label>
@@ -26,10 +26,10 @@
                 <div class="col-md-4"><label class="form-label">Bowling Style</label>
                     <select class="form-select" th:field="*{bowlingStyle}"><option value="">Select</option><option value="RIGHT_ARM_FAST">Right Arm Fast</option><option value="LEFT_ARM_FAST">Left Arm Fast</option><option value="RIGHT_ARM_SPIN">Right Arm Spin</option><option value="LEFT_ARM_SPIN">Left Arm Spin</option><option value="RIGHT_ARM_MEDIUM">Right Arm Medium</option></select></div>
                 <div class="col-md-4"><label class="form-label">Date of Birth</label><input type="date" class="form-control" th:field="*{dateOfBirth}"></div>
-                <div class="col-md-3"><label class="form-label">Nationality</label><input type="text" class="form-control" th:field="*{nationality}"></div>
-                <div class="col-md-3"><label class="form-label">Phone</label><input type="text" class="form-control" th:field="*{phone}"></div>
-                <div class="col-md-3"><label class="form-label">Email</label><input type="email" class="form-control" th:field="*{email}"></div>
-                <div class="col-md-3"><label class="form-label">Photo URL</label><input type="url" class="form-control" th:field="*{photo}" data-preview="photoPreview"></div>
+                <div class="col-md-3"><label class="form-label">Nationality</label><input type="text" class="form-control" th:field="*{nationality}" placeholder="e.g. Indian"></div>
+                <div class="col-md-3"><label class="form-label">Phone</label><input type="text" class="form-control" th:field="*{phone}" placeholder="e.g. 9876543210"></div>
+                <div class="col-md-3"><label class="form-label">Email</label><input type="email" class="form-control" th:field="*{email}" placeholder="e.g. player@example.com"></div>
+                <div class="col-md-3"><label class="form-label">Photo URL</label><input type="url" class="form-control" th:field="*{photo}" placeholder="https://..." data-preview="photoPreview"></div>
                 <div class="col-12"><img id="photoPreview" src="" alt="Photo" class="rounded" style="max-height:100px;display:none"></div>
                 <div class="col-md-4 d-flex gap-3 align-items-center pt-3">
                     <div class="form-check"><input type="checkbox" class="form-check-input" th:field="*{captain}" id="captain"><label class="form-check-label" for="captain">Captain</label></div>

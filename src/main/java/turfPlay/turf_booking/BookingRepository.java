@@ -22,6 +22,9 @@ public class BookingRepository {
         Booking booking = new Booking();
 
         booking.setId(rs.getLong("id"));
+        try {
+            booking.setBookingId(rs.getString("booking_id"));
+        } catch (Exception e) {}
         booking.setUserId(rs.getLong("user_id"));
         booking.setTurfSlotId(rs.getLong("turf_slot_id"));
         booking.setBookingStatus(rs.getString("booking_status"));
@@ -60,8 +63,9 @@ public class BookingRepository {
     }
 
     public Long createBooking(Long userId, Long slotId, java.math.BigDecimal totalPrice, String paymentType, String uuid, String status) {
-        String sql = "                INSERT INTO bookings (user_id, turf_slot_id, booking_status, total_price, payment_type, split_link_uuid) " +
-"                VALUES (?, ?, ?, ?, ?, ?) ";
+        String bookingRefId = "BKG-" + java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        String sql = "                INSERT INTO bookings (user_id, turf_slot_id, booking_status, total_price, payment_type, split_link_uuid, booking_id) " +
+"                VALUES (?, ?, ?, ?, ?, ?, ?) ";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
@@ -72,6 +76,7 @@ public class BookingRepository {
             ps.setBigDecimal(4, totalPrice != null ? totalPrice : java.math.BigDecimal.ZERO);
             ps.setString(5, paymentType != null ? paymentType : "FULL");
             ps.setString(6, uuid);
+            ps.setString(7, bookingRefId);
             return ps;
         }, keyHolder);
         
@@ -79,7 +84,7 @@ public class BookingRepository {
     }
 
     public Optional<Booking> findById(Long id) {
-        String sql = "                SELECT b.id, b.user_id, b.turf_slot_id, b.booking_status, b.booked_at, " +
+        String sql = "                SELECT b.id, b.booking_id, b.user_id, b.turf_slot_id, b.booking_status, b.booked_at, " +
 "                       b.total_price, b.amount_paid, b.split_link_uuid, b.payment_type, " +
 "                       u.full_name, u.email, " +
 "                       t.name AS turf_name, t.location, " +
@@ -94,7 +99,7 @@ public class BookingRepository {
     }
     
     public Optional<Booking> findBySplitLinkUuid(String uuid) {
-        String sql = "                SELECT b.id, b.user_id, b.turf_slot_id, b.booking_status, b.booked_at, " +
+        String sql = "                SELECT b.id, b.booking_id, b.user_id, b.turf_slot_id, b.booking_status, b.booked_at, " +
 "                       b.total_price, b.amount_paid, b.split_link_uuid, b.payment_type, " +
 "                       u.full_name, u.email, " +
 "                       t.name AS turf_name, t.location, " +
@@ -109,7 +114,7 @@ public class BookingRepository {
     }
 
     public List<Booking> findByUserId(Long userId) {
-        String sql = "                SELECT b.id, b.user_id, b.turf_slot_id, b.booking_status, b.booked_at, " +
+        String sql = "                SELECT b.id, b.booking_id, b.user_id, b.turf_slot_id, b.booking_status, b.booked_at, " +
 "                       b.total_price, b.amount_paid, b.split_link_uuid, b.payment_type, " +
 "                       u.full_name, u.email, " +
 "                       t.name AS turf_name, t.location, " +
@@ -125,7 +130,7 @@ public class BookingRepository {
     }
 
     public List<Booking> findAll() {
-        String sql = "                SELECT b.id, b.user_id, b.turf_slot_id, b.booking_status, b.booked_at, " +
+        String sql = "                SELECT b.id, b.booking_id, b.user_id, b.turf_slot_id, b.booking_status, b.booked_at, " +
 "                       b.total_price, b.amount_paid, b.split_link_uuid, b.payment_type, " +
 "                       u.full_name, u.email, " +
 "                       t.name AS turf_name, t.location, " +
