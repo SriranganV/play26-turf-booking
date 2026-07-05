@@ -5,12 +5,28 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link th:href="@{/css/styles.css}" rel="stylesheet"></head>
 <body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
 <div class="play26-hero" style="background:var(--play26-accent)"><div class="container text-center">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/dashboard}"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a></li>
+            <li class="breadcrumb-item active" th:text="${pageTitle}">Page</li>
+        </ol>
+    </nav>
+
     <h1 style="color:#000"><i class="bi bi-trophy-fill me-2"></i>Match Result</h1>
     <p class="fs-4 fw-bold mb-0" style="color:#000" th:text="${resultText}">Result Text</p>
     <p class="mt-2" style="color:rgba(0,0,0,0.7)"><span th:text="${match.teamAName}">A</span> vs <span th:text="${match.teamBName}">B</span></p>
 </div></div>
 <div class="container pb-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/dashboard}"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a></li>
+            <li class="breadcrumb-item active" th:text="${pageTitle}">Page</li>
+        </ol>
+    </nav>
+
     <div class="text-center mb-4">
         <a th:href="@{/matches}" class="btn btn-outline-play26"><i class="bi bi-arrow-left me-1"></i>Back to Matches</a>
         <a th:href="@{/scorecard/match/{id}(id=${match.id})}" class="btn btn-play26"><i class="bi bi-clipboard-data me-1"></i>Full Scorecard</a>

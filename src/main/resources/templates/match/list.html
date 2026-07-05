@@ -8,8 +8,24 @@
     <link th:href="@{/css/styles.css}" rel="stylesheet">
 </head>
 <body>
-<div class="play26-hero"><div class="container"><h1><i class="bi bi-controller me-2"></i>Matches</h1><p>Manage cricket matches</p></div></div>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<div class="play26-hero"><div class="container">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/dashboard}"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a></li>
+            <li class="breadcrumb-item active" th:text="${pageTitle}">Page</li>
+        </ol>
+    </nav>
+<h1><i class="bi bi-controller me-2"></i>Matches</h1><p>Manage cricket matches</p></div></div>
 <div class="container pb-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/dashboard}"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a></li>
+            <li class="breadcrumb-item active" th:text="${pageTitle}">Page</li>
+        </ol>
+    </nav>
+
     <div class="toast-container">
         <div th:if="${successMessage}" class="toast play26-toast success" role="alert"><div class="toast-body"><i class="bi bi-check-circle-fill text-success me-2"></i><span th:text="${successMessage}"></span></div></div>
         <div th:if="${errorMessage}" class="toast play26-toast error" role="alert"><div class="toast-body"><i class="bi bi-x-circle-fill text-danger me-2"></i><span th:text="${errorMessage}"></span></div></div>

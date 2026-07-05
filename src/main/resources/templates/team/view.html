@@ -5,9 +5,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link th:href="@{/css/styles.css}" rel="stylesheet"></head>
 <body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
 <div class="toast-container"><div th:if="${successMessage}" class="toast play26-toast success" role="alert"><div class="toast-body"><i class="bi bi-check-circle-fill text-success me-2"></i><span th:text="${successMessage}"></span></div></div></div>
 <div class="play26-hero"><div class="container">
-    <nav aria-label="breadcrumb"><ol class="breadcrumb mb-2"><li class="breadcrumb-item"><a th:href="@{/teams}" style="color:rgba(255,255,255,.7)">Teams</a></li><li class="breadcrumb-item active" style="color:#fff" th:text="${team.teamName}">Team</li></ol></nav>
+    <nav aria-label="breadcrumb"><ol class="breadcrumb mb-2">
+        <li class="breadcrumb-item"><a th:href="@{/dashboard}" style="color:rgba(255,255,255,.8)"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a></li><li class="breadcrumb-item"><a th:href="@{/teams}" style="color:rgba(255,255,255,.7)">Teams</a></li><li class="breadcrumb-item active" style="color:#fff" th:text="${team.teamName}">Team</li></ol></nav>
     <div class="d-flex align-items-center gap-3">
         <img th:if="${team.logo != null and !team.logo.isEmpty()}" th:src="${team.logo}" class="rounded-circle" style="width:64px;height:64px;object-fit:cover" alt="">
         <div><h1 class="mb-0" th:text="${team.teamName}">Team</h1><p class="mb-0" th:text="${team.city}">City</p></div>

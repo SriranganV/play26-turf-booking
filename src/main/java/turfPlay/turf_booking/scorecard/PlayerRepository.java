@@ -59,15 +59,29 @@ public class PlayerRepository {
             PreparedStatement ps = con.prepareStatement(
                 "INSERT INTO players(tournament_id,team_id,player_name,jersey_number,photo,role,batting_style,bowling_style,wicket_keeper,captain,vice_captain,date_of_birth,age,nationality,phone,email,status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 Statement.RETURN_GENERATED_KEYS);
-            ps.setObject(1,p.getTournamentId()); ps.setObject(2,p.getTeamId());
-            ps.setString(3,p.getPlayerName()); ps.setObject(4,p.getJerseyNumber());
-            ps.setString(5,p.getPhoto()); ps.setString(6,p.getRole());
-            ps.setString(7,p.getBattingStyle()); ps.setString(8,p.getBowlingStyle());
-            ps.setBoolean(9,p.isWicketKeeper()); ps.setBoolean(10,p.isCaptain());
-            ps.setBoolean(11,p.isViceCaptain()); ps.setObject(12,p.getDateOfBirth());
-            ps.setObject(13,p.getAge()); ps.setString(14,p.getNationality());
-            ps.setString(15,p.getPhone()); ps.setString(16,p.getEmail());
-            ps.setString(17,p.getStatus()==null?"ACTIVE":p.getStatus());
+            
+            if (p.getTournamentId() != null) ps.setLong(1, p.getTournamentId()); else ps.setNull(1, Types.BIGINT);
+            if (p.getTeamId() != null) ps.setLong(2, p.getTeamId()); else ps.setNull(2, Types.BIGINT);
+            ps.setString(3, p.getPlayerName());
+            
+            if (p.getJerseyNumber() != null) ps.setInt(4, p.getJerseyNumber()); else ps.setNull(4, Types.INTEGER);
+            ps.setString(5, p.getPhoto());
+            ps.setString(6, p.getRole());
+            ps.setString(7, p.getBattingStyle());
+            ps.setString(8, p.getBowlingStyle());
+            
+            ps.setBoolean(9, p.isWicketKeeper());
+            ps.setBoolean(10, p.isCaptain());
+            ps.setBoolean(11, p.isViceCaptain());
+            
+            if (p.getDateOfBirth() != null) ps.setDate(12, java.sql.Date.valueOf(p.getDateOfBirth())); else ps.setNull(12, Types.DATE);
+            if (p.getAge() != null) ps.setInt(13, p.getAge()); else ps.setNull(13, Types.INTEGER);
+            
+            ps.setString(14, p.getNationality());
+            ps.setString(15, p.getPhone());
+            ps.setString(16, p.getEmail());
+            ps.setString(17, p.getStatus() == null ? "ACTIVE" : p.getStatus());
+            
             return ps;
         }, kh);
         Long id = GeneratedKeyExtractor.extractId(kh);

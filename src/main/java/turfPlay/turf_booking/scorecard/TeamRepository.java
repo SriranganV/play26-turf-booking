@@ -56,11 +56,18 @@ public class TeamRepository {
             PreparedStatement ps = con.prepareStatement(
                 "INSERT INTO teams(tournament_id,team_name,short_name,team_code,logo,city,description,coach_name,home_ground,status) VALUES(?,?,?,?,?,?,?,?,?,?)",
                 Statement.RETURN_GENERATED_KEYS);
-            ps.setObject(1,t.getTournamentId()); ps.setString(2,t.getTeamName());
-            ps.setString(3,t.getShortName()); ps.setString(4,t.getTeamCode());
-            ps.setString(5,t.getLogo()); ps.setString(6,t.getCity());
-            ps.setString(7,t.getDescription()); ps.setString(8,t.getCoachName());
-            ps.setString(9,t.getHomeGround()); ps.setString(10,t.getStatus()==null?"ACTIVE":t.getStatus());
+            
+            if (t.getTournamentId() != null) ps.setLong(1, t.getTournamentId()); else ps.setNull(1, Types.BIGINT);
+            ps.setString(2, t.getTeamName());
+            ps.setString(3, t.getShortName());
+            ps.setString(4, t.getTeamCode());
+            ps.setString(5, t.getLogo());
+            ps.setString(6, t.getCity());
+            ps.setString(7, t.getDescription());
+            ps.setString(8, t.getCoachName());
+            ps.setString(9, t.getHomeGround());
+            ps.setString(10, t.getStatus() == null ? "ACTIVE" : t.getStatus());
+            
             return ps;
         }, kh);
         Long id = GeneratedKeyExtractor.extractId(kh);

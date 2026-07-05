@@ -8,11 +8,14 @@
     <link th:href="@{/css/styles.css}" rel="stylesheet">
 </head>
 <body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
 <div class="toast-container">
     <div th:if="${successMessage}" class="toast play26-toast success" role="alert"><div class="toast-body"><i class="bi bi-check-circle-fill text-success me-2"></i><span th:text="${successMessage}"></span></div></div>
 </div>
 <div class="play26-hero"><div class="container">
-    <nav aria-label="breadcrumb"><ol class="breadcrumb mb-2"><li class="breadcrumb-item"><a th:href="@{/tournaments}" style="color:rgba(255,255,255,.7)">Tournaments</a></li><li class="breadcrumb-item active" style="color:#fff" th:text="${tournament.tournamentName}">Name</li></ol></nav>
+    <nav aria-label="breadcrumb"><ol class="breadcrumb mb-2">
+        <li class="breadcrumb-item"><a th:href="@{/dashboard}" style="color:rgba(255,255,255,.8)"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a></li><li class="breadcrumb-item"><a th:href="@{/tournaments}" style="color:rgba(255,255,255,.7)">Tournaments</a></li><li class="breadcrumb-item active" style="color:#fff" th:text="${tournament.tournamentName}">Name</li></ol></nav>
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
         <h1 class="mb-0" th:text="${tournament.tournamentName}">Tournament</h1>
         <span class="badge fs-6 px-3 py-2" th:classappend="${tournament.status == 'LIVE' ? 'badge-live' : (tournament.status == 'UPCOMING' ? 'badge-upcoming' : (tournament.status == 'COMPLETED' ? 'badge-completed' : 'badge-cancelled'))}" th:text="${tournament.status}">STATUS</span>

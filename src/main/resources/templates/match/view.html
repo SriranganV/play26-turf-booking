@@ -8,11 +8,14 @@
     <link th:href="@{/css/styles.css}" rel="stylesheet">
 </head>
 <body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
 <div class="toast-container">
     <div th:if="${successMessage}" class="toast play26-toast success" role="alert"><div class="toast-body"><i class="bi bi-check-circle-fill text-success me-2"></i><span th:text="${successMessage}"></span></div></div>
 </div>
 <div class="play26-hero"><div class="container">
-    <nav aria-label="breadcrumb"><ol class="breadcrumb mb-2"><li class="breadcrumb-item"><a th:href="@{/matches}" style="color:rgba(255,255,255,.7)">Matches</a></li><li class="breadcrumb-item active" style="color:#fff">Details</li></ol></nav>
+    <nav aria-label="breadcrumb"><ol class="breadcrumb mb-2">
+        <li class="breadcrumb-item"><a th:href="@{/dashboard}" style="color:rgba(255,255,255,.8)"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a></li><li class="breadcrumb-item"><a th:href="@{/matches}" style="color:rgba(255,255,255,.7)">Matches</a></li><li class="breadcrumb-item active" style="color:#fff">Details</li></ol></nav>
     <div class="text-center">
         <span class="badge" th:classappend="${match.status == 'LIVE' ? 'badge-live' : (match.status == 'UPCOMING' ? 'badge-upcoming' : (match.status == 'COMPLETED' ? 'badge-completed' : 'badge-cancelled'))}" th:text="${match.status}">STATUS</span>
         <h1 class="mt-2"><span th:text="${match.teamAName} ?: 'Team A'">A</span> <span style="opacity:.6">vs</span> <span th:text="${match.teamBName} ?: 'Team B'">B</span></h1>

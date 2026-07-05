@@ -61,14 +61,28 @@ public class TournamentRepository {
             PreparedStatement ps = con.prepareStatement(
                 "INSERT INTO tournaments(tournament_name,description,tournament_type,match_type,overs,ball_type,entry_fee,prize_pool,maximum_teams,registered_teams,venue,start_date,end_date,banner,rules,status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, t.getTournamentName()); ps.setString(2, t.getDescription());
-            ps.setString(3, t.getTournamentType()); ps.setString(4, t.getMatchType());
-            ps.setObject(5, t.getOvers()); ps.setString(6, t.getBallType());
-            ps.setBigDecimal(7, t.getEntryFee()); ps.setBigDecimal(8, t.getPrizePool());
-            ps.setObject(9, t.getMaximumTeams()); ps.setObject(10, t.getRegisteredTeams() == null ? 0 : t.getRegisteredTeams());
-            ps.setString(11, t.getVenue()); ps.setObject(12, t.getStartDate());
-            ps.setObject(13, t.getEndDate()); ps.setString(14, t.getBanner());
-            ps.setString(15, t.getRules()); ps.setString(16, t.getStatus() == null ? "UPCOMING" : t.getStatus());
+            
+            ps.setString(1, t.getTournamentName());
+            ps.setString(2, t.getDescription());
+            ps.setString(3, t.getTournamentType());
+            ps.setString(4, t.getMatchType());
+            
+            if (t.getOvers() != null) ps.setInt(5, t.getOvers()); else ps.setNull(5, Types.INTEGER);
+            ps.setString(6, t.getBallType());
+            ps.setBigDecimal(7, t.getEntryFee());
+            ps.setBigDecimal(8, t.getPrizePool());
+            
+            if (t.getMaximumTeams() != null) ps.setInt(9, t.getMaximumTeams()); else ps.setNull(9, Types.INTEGER);
+            ps.setInt(10, t.getRegisteredTeams() == null ? 0 : t.getRegisteredTeams());
+            ps.setString(11, t.getVenue());
+            
+            if (t.getStartDate() != null) ps.setDate(12, java.sql.Date.valueOf(t.getStartDate())); else ps.setNull(12, Types.DATE);
+            if (t.getEndDate() != null) ps.setDate(13, java.sql.Date.valueOf(t.getEndDate())); else ps.setNull(13, Types.DATE);
+            
+            ps.setString(14, t.getBanner());
+            ps.setString(15, t.getRules());
+            ps.setString(16, t.getStatus() == null ? "UPCOMING" : t.getStatus());
+            
             return ps;
         }, kh);
         Long id = GeneratedKeyExtractor.extractId(kh);

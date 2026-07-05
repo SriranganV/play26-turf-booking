@@ -6,8 +6,22 @@
     <link th:href="@{/css/styles.css}" rel="stylesheet"></head>
 <body>
 <nav th:replace="~{fragments/layout :: nav}"></nav>
-<div class="play26-hero"><div class="container"><h1><i class="bi bi-clipboard-data-fill me-2"></i>Scorecard Hub</h1><p>Cricket scoring &amp; live match management</p></div></div>
+<div class="play26-hero"><div class="container">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/dashboard}"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a></li>
+            <li class="breadcrumb-item active" th:text="${pageTitle}">Page</li>
+        </ol>
+    </nav>
+<h1><i class="bi bi-clipboard-data-fill me-2"></i>Scorecard Hub</h1><p>Cricket scoring &amp; live match management</p></div></div>
 <div class="container pb-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/dashboard}"><i class="bi bi-speedometer2 me-1"></i>Dashboard</a></li>
+            <li class="breadcrumb-item active" th:text="${pageTitle}">Page</li>
+        </ol>
+    </nav>
+
     <div class="row g-3 mb-4">
         <div class="col-6 col-md-3"><div class="stat-card accent"><i class="bi bi-trophy stat-icon"></i><div class="stat-value" th:text="${totalTournaments} ?: 0">0</div><div class="stat-label">Tournaments</div></div></div>
         <div class="col-6 col-md-3"><div class="stat-card primary"><i class="bi bi-controller stat-icon"></i><div class="stat-value" th:text="${totalMatches} ?: 0">0</div><div class="stat-label">Matches</div></div></div>

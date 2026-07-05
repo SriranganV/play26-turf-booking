@@ -95,14 +95,28 @@ public class MatchRepository {
             PreparedStatement ps = con.prepareStatement(
                 "INSERT INTO matches(tournament_id,match_number,team_a_id,team_b_id,turf_id,match_date,match_time,venue,overs,toss_winner,toss_decision,winner,man_of_match,match_stage,result,status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 Statement.RETURN_GENERATED_KEYS);
-            ps.setObject(1, m.getTournamentId()); ps.setString(2, m.getMatchNumber());
-            ps.setObject(3, m.getTeamAId()); ps.setObject(4, m.getTeamBId());
-            ps.setObject(5, m.getTurfId()); ps.setObject(6, m.getMatchDate());
-            ps.setObject(7, m.getMatchTime()); ps.setString(8, m.getVenue());
-            ps.setObject(9, m.getOvers()); ps.setObject(10, m.getTossWinnerId());
-            ps.setString(11, m.getTossDecision()); ps.setObject(12, m.getWinnerId());
-            ps.setObject(13, m.getManOfMatchId()); ps.setString(14, m.getMatchStage());
-            ps.setString(15, m.getResult()); ps.setString(16, m.getStatus() == null ? "UPCOMING" : m.getStatus());
+            
+            if (m.getTournamentId() != null) ps.setLong(1, m.getTournamentId()); else ps.setNull(1, Types.BIGINT);
+            ps.setString(2, m.getMatchNumber());
+            if (m.getTeamAId() != null) ps.setLong(3, m.getTeamAId()); else ps.setNull(3, Types.BIGINT);
+            if (m.getTeamBId() != null) ps.setLong(4, m.getTeamBId()); else ps.setNull(4, Types.BIGINT);
+            if (m.getTurfId() != null) ps.setLong(5, m.getTurfId()); else ps.setNull(5, Types.BIGINT);
+            
+            if (m.getMatchDate() != null) ps.setDate(6, java.sql.Date.valueOf(m.getMatchDate())); else ps.setNull(6, Types.DATE);
+            if (m.getMatchTime() != null) ps.setTime(7, java.sql.Time.valueOf(m.getMatchTime())); else ps.setNull(7, Types.TIME);
+            
+            ps.setString(8, m.getVenue());
+            if (m.getOvers() != null) ps.setInt(9, m.getOvers()); else ps.setNull(9, Types.INTEGER);
+            
+            if (m.getTossWinnerId() != null) ps.setLong(10, m.getTossWinnerId()); else ps.setNull(10, Types.BIGINT);
+            ps.setString(11, m.getTossDecision());
+            if (m.getWinnerId() != null) ps.setLong(12, m.getWinnerId()); else ps.setNull(12, Types.BIGINT);
+            if (m.getManOfMatchId() != null) ps.setLong(13, m.getManOfMatchId()); else ps.setNull(13, Types.BIGINT);
+            
+            ps.setString(14, m.getMatchStage());
+            ps.setString(15, m.getResult());
+            ps.setString(16, m.getStatus() == null ? "UPCOMING" : m.getStatus());
+            
             return ps;
         }, kh);
         Long id = GeneratedKeyExtractor.extractId(kh);
